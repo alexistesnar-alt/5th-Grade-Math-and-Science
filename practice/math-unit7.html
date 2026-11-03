@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 7 Practice: Shapes on the Coordinate Plane — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="practice.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← All practice</a>
+<div class="page-hdr">
+  <span class="eyebrow">Extra Practice · Unit 7</span>
+  <h1>Shapes on the Coordinate Plane</h1>
+  <p>Plot points, compare two number patterns, use line plots with fractions, and sort quadrilaterals.</p>
+  <p class="stds">NC.5.G.1 · NC.5.OA.3 · NC.5.MD.2 · NC.5.G.3</p>
+  <div class="pr-hdr-links"><a class="plink" href="../math/unit7.html">Unit 7 page</a><a class="plink gold" href="../learning-lab/index.html">Learning Lab →</a></div>
+</div>
+<div id="app"></div>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="practice.js"></script>
+<script>
+(function () {
+  var P = Practice, F = P.F, S = P.svg, m = P.m, fr = P.fr, mx = P.mx;
+
+  /* patterns */
+  function pattern(start, add, n) { var a = []; for (var i = 0; i < n; i++) a.push(start + add * i); return a; }
+  var A = pattern(0, 3, 5), Bp = pattern(0, 6, 5);
+  var pairs = [0, 1, 2].map(function (i) { return [A[i], Bp[i]]; });
+
+  /* line plot data (inches) */
+  var data = ['3/8', '3/8', '1/2', '1/2', '1/2', '5/8', '7/8', '7/8', '1 1/8'].map(F);
+  var hi = data.reduce(function (a, b) { return a.cmp(b) > 0 ? a : b; }), lo = data.reduce(function (a, b) { return a.cmp(b) < 0 ? a : b; });
+  var halves = data.filter(function (v) { return v.eq(F(1, 2)); });
+  var halfTotal = halves.reduce(function (s, v) { return s.add(v); }, F(0));
+
+  /* quadrilateral properties: a shape belongs to a family when it has all of the family's properties */
+  var FAM = { quadrilateral: [], parallelogram: ['2 pairs of parallel sides'], rectangle: ['2 pairs of parallel sides', '4 right angles'],
+              rhombus: ['2 pairs of parallel sides', '4 equal sides'], square: ['2 pairs of parallel sides', '4 right angles', '4 equal sides'] };
+  function is(shape, fam) { return FAM[fam].every(function (p) { return FAM[shape].indexOf(p) >= 0; }); }
+  var quadPics = S.shapes([
+    { name: 'square', pts: [[10, 10], [90, 10], [90, 90], [10, 90]], right: [[10, 78, 12, 12]], ticks: [[46, 4, 54, 16], [84, 46, 96, 54], [46, 84, 54, 96], [4, 46, 16, 54]] },
+    { name: 'rectangle', pts: [[0, 25], [100, 25], [100, 85], [0, 85]], right: [[0, 73, 12, 12]] },
+    { name: 'rhombus', pts: [[50, 0], [92, 50], [50, 100], [8, 50]], ticks: [[67, 22, 75, 28], [67, 78, 75, 72], [25, 78, 33, 72], [25, 22, 33, 28]] },
+    { name: 'parallelogram', pts: [[25, 25], [100, 25], [75, 85], [0, 85]] }
+  ], { label: 'a square, a rectangle, a rhombus, and a parallelogram' });
+
+  Practice.init({
+    id: 'unit7',
+    warmup: {
+      routine: 'Notice and Wonder',
+      title: 'Points on a grid',
+      figure: S.coordGrid({ max: 8, size: 280, points: [{ x: 0, y: 1 }, { x: 1, y: 3 }, { x: 2, y: 5 }, { x: 3, y: 7 }], label: 'grid with points at (0, 1), (1, 3), (2, 5), (3, 7)', maxw: 340 }),
+      responses: [
+        'I notice the points go up in a straight line.',
+        'I notice each point is 1 to the right and 2 up from the one before.',
+        'I notice the first point is on the y-axis, at (0, 1).',
+        'I wonder where the next point would be. (It would be at (4, 9), off this grid!)',
+        'I wonder what the points could stand for in real life.'
+      ]
+    },
+    goals: [
+      'Let\'s plot points and name them with ordered pairs.',
+      'Let\'s make two number patterns and compare them.',
+      'Let\'s use line plots with fractions.',
+      'Let\'s sort quadrilaterals by their properties.'
+    ],
+    problems: [
+      { id: 'p1', type: 'plot',
+        q: '<p>Plot point <b>A at (3, 5)</b> and point <b>B at (6, 2)</b>. Tap the grid where the lines cross.</p>',
+        points: [[3, 5], [6, 2]], names: ['A', 'B'], max: 10,
+        hints: ['The first number tells how far to go <b>across</b>. The second tells how far to go <b>up</b>.', 'For A: start at 0, go across 3, then up 5.'],
+        explain: 'A (3, 5): across 3, up 5. B (6, 2): across 6, up 2.' },
+
+      { id: 'p2', type: 'mc',
+        q: '<p>What are the coordinates of point P?</p>',
+        fig: S.coordGrid({ max: 10, size: 300, points: [{ x: 4, y: 7, t: 'P' }], label: 'grid with point P', maxw: 360 }),
+        two: true,
+        options: [{ t: m('(4, 7)') }, { t: m('(7, 4)'), why: 'You switched the numbers. Across first (x), then up (y).' },
+                  { t: m('(4, 4)'), why: 'P is 4 across. Count how far up it is.' }, { t: m('(7, 7)'), why: 'P is 7 up. Count how far across it is.' }],
+        answer: 0,
+        hints: ['Start at (0, 0). How far across is P?', 'Now how far up is P?'],
+        explain: 'P is 4 across and 7 up, so it is at (4, 7).' },
+
+      { id: 'p3', type: 'num',
+        q: '<p><b>Pattern A</b>: start at 0 and add 3. <b>Pattern B</b>: start at 0 and add 6. Find the next number in each pattern.</p>' +
+           '<p>' + m('A: ' + A.slice(0, 4).join(', ') + ', __') + '<br>' + m('B: ' + Bp.slice(0, 4).join(', ') + ', __') + '</p>',
+        blanks: [
+          { label: 'Next in Pattern A', ans: A[4], expect: '12', wrong: [[A[3] + 6, 'Pattern A adds 3 each time, not 6.']] },
+          { label: 'Next in Pattern B', ans: Bp[4], expect: '24', wrong: [[Bp[3] + 3, 'Pattern B adds 6 each time, not 3.']] }
+        ],
+        hints: ['Pattern A: 9 + 3 = ?', 'Pattern B: 18 + 6 = ?'],
+        explain: 'A: 9 + 3 = 12. B: 18 + 6 = 24.' },
+
+      { id: 'p4', type: 'mc',
+        q: '<p>Look at Pattern A (0, 3, 6, 9, 12) and Pattern B (0, 6, 12, 18, 24). Which is true for every pair of matching numbers?</p>',
+        options: [{ t: 'Each number in B is <b>2 times</b> the matching number in A.' },
+                  { t: 'Each number in B is <b>3 more</b> than the matching number in A.', why: 'Check: 6 is 3 more than 3, but 12 is not 3 more than 6.' },
+                  { t: 'Each number in B is <b>6 more</b> than the matching number in A.', why: 'Check: 0 and 0. B is not 6 more there.' },
+                  { t: 'Each number in B is <b>half</b> of the matching number in A.', why: 'B is bigger than A, so it can\'t be half.' }],
+        answer: A.every(function (a, i) { return Bp[i] === 2 * a; }) ? 0 : -1,
+        hints: ['Look at the pairs: (3, 6), (6, 12), (9, 18).', 'What do you multiply 3 by to get 6? Does it work for 6 and 12?'],
+        explain: '3 × 2 = 6, 6 × 2 = 12, 9 × 2 = 18. B adds twice as much each time, so B is always 2 times A.' },
+
+      { id: 'p5', type: 'plot',
+        q: '<p>Make ordered pairs from the patterns: (A, B). The first three are ' + m(pairs.map(function (p) { return '(' + p[0] + ', ' + p[1] + ')'; }).join(', ')) + '. Plot all three points.</p>',
+        points: pairs, max: 12, every: 2, anyOrder: true, xLabel: 'A', yLabel: 'B',
+        hints: ['(0, 0) is the corner where the axes meet.', 'For (3, 6): go across 3, then up 6.'],
+        explain: 'The points (0, 0), (3, 6), and (6, 12) line up. Each step goes across 3 and up 6.' },
+
+      { id: 'p6', type: 'num',
+        q: '<p>A class measured how much 9 bean plants grew in one week. The line plot shows the data in inches.</p>',
+        fig: S.linePlot({ min: F(1, 4), max: F(5, 4), den: 8, data: data, title: 'Growth (inches)', width: 460, label: 'line plot of plant growth in eighths of an inch' }),
+        blanks: [
+          { label: 'Longest − shortest', ans: hi.sub(lo), expect: '3/4', unit: 'inch', wrong: [[hi.add(lo), 'You added. "How much longer" means subtract.'], [F(6), 'That counts tick marks. Subtract the measurements: ' + mx(1, 1, 8) + ' − ' + fr(3, 8) + '.']] },
+          { label: 'Total of all the ½-inch plants', ans: halfTotal, expect: '1 1/2', unit: 'inches', wrong: [[halves.length, 'That is how many plants grew ' + fr(1, 2) + ' inch. Add their lengths: ' + fr(1, 2) + ' + ' + fr(1, 2) + ' + ' + fr(1, 2) + '.']] }
+        ],
+        hints: ['The longest is ' + mx(1, 1, 8) + '. The shortest is ' + fr(3, 8) + '.', 'There are 3 Xs above ' + fr(1, 2) + '. Add 3 halves.'],
+        explain: mx(1, 1, 8) + ' − ' + fr(3, 8) + ' = ' + fr(6, 8) + ' = ' + fr(3, 4) + ' inch. 3 × ' + fr(1, 2) + ' = ' + mx(1, 1, 2) + ' inches.' },
+
+      { id: 'p7', type: 'multi',
+        q: '<p>Select <b>all</b> the names that are <b>always</b> true for a square.</p>',
+        fig: quadPics, figLeft: true,
+        options: ['rectangle', 'rhombus', 'parallelogram'].map(function (f) { return { t: 'A square is a ' + f + '.', ok: is('square', f), why: '' }; })
+          .concat([{ t: 'A square has exactly 2 right angles.', ok: false, why: 'A square has 4 right angles.' },
+                   { t: 'A square has sides of different lengths.', ok: false, why: 'All 4 sides of a square are the same length.' }]),
+        hints: ['A square has 4 right angles, 4 equal sides, and 2 pairs of parallel sides.', 'A rectangle needs 4 right angles. A rhombus needs 4 equal sides. Does a square have those?'],
+        explain: 'A square has everything a rectangle, a rhombus, and a parallelogram need. So a square is all three.' },
+
+      { id: 'p8', type: 'error',
+        q: '<p>Jamal wanted to plot the point (2, 6). He put his point at <b>J</b>. Find his mistake.</p>',
+        fig: S.coordGrid({ max: 8, size: 260, points: [{ x: 6, y: 2, t: 'J' }], label: 'grid with Jamal\'s point at 6 across and 2 up', maxw: 330 }),
+        steps: ['Start at (0, 0).', 'Go up 2.', 'Go right 6.', 'Draw the point.'],
+        bad: 1,
+        stepNotes: ['Starting at (0, 0) is right.', null, 'Look at what he did first. That is where it went wrong.', 'Drawing the point is fine. The point is in the wrong place, though.'],
+        fixLabel: 'How many units up should he go?', ans: 6, expect: '6',
+        wrong: [[2, '2 is how far across he should go. The second number, 6, tells how far up.']],
+        hints: ['In (2, 6), which number tells how far across?', 'Go across 2 first. Then go up 6.'],
+        explain: 'Jamal mixed up the order. For (2, 6), go right 2, then up 6. He went up 2 instead.' },
+
+      { id: 'p9', type: 'mc',
+        q: '<p>Which statement is true?</p>',
+        fig: quadPics, figLeft: true,
+        options: [{ t: 'Every rectangle is a square.', why: 'A rectangle can have 2 long sides and 2 short sides. Then it is not a square.' },
+                  { t: 'Every square is a rectangle.' },
+                  { t: 'Every parallelogram is a rectangle.', why: 'A parallelogram does not need right angles.' },
+                  { t: 'A rhombus can never have a right angle.', why: 'A square is a rhombus with right angles.' }],
+        answer: (is('square', 'rectangle') && !is('rectangle', 'square') && !is('parallelogram', 'rectangle')) ? 1 : -1,
+        hints: ['What does a shape need to be a rectangle?', 'Does a square have 4 right angles?'],
+        explain: 'A rectangle needs 4 right angles and 2 pairs of parallel sides. Every square has those, so every square is a rectangle.' },
+
+      { id: 'p10', type: 'open',
+        q: '<p>Is a square a rhombus? Explain how you know.</p>',
+        model: 'Yes. A rhombus is a quadrilateral with 4 equal sides. A square has 4 equal sides, so a square is a rhombus. It is a special rhombus because it also has 4 right angles.',
+        look: ['say yes or no?', 'name the property of a rhombus (4 equal sides)?', 'say that a square has that property?'] }
+    ],
+    synthesisTitle: 'Points, patterns, and shapes',
+    synthesis: '<ul><li>In an ordered pair (x, y), go <b>across</b> x first, then <b>up</b> y.</li>' +
+      '<li>Two patterns make ordered pairs. If B is always 2 times A, the points line up.</li>' +
+      '<li>On a line plot, each X is one data point. Add or subtract the fractions to answer questions.</li>' +
+      '<li>Quadrilaterals sort into families. A square is a rectangle, a rhombus, and a parallelogram.</li></ul>',
+    cooldown: [
+      { id: 'c1', type: 'plot',
+        q: '<p>Plot point <b>C at (5, 1)</b>.</p>',
+        points: [[5, 1]], names: ['C'], max: 8,
+        hints: ['Go across 5, then up 1.'],
+        explain: 'C (5, 1): across 5, up 1.' },
+      { id: 'c2', type: 'mc',
+        q: '<p>A shape has 4 sides and 4 right angles. Its sides are <b>not</b> all the same length. What is the <b>best</b> name for it?</p>',
+        two: true,
+        options: [{ t: 'square', why: 'A square has 4 equal sides. This shape does not.' }, { t: 'rectangle' },
+                  { t: 'rhombus', why: 'A rhombus has 4 equal sides. This shape does not.' }, { t: 'parallelogram', why: 'It is a parallelogram, but there is a more exact name. It has 4 right angles.' }],
+        answer: 1,
+        hints: ['Which shapes need 4 right angles?'],
+        explain: '4 right angles but not 4 equal sides: that is a rectangle (but not a square).' }
+    ],
+    asserts: [
+      ['patterns', A.join() === '0,3,6,9,12' && Bp.join() === '0,6,12,18,24'],
+      ['line plot', hi.eq(F(9, 8)) && lo.eq(F(3, 8)) && halves.length === 3 && data.length === 9],
+      ['square families', is('square', 'rectangle') && is('square', 'rhombus') && is('square', 'parallelogram') && !is('rectangle', 'rhombus')]
+    ]
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 1a Practice: Order of Operations — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="practice.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← All practice</a>
+<div class="page-hdr">
+  <span class="eyebrow">Extra Practice · Mini-Unit 1a</span>
+  <h1>Order of Operations</h1>
+  <p>Write, explain, and find the value of expressions with parentheses.</p>
+  <p class="stds">NC.5.OA.2</p>
+  <div class="pr-hdr-links"><a class="plink" href="../math/unit1a.html">Mini-unit page</a><a class="plink gold" href="../learning-lab/index.html">Learning Lab →</a></div>
+</div>
+<div id="app"></div>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="practice.js"></script>
+<script>
+(function () {
+  var P = Practice, F = P.F, S = P.svg, m = P.m, ev = P.evalExpr;
+  function opt(t, why) { return { t: m(t), v: ev(t), why: why }; }
+
+  var tf = [['3 × (4 + 2) = 3 × 4 + 2', false], ['3 × (4 + 2) = 3 × 4 + 3 × 2', true], ['(10 − 4) − 2 = 10 − (4 − 2)', false], ['2 × (5 × 3) = (2 × 5) × 3', true]];
+  function tfCheck(s) { var sides = s.split('='); return ev(sides[0]).eq(ev(sides[1])); }
+
+  var p6opts = [['6 × 10 + 6 × 3', 'That is the same as 6 groups of 10 and 6 groups of 3.'], ['6 × 13', ''], ['6 × 10 + 3', 'This only adds 3 once. 6 × (10 + 3) needs 6 groups of 3.'],
+                ['(10 + 3) × 6', ''], ['60 + 3', 'This only adds 3 once. It equals 63, not 78.']];
+  var p6V = ev('6 × (10 + 3)');
+  var p9opts = ['(2 × 6) + 4', '2 × (6 + 4)', '2 × 6 + 4'];
+
+  Practice.init({
+    id: 'unit1a',
+    warmup: {
+      routine: 'True or False?',
+      title: 'True or false?',
+      list: tf.map(function (t) { return t[0]; }),
+      responses: [
+        '1. <b>False.</b> The left side is 3 groups of 6, which is 18. The right side is 12 + 2, which is 14.',
+        '2. <b>True.</b> 3 groups of (4 + 2) is 3 groups of 4 and 3 groups of 2. Both sides are 18.',
+        '3. <b>False.</b> The left side is 6 − 2 = 4. The right side is 10 − 2 = 8.',
+        '4. <b>True.</b> You can group factors in any way. Both sides are 30.'
+      ],
+      after: 'Parentheses tell us what to do first. Sometimes moving them changes the value. Sometimes it does not!'
+    },
+    goals: [
+      'Let\'s find the value of expressions with parentheses.',
+      'Let\'s write expressions that match words and stories.',
+      'Let\'s explain what an expression means without finding its value.'
+    ],
+    problems: [
+      { id: 'p1', type: 'num',
+        q: '<p>Find the value of ' + m('24 − (6 + 3)') + '.</p>',
+        ans: ev('24 − (6 + 3)'), expect: '15',
+        wrong: [[ev('24 − 6 + 3'), 'You worked left to right. Do the part in parentheses first: 6 + 3.']],
+        hints: ['Parentheses first. What is 6 + 3?', 'Now find 24 − 9.'],
+        explain: 'First 6 + 3 = 9. Then 24 − 9 = 15.' },
+
+      { id: 'p2', type: 'num',
+        q: '<p>Find the value of ' + m('5 × (8 − 2)') + '.</p>',
+        ans: ev('5 × (8 − 2)'), expect: '30',
+        wrong: [[ev('5 × 8 − 2'), 'You multiplied 5 × 8 first. Do the part in parentheses first: 8 − 2.']],
+        hints: ['Parentheses first: 8 − 2 = ?', 'Now multiply that by 5.'],
+        explain: 'First 8 − 2 = 6. Then 5 × 6 = 30.' },
+
+      { id: 'p3', type: 'num',
+        q: '<p>Find the value of ' + m('40 − 12 ÷ 4') + '. There are no parentheses. Think about which operation comes first.</p>',
+        ans: ev('40 − 12 ÷ 4'), expect: '37',
+        wrong: [[ev('(40 − 12) ÷ 4'), 'You subtracted first. Without parentheses, divide before you subtract.']],
+        hints: ['Multiply and divide before you add and subtract.', 'Find 12 ÷ 4 first. Then subtract from 40.'],
+        explain: 'Divide first: 12 ÷ 4 = 3. Then 40 − 3 = 37.' },
+
+      { id: 'p4', type: 'mc',
+        q: '<p>Which expression means "add 7 and 3, then multiply by 4"?</p>',
+        options: [opt('(7 + 3) × 4'), opt('7 + 3 × 4', 'Here you would multiply 3 × 4 first. The words say to add first, so 7 + 3 needs parentheses.'),
+                  opt('4 × 7 + 3', 'This multiplies 4 × 7 first, then adds 3.'), opt('7 × 4 + 3', 'This multiplies 7 × 4 first, then adds 3.')],
+        ans: ev('(7 + 3) × 4'),
+        hints: ['Which part should happen first? Put it in parentheses.'],
+        explain: 'Parentheses show that 7 + 3 happens first. Then multiply by 4: (7 + 3) × 4 = 40.' },
+
+      { id: 'p5', type: 'mc',
+        q: '<p>Without finding the value, which sentence describes ' + m('3 × (12 + 8)') + '?</p>',
+        options: [{ t: '3 times as much as 12 + 8' }, { t: '8 more than 3 × 12', why: 'That would be 3 × 12 + 8. In the expression, 12 + 8 is grouped.' },
+                  { t: '3 more than 12 + 8', why: 'That would be (12 + 8) + 3. The 3 is multiplied, not added.' }, { t: '12 + 8 divided by 3', why: 'There is no division in this expression.' }],
+        answer: 0,
+        hints: ['The parentheses make 12 + 8 one amount.', 'What happens to that amount? It is multiplied by 3.'],
+        explain: '12 + 8 is in parentheses, so it is one amount. Multiplying it by 3 makes it 3 times as much.' },
+
+      { id: 'p6', type: 'multi',
+        q: '<p>Select <b>all</b> the expressions that have the same value as ' + m('6 × (10 + 3)') + '.</p>',
+        options: p6opts.map(function (o) { return { t: m(o[0]), ok: ev(o[0]).eq(p6V), why: o[1] }; }),
+        hints: ['6 × (10 + 3) means 6 groups of 13.', 'Find the value of each one. Which ones equal 78?'],
+        explain: '6 × (10 + 3) = 6 × 13 = 78. So do 6 × 10 + 6 × 3 (60 + 18) and (10 + 3) × 6.' },
+
+      { id: 'p7', type: 'error',
+        q: '<p>Ari found the value of ' + m('18 − (4 + 5)') + '. Here is his work. Find his mistake.</p>',
+        steps: [m('18 − 4 = 14'), m('14 + 5 = 19'), 'The value is ' + m('19') + '.'],
+        bad: 0,
+        stepNotes: [null, 'Step 2 adds correctly, but Ari started in the wrong place. Look at Step 1.', 'Step 3 only repeats his answer. Where did the mistake start?'],
+        ans: ev('18 − (4 + 5)'), expect: '9',
+        wrong: [[ev('18 − 4 + 5'), 'That is Ari\'s answer. Do the parentheses first.']],
+        hints: ['What should you do first when there are parentheses?', 'Find 4 + 5 first. Then subtract from 18.'],
+        explain: 'Ari did not do the parentheses first. 4 + 5 = 9, then 18 − 9 = 9.' },
+
+      { id: 'p8', type: 'num',
+        q: '<p>Kiran has 3 packs of markers. Each pack has 12 markers. He gives away 10 markers. How many markers does he have now?</p>',
+        fig: S.tape([{ parts: [{ t: '12' }, { t: '12' }, { t: '12' }], brace: { from: 0, to: 3, t: '3 × 12' } }], { width: 420, label: 'tape diagram: 3 packs of 12' }),
+        ans: ev('(3 × 12) − 10'), expect: '26', unit: 'markers',
+        wrong: [[ev('3 × (12 − 10)'), 'That takes 10 from each pack. He gave away 10 markers in all. Find 3 × 12 first.'], [36, 'That is how many he started with. He gave 10 away.']],
+        hints: ['Write an expression: (3 × 12) − 10.', 'He has 36 markers before he gives any away.'],
+        explain: '(3 × 12) − 10 = 36 − 10 = 26 markers.' },
+
+      { id: 'p9', type: 'mc',
+        q: '<p>Where should the parentheses go to make this true? ' + m('2 × 6 + 4 = 20') + '</p>',
+        options: p9opts.map(function (t, i) { var v = ev(t); return { t: m(t + ' = 20'), v: v, why: i === 2 ? 'Without parentheses, you multiply first: 12 + 4 = 16.' : 'This equals ' + v + ', not 20.' }; }),
+        ans: F(20),
+        hints: ['Try each one. What is its value?', 'What if you add 6 + 4 first?'],
+        explain: '2 × (6 + 4) = 2 × 10 = 20.' },
+
+      { id: 'p10', type: 'open',
+        q: '<p>Explain why ' + m('4 × (5 + 2)') + ' and ' + m('4 × 5 + 2') + ' have different values.</p>',
+        model: 'In 4 × (5 + 2), you add first, so it is 4 groups of 7, which is 28. In 4 × 5 + 2, you multiply first, so it is 20 + 2, which is 22. The parentheses change what you do first.',
+        look: ['find both values (28 and 22)?', 'say what the parentheses do?'] }
+    ],
+    synthesisTitle: 'Parentheses tell us what to do first',
+    synthesis: '<ul><li>Do the work <b>inside parentheses</b> first.</li>' +
+      '<li>With no parentheses: <b>multiply and divide</b> before you add and subtract.</li>' +
+      '<li>We can read an expression without solving it. ' + m('3 × (12 + 8)') + ' is "3 times as much as 12 + 8."</li>' +
+      '<li>When words say "then," the first step goes in parentheses: "add 7 and 3, then multiply by 4" is ' + m('(7 + 3) × 4') + '.</li></ul>',
+    cooldown: [
+      { id: 'c1', type: 'num',
+        q: '<p>Find the value of ' + m('7 × (9 − 4)') + '.</p>',
+        ans: ev('7 × (9 − 4)'), expect: '35',
+        wrong: [[ev('7 × 9 − 4'), 'You multiplied first. Do 9 − 4 first.']],
+        hints: ['Parentheses first: 9 − 4.'],
+        explain: '9 − 4 = 5. Then 7 × 5 = 35.' },
+      { id: 'c2', type: 'mc',
+        q: '<p>Which expression means "multiply 6 by the sum of 5 and 2"?</p>',
+        options: [opt('6 × 5 + 2', 'This multiplies 6 × 5 first. The sum 5 + 2 needs parentheses.'), opt('6 × (5 + 2)'), opt('(6 × 5) + 2', 'This multiplies 6 × 5 first, then adds 2.'), opt('6 + 5 × 2', 'This adds 6. The words say to multiply 6.')],
+        ans: ev('6 × (5 + 2)'),
+        hints: ['"The sum of 5 and 2" is one amount. Put it in parentheses.'],
+        explain: 'The sum of 5 and 2 is (5 + 2). Multiply 6 by it: 6 × (5 + 2) = 42.' }
+    ],
+    asserts: [
+      ['warm-up true/false answers', tf.every(function (t) { return tfCheck(t[0]) === t[1]; })],
+      ['p6 has three right choices', p6opts.filter(function (o) { return ev(o[0]).eq(78); }).length === 3],
+      ['p9 only one makes 20', p9opts.filter(function (t) { return ev(t).eq(20); }).length === 1],
+      ['p4 value is 40', ev('(7 + 3) × 4').eq(40)]
+    ]
+  });
+})();
+</script>
+</body>
+</html>

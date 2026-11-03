@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 3 Practice: Multiplying and Dividing Fractions — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="practice.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← All practice</a>
+<div class="page-hdr">
+  <span class="eyebrow">Extra Practice · Unit 3</span>
+  <h1>Multiplying and Dividing Fractions</h1>
+  <p>Multiply with mixed numbers, find areas with fraction side lengths, and divide unit fractions and whole numbers.</p>
+  <p class="stds">NC.5.NF.4 · NC.5.NF.7</p>
+  <div class="pr-hdr-links"><a class="plink" href="../math/unit3.html">Unit 3 page</a><a class="plink gold" href="../learning-lab/index.html">Learning Lab →</a></div>
+</div>
+<div id="app"></div>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="practice.js"></script>
+<script>
+(function () {
+  var P = Practice, F = P.F, S = P.svg, m = P.m, fr = P.fr, mx = P.mx, ev = P.evalExpr;
+  var G = '#FFE082', G2 = '#E0A800';
+  var p2a = F(5, 2), p2b = F(4, 3);
+  var p7opts = [['18', ev('18'), ''], ['6 × 3', ev('6 × 3'), ''], ['2', ev('2'), '6 ÷ 3 = 2. But we are dividing by ' + fr(1, 3) + ', not by 3.'],
+                [fr(1, 18), F(1, 18), 'This is tiny. But there are many thirds in 6, so the answer is big.']];
+  var p7V = F(6).div(F(1, 3));
+  var est = F(4).mul(F(23, 8));
+
+  Practice.init({
+    id: 'unit3',
+    warmup: {
+      routine: 'Estimation',
+      title: 'About how much?',
+      prompt: '<p style="font-size:22px;margin:4px 0 0">' + m('4 ×') + ' ' + mx(2, 7, 8) + '</p><p>Give an estimate that is too low, one that is too high, and one that is about right.</p>',
+      responses: [
+        'Too low: 8, because 4 × 2 = 8 and ' + mx(2, 7, 8) + ' is more than 2.',
+        'Too high: 16, because 4 × 4 = 16 and ' + mx(2, 7, 8) + ' is less than 4.',
+        'About right: a little less than 12, because ' + mx(2, 7, 8) + ' is almost 3, and 4 × 3 = 12.'
+      ],
+      after: 'The exact answer is ' + mx(11, 1, 2) + '. Estimating first helps you check your answer later.'
+    },
+    goals: [
+      'Let\'s multiply with mixed numbers.',
+      'Let\'s find the area of rectangles with fraction side lengths.',
+      'Let\'s divide a unit fraction by a whole number, and a whole number by a unit fraction.'
+    ],
+    problems: [
+      { id: 'p1', type: 'num',
+        q: '<p>Find ' + m('3 ×') + ' ' + mx(2, 1, 4) + '. The diagram splits ' + mx(2, 1, 4) + ' into 2 and ' + fr(1, 4) + '.</p>',
+        fig: S.areaRect([{ w: 220, t: '2' }, { w: 100, t: '1/4' }], [{ h: 70, t: '3' }], [['3 × 2', '3 × 1/4']], { label: 'rectangle 3 by 2 and one fourth, split into 3 times 2 and 3 times one fourth' }),
+        ans: F(3).mul(F(9, 4)), expect: '6 3/4',
+        wrong: [[F(6).add(F(1, 4)), 'You found 3 × 2 = 6, but you only added ' + fr(1, 4) + '. Multiply 3 × ' + fr(1, 4) + ' too.'], [F(3, 4), 'That is only 3 × ' + fr(1, 4) + '. Add 3 × 2 too.']],
+        hints: ['Find each part: 3 × 2 and 3 × ' + fr(1, 4) + '.', '3 × ' + fr(1, 4) + ' = ' + fr(3, 4) + '. Now add it to 6.'],
+        explain: '3 × 2 = 6 and 3 × ' + fr(1, 4) + ' = ' + fr(3, 4) + '. 6 + ' + fr(3, 4) + ' = ' + mx(6, 3, 4) + '.' },
+
+      { id: 'p2', type: 'num',
+        q: '<p>A garden is ' + mx(2, 1, 2) + ' feet long and ' + mx(1, 1, 3) + ' feet wide. What is its area?</p>',
+        fig: S.areaRect([{ w: 220, t: '2' }, { w: 110, t: '1/2' }], [{ h: 90, t: '1' }, { h: 44, t: '1/3' }], [['2 × 1', '1/2 × 1'], ['2 × 1/3', '1/2 × 1/3']], { size: 14, label: 'rectangle split into 4 parts: 2 by 1, one half by 1, 2 by one third, one half by one third' }),
+        ans: p2a.mul(p2b), expect: '3 1/3', unit: 'square feet',
+        wrong: [[F(2).add(F(1, 6)), 'You multiplied 2 × 1 and ' + fr(1, 2) + ' × ' + fr(1, 3) + ', but there are 4 parts. Find all 4 and add them.'],
+                [p2a.add(p2b).mul(2), 'That is the perimeter (the distance around). Area is length × width.']],
+        hints: ['Find the area of each of the 4 parts.', 'The parts are 2, ' + fr(1, 2) + ', ' + fr(2, 3) + ', and ' + fr(1, 6) + '. Add them. (Or multiply ' + fr(5, 2) + ' × ' + fr(4, 3) + '.)'],
+        explain: '2 + ' + fr(1, 2) + ' + ' + fr(2, 3) + ' + ' + fr(1, 6) + ' = ' + mx(3, 1, 3) + '. Or: ' + fr(5, 2) + ' × ' + fr(4, 3) + ' = ' + fr(20, 6) + ' = ' + mx(3, 1, 3) + ' square feet.' },
+
+      { id: 'p3', type: 'num',
+        q: '<p>A square tile has sides that are ' + fr(3, 4) + ' meter long. What is the area of the tile?</p>',
+        fig: S.areaFrac(4, 4, 3, 3, { top: '3/4', left: '3/4', label: '1 by 1 square in fourths; a 3 by 3 part is dark' }),
+        ans: F(3, 4).mul(F(3, 4)), expect: '9/16', unit: 'square meter',
+        wrong: [[F(3, 4).add(F(3, 4)), 'You added the sides. Area is side × side.'], [F(3), 'That is the perimeter (4 sides of ' + fr(3, 4) + '). Area is side × side.']],
+        hints: ['Area = side × side = ' + fr(3, 4) + ' × ' + fr(3, 4) + '.', 'Count the dark parts in the diagram. How many parts are in the whole square?'],
+        explain: fr(3, 4) + ' × ' + fr(3, 4) + ' = ' + fr(9, 16) + ' square meter. The diagram shows 9 dark parts out of 16.' },
+
+      { id: 'p4', type: 'num',
+        q: '<p>There is ' + fr(1, 3) + ' of a pan of brownies left. 4 friends share it equally. What fraction of the <b>whole pan</b> does each friend get?</p>',
+        fig: S.bars([{ parts: 3, fills: { 0: G } }, { parts: 12, fills: { 0: G2, 1: G, 2: G, 3: G } }], { width: 420, label: 'top bar in thirds with one third shaded; bottom bar in twelfths with 4 shaded and 1 dark' }),
+        ans: F(1, 3).div(4), expect: '1/12',
+        wrong: [[F(4, 3), 'That is bigger than the ' + fr(1, 3) + ' you started with. Sharing makes each part smaller.'],
+                [F(3, 4), 'That is 3 ÷ 4. We are sharing ' + fr(1, 3) + ' of a pan, not 3 pans.'], [F(1, 4), 'That is the friend\'s part of the <b>leftover piece</b>. What part of the <b>whole pan</b> is it?']],
+        hints: ['Cut the ' + fr(1, 3) + ' into 4 equal pieces.', 'If every third were cut into 4 pieces, how many pieces would the whole pan have?'],
+        explain: fr(1, 3) + ' ÷ 4 = ' + fr(1, 12) + '. Each third is cut into 4 pieces, so the whole pan has 12 pieces.' },
+
+      { id: 'p5', type: 'num',
+        q: '<p>How many ' + fr(1, 4) + '-cup scoops are in 3 cups of rice?</p>',
+        fig: S.numberLine({ min: 0, max: 3, den: 4, jumps: { from: 0, size: F(1, 4), count: 12 }, label: 'number line from 0 to 3 in fourths with jumps of one fourth' }),
+        ans: F(3).div(F(1, 4)), expect: '12', unit: 'scoops',
+        wrong: [[F(3, 4), 'That is 3 × ' + fr(1, 4) + '. Count how many fourths fit in 3.'], [F(4), 'That is how many fourths fit in 1 cup. There are 3 cups.']],
+        hints: ['How many fourths are in 1 cup?', 'There are 4 fourths in each cup. How many in 3 cups?'],
+        explain: '3 ÷ ' + fr(1, 4) + ' = 12, because each cup has 4 fourths and 3 × 4 = 12.' },
+
+      { id: 'p6', type: 'mc',
+        q: '<p>Which story matches ' + fr(1, 2) + ' ' + m('÷ 3') + '?</p>',
+        options: [{ t: 'Half a pan of cornbread is shared equally by 3 people. How much of the pan does each person get?' },
+                  { t: 'Each person gets ' + fr(1, 2) + ' cup of juice. How many people can share 3 cups?', why: 'That story is 3 ÷ ' + fr(1, 2) + ': how many halves fit in 3.' },
+                  { t: 'There are 3 pans. Each pan is cut in half. How many pieces are there?', why: 'That story is 3 × 2.' },
+                  { t: 'Ana has ' + fr(1, 2) + ' of a pizza. She gets 3 more pizzas. How much does she have?', why: 'That story uses addition.' }],
+        answer: 0,
+        hints: ['In ' + fr(1, 2) + ' ÷ 3, what is being shared? How many groups?'],
+        explain: fr(1, 2) + ' ÷ 3 means ' + fr(1, 2) + ' is shared into 3 equal parts. Each person gets ' + fr(1, 6) + ' of the pan.' },
+
+      { id: 'p7', type: 'multi',
+        q: '<p>Select <b>all</b> that are equal to ' + m('6 ÷') + ' ' + fr(1, 3) + '.</p>',
+        options: p7opts.map(function (o) { return { t: o[0].length < 8 ? m(o[0]) : o[0], ok: F(o[1]).eq(p7V), why: o[2] }; }).concat([{ t: 'the number of thirds in 6', ok: true }]),
+        hints: ['6 ÷ ' + fr(1, 3) + ' asks: how many thirds are in 6?', 'There are 3 thirds in each whole.'],
+        explain: 'There are 3 thirds in each whole, so there are 6 × 3 = 18 thirds in 6.' },
+
+      { id: 'p8', type: 'error',
+        q: '<p>Sam found ' + m('4 ÷') + ' ' + fr(1, 2) + '. Here is his thinking. Find his mistake.</p>',
+        steps: ['I need to find ' + m('4 ÷') + ' ' + fr(1, 2) + '.', 'Dividing by ' + fr(1, 2) + ' is the same as finding half.', 'Half of 4 is ' + m('2') + '.'],
+        bad: 1,
+        stepNotes: ['Step 1 just says the problem. That part is fine.', null, 'Half of 4 is 2. That math is right. Check the idea in the step before it.'],
+        ans: F(4).div(F(1, 2)), expect: '8',
+        wrong: [[F(2), 'That is Sam\'s answer. Think: how many halves are in 4?']],
+        hints: ['Dividing by ' + fr(1, 2) + ' asks "how many halves fit?"', 'Each whole has 2 halves. How many halves in 4 wholes?'],
+        explain: '4 ÷ ' + fr(1, 2) + ' asks how many halves are in 4. Each whole has 2 halves, so 4 × 2 = 8. Finding half would be 4 ÷ 2.' },
+
+      { id: 'p9', type: 'num',
+        q: '<p>A recipe uses ' + fr(2, 3) + ' cup of oats. Kai makes ' + fr(1, 2) + ' of the recipe. How many cups of oats does he use?</p>',
+        ans: F(1, 2).mul(F(2, 3)), expect: '1/3', unit: 'cup',
+        wrong: [[F(1, 2).add(F(2, 3)), 'You added. Half of the recipe means ' + fr(1, 2) + ' × ' + fr(2, 3) + '.'], [F(4, 3), 'That is double the oats. Half the recipe uses less.']],
+        hints: ['Find ' + fr(1, 2) + ' of ' + fr(2, 3) + '.', 'Half of 2 thirds is 1 third.'],
+        explain: fr(1, 2) + ' × ' + fr(2, 3) + ' = ' + fr(2, 6) + ' = ' + fr(1, 3) + ' cup.' },
+
+      { id: 'p10', type: 'open',
+        q: '<p>Noah says, "When you divide, the answer is always smaller than the number you started with." Use ' + m('3 ÷') + ' ' + fr(1, 4) + ' to explain if he is right.</p>',
+        model: 'Noah is not right. 3 ÷ 1/4 asks how many fourths are in 3. There are 4 fourths in each whole, so there are 12. The answer 12 is bigger than 3. When you divide by a fraction less than 1, the answer is bigger.',
+        look: ['say if Noah is right?', 'find 3 ÷ 1/4 = 12?', 'compare 12 to 3?'] }
+    ],
+    synthesisTitle: 'Multiplying and dividing fractions',
+    synthesis: '<ul><li>To multiply with a mixed number, split it into parts (like 2 and ' + fr(1, 4) + '), multiply each part, then add. Or change it to a fraction.</li>' +
+      '<li>Area of a rectangle with fraction sides: length × width, just like whole numbers.</li>' +
+      '<li>Unit fraction ÷ whole number: you <b>share</b> a small piece, so the answer is smaller. ' + fr(1, 3) + ' ÷ 4 = ' + fr(1, 12) + '.</li>' +
+      '<li>Whole number ÷ unit fraction: count <b>how many pieces fit</b>, so the answer is bigger. 3 ÷ ' + fr(1, 4) + ' = 12.</li></ul>',
+    cooldown: [
+      { id: 'c1', type: 'num',
+        q: '<p>Find ' + m('5 ÷') + ' ' + fr(1, 3) + '.</p>',
+        ans: F(5).div(F(1, 3)), expect: '15',
+        wrong: [[F(5, 3), 'That is 5 × ' + fr(1, 3) + '. How many thirds are in 5?']],
+        hints: ['How many thirds are in 1 whole? In 5 wholes?'],
+        explain: 'Each whole has 3 thirds. 5 × 3 = 15 thirds.' },
+      { id: 'c2', type: 'num',
+        q: '<p>A rug is ' + mx(1, 1, 2) + ' meters long and ' + mx(2, 1, 3) + ' meters wide. What is its area?</p>',
+        ans: F(3, 2).mul(F(7, 3)), expect: '3 1/2', unit: 'square meters',
+        wrong: [[F(2).add(F(1, 6)), 'You multiplied only 1 × 2 and ' + fr(1, 2) + ' × ' + fr(1, 3) + '. Split it into 4 parts and add them all.']],
+        hints: ['Write each as a fraction: ' + fr(3, 2) + ' × ' + fr(7, 3) + '.'],
+        explain: fr(3, 2) + ' × ' + fr(7, 3) + ' = ' + fr(21, 6) + ' = ' + mx(3, 1, 2) + ' square meters.' }
+    ],
+    asserts: [
+      ['warm-up exact answer 11 1/2', est.eq(F(23, 2)) && est.cmp(12) < 0 && est.cmp(8) > 0],
+      ['p2 parts add to the product', F(2).add(F(1, 2)).add(F(2, 3)).add(F(1, 6)).eq(p2a.mul(p2b))],
+      ['p7 thirds in 6', p7V.eq(F(6).mul(3))],
+      ['c2 parts', F(1 * 2).add(F(1, 3)).add(F(1, 2).mul(2)).add(F(1, 2).mul(F(1, 3))).eq(F(7, 2))]
+    ]
+  });
+})();
+</script>
+</body>
+</html>

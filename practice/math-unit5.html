@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 5 Practice: Place Value Patterns and Decimal Operations — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="practice.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← All practice</a>
+<div class="page-hdr">
+  <span class="eyebrow">Extra Practice · Unit 5</span>
+  <h1>Place Value Patterns and Decimal Operations</h1>
+  <p>Use powers of 10. Read, write, and compare decimals to thousandths. Add, subtract, multiply, and divide decimals.</p>
+  <p class="stds">NC.5.NBT.1 · NC.5.NBT.3 · NC.5.NBT.7</p>
+  <div class="pr-hdr-links"><a class="plink" href="../math/unit5.html">Unit 5 page</a><a class="plink gold" href="../learning-lab/index.html">Learning Lab →</a></div>
+</div>
+<div id="app"></div>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="practice.js"></script>
+<script>
+(function () {
+  var P = Practice, F = P.F, S = P.svg, m = P.m, fr = P.fr, D = P.Dec;
+  function d(s) { return D.of(s); }          // decimal -> thousandths
+  function f(t) { return D.F(t); }            // thousandths -> exact fraction
+  var SIGNS = ['&lt;', '&gt;', '='];
+  function signIdx(a, b) { var c = f(a).cmp(f(b)); return c < 0 ? 0 : c > 0 ? 1 : 2; }
+
+  var p1a = D.mulInt(d('3.42'), 100), p1b = D.div(d('56.7'), d('10'));
+  var p4opts = [['2.30', m('2.30'), F('2.30')], ['2.03', m('2.03'), F('2.03'), '2.03 has 0 tenths and 3 hundredths. 2.3 has 3 tenths.'],
+                ['23 tenths', '23 tenths', F(23, 10)], ['2 + 3/10', m('2 +') + ' ' + fr(3, 10), F(2).add(F(3, 10))],
+                ['2 + 3/100', m('2 +') + ' ' + fr(3, 100), F(2).add(F(3, 100)), fr(3, 100) + ' is 3 hundredths. 2.3 has 3 tenths.']];
+  var p5 = 2 * 1000 + 3 * 100 + 14 * 10;
+  var sumA = D.add(d('12.6'), d('3.85')), difA = D.sub(d('7'), d('2.35'));
+  var prod = D.mul(d('0.4'), d('0.3')), quo = D.div(d('4.8'), d('0.6')), p9 = D.div(d('3.6'), d('4'));
+
+  Practice.init({
+    id: 'unit5',
+    warmup: {
+      routine: 'Which One Doesn\'t Belong?',
+      title: 'Four numbers',
+      cells: ['<span class="big">0.5</span>', '<span class="big">0.50</span>', '<span class="big">0.05</span>', '<span class="big" style="font-size:30px">' + fr(1, 2) + '</span>'],
+      responses: [
+        '<b>A (0.5)</b> is the only decimal with just one digit after the point.',
+        '<b>B (0.50)</b> is the only one written with hundredths that equals one half.',
+        '<b>C (0.05)</b> is the only one that is <b>not</b> equal to one half. It is 5 hundredths.',
+        '<b>D (' + fr(1, 2) + ')</b> is the only one written as a fraction.'
+      ],
+      after: '0.5, 0.50, and ' + fr(1, 2) + ' all name the same amount.'
+    },
+    goals: [
+      'Let\'s multiply and divide by powers of 10.',
+      'Let\'s read, write, and compare decimals to thousandths.',
+      'Let\'s add, subtract, multiply, and divide decimals.'
+    ],
+    problems: [
+      { id: 'p1', type: 'num',
+        q: '<p>Find each value.</p>',
+        blanks: [
+          { label: '3.42 × 100', ans: f(p1a), expect: '342', wrong: [[F('34.2'), 'That is 3.42 × 10. When you multiply by 100, each digit moves 2 places to the left.'], [F('3.42'), 'Adding zeros to the end of a decimal does not change its value. Each digit should move 2 places.']] },
+          { label: '56.7 ÷ 10', ans: f(p1b), expect: '5.67', wrong: [[F('567'), 'You multiplied by 10. Dividing by 10 makes the number smaller.']] }
+        ],
+        hints: ['Multiplying by 100 makes each digit worth 100 times as much. Each digit moves 2 places left.', 'Dividing by 10 makes each digit worth ' + fr(1, 10) + ' as much. Each digit moves 1 place right.'],
+        explain: '3.42 × 100 = 342. 56.7 ÷ 10 = 5.67.' },
+
+      { id: 'p2', type: 'num',
+        q: '<p>Write <b>five and twenty-eight thousandths</b> as a decimal.</p>',
+        ans: F('5.028'), expect: '5.028',
+        wrong: [[F('5.28'), '5.28 is five and twenty-eight <b>hundredths</b>. Thousandths need 3 digits after the point.'], [F('5028'), 'The word "and" shows where the decimal point goes.']],
+        hints: ['"And" means the decimal point.', 'Thousandths use 3 places after the point: 5.___ ___ ___. The 28 goes in the last two places.'],
+        explain: 'Five and twenty-eight thousandths is 5.028. The 0 holds the tenths place.' },
+
+      { id: 'p3', type: 'mc',
+        q: '<p>Which symbol makes this true? ' + m('0.405 __ 0.45') + '</p>',
+        two: true,
+        options: SIGNS.map(function (s, i) { return { t: m('0.405 ' + s + ' 0.45'), why: i === 1 ? '405 is more than 45, but look at place value. Compare the tenths, then the hundredths.' : 'These numbers are not equal. Compare the digits place by place.' }; }),
+        answer: signIdx(d('0.405'), d('0.45')),
+        hints: ['Both have 4 tenths. Compare the hundredths.', '0.405 has 0 hundredths. 0.45 has 5 hundredths.'],
+        explain: 'Both have 4 tenths. 0.405 has 0 hundredths and 0.45 has 5 hundredths. So 0.405 &lt; 0.45. (0.45 = 0.450.)' },
+
+      { id: 'p4', type: 'multi',
+        q: '<p>Select <b>all</b> that are equal to ' + m('2.3') + '.</p>',
+        options: p4opts.map(function (o) { return { t: o[1], ok: o[2].eq(F('2.3')), why: o[3] }; }),
+        hints: ['2.3 is 2 ones and 3 tenths.', 'Adding a zero at the end (2.30) does not change the value.'],
+        explain: '2.3 = 2.30 = 23 tenths = 2 + ' + fr(3, 10) + '.' },
+
+      { id: 'p5', type: 'num',
+        q: '<p>A big square is 1. A rod is 0.1. A small square is 0.01. What number does this base-ten diagram show?</p>',
+        fig: P.svg.baseTen(2, 3, 14, { label: 'base-ten diagram: 2 big squares, 3 rods, 14 small squares' }),
+        ans: f(p5), expect: '2.44',
+        wrong: [[F('2.314'), '14 small squares is 14 hundredths. That is 1 tenth and 4 hundredths. Regroup.']],
+        hints: ['10 small squares make 1 rod.', '14 hundredths = 1 tenth + 4 hundredths. So there are 4 tenths in all.'],
+        explain: '2 ones + 3 tenths + 14 hundredths = 2 + 0.3 + 0.14 = 2.44.' },
+
+      { id: 'p6', type: 'num',
+        q: '<p>Find the sum and the difference.</p>',
+        blanks: [
+          { label: '12.6 + 3.85', ans: f(sumA), expect: '16.45', wrong: [[F('5.11'), 'Line up the decimal points. 12.6 has 6 tenths, not 6 hundredths.'], [F('15.91'), 'Line up the decimal points. Write 12.6 as 12.60.']] },
+          { label: '7 − 2.35', ans: f(difA), expect: '4.65', wrong: [[F('5.35'), 'It looks like you did 7 − 2 and kept the .35. Write 7 as 7.00. Then subtract.'], [F('5.65'), 'Check the ones. After you regroup, 7 becomes 6 ones.']] }
+        ],
+        hints: ['Line up the decimal points. Write 12.6 as 12.60.', 'Write 7 as 7.00. Regroup to subtract 0.35.'],
+        explain: '12.60 + 3.85 = 16.45. 7.00 − 2.35 = 4.65.' },
+
+      { id: 'p7', type: 'num',
+        q: '<p>The big square is 1. Use the diagram to find ' + m('0.4 × 0.3') + '.</p>',
+        fig: S.hundredGrid({ cols: 4, rows: 3, label: '10 by 10 grid; 4 columns and 3 rows shaded; 12 small squares overlap' }),
+        ans: f(prod), expect: '0.12',
+        wrong: [[F('1.2'), 'A tenth of a tenth is a hundredth. The dark part is 12 small squares.'], [F('0.7'), 'You added. Count the dark squares where the shading overlaps.']],
+        hints: ['Count the dark squares where the blue and yellow overlap.', 'Each small square is 0.01.'],
+        explain: '12 small squares are dark. 0.4 × 0.3 = 0.12.' },
+
+      { id: 'p8', type: 'num',
+        q: '<p>A jug holds 4.8 liters of water. How many 0.6-liter bottles can it fill?</p>',
+        ans: f(quo), expect: '8', unit: 'bottles',
+        wrong: [[F('0.8'), 'That is 4.8 ÷ 6. Think: how many 0.6s are in 4.8?']],
+        hints: ['How many 6 tenths are in 48 tenths?', '6 × 8 = 48.'],
+        explain: '4.8 is 48 tenths. 0.6 is 6 tenths. 48 ÷ 6 = 8 bottles.' },
+
+      { id: 'p9', type: 'error',
+        q: '<p>Kai found ' + m('3.6 ÷ 4') + '. Here is his thinking. Find his mistake.</p>',
+        steps: [m('36 ÷ 4 = 9'), m('3.6') + ' is 36 hundredths.', 'So ' + m('3.6 ÷ 4 = 0.09') + '.'],
+        bad: 1,
+        stepNotes: ['Step 1 is correct. 36 ÷ 4 = 9.', null, 'Step 3 follows from Step 2. Check Step 2 first.'],
+        ans: f(p9), expect: '0.9',
+        wrong: [[F('0.09'), 'That is Kai\'s answer. How many tenths is 3.6?']],
+        hints: ['Is 3.6 tenths or hundredths?', '3.6 is 36 tenths. 36 tenths ÷ 4 = 9 tenths.'],
+        explain: '3.6 is 36 <b>tenths</b>. 36 tenths ÷ 4 = 9 tenths = 0.9.' },
+
+      { id: 'p10', type: 'open',
+        q: '<p>Han says ' + m('0.25 × 10 = 0.250') + ' because "you just add a zero." Do you agree? Explain.</p>',
+        model: 'I disagree. 0.250 is the same as 0.25, so adding a zero at the end did not change the value. When you multiply by 10, each digit becomes 10 times as much and moves one place to the left. 0.25 × 10 = 2.5.',
+        look: ['say if you agree?', 'say that 0.250 = 0.25?', 'give the right answer, 2.5?'] }
+    ],
+    synthesisTitle: 'Decimals and place value',
+    synthesis: '<ul><li>Each place is 10 times the place to its right. × 10 moves digits 1 place left. ÷ 10 moves them 1 place right.</li>' +
+      '<li>To compare decimals, line up the places. Compare tenths first, then hundredths, then thousandths.</li>' +
+      '<li>To add or subtract, line up the decimal points. Add zeros if it helps (7 = 7.00).</li>' +
+      '<li>A tenth times a tenth is a hundredth: 0.4 × 0.3 = 0.12. Estimate to check where the decimal point goes.</li></ul>',
+    cooldown: [
+      { id: 'c1', type: 'mc',
+        q: '<p>Which symbol makes this true? ' + m('2.09 __ 2.1') + '</p>',
+        two: true,
+        options: SIGNS.map(function (s, i) { return { t: m('2.09 ' + s + ' 2.1'), why: i === 1 ? '09 looks bigger than 1, but compare tenths first: 0 tenths and 1 tenth.' : 'They are not equal. Compare the tenths.' }; }),
+        answer: signIdx(d('2.09'), d('2.1')),
+        hints: ['Compare the tenths: 2.09 has 0 tenths. 2.1 has 1 tenth.'],
+        explain: '2.09 has 0 tenths and 2.1 has 1 tenth. So 2.09 &lt; 2.1.' },
+      { id: 'c2', type: 'num',
+        q: '<p>Find ' + m('1.5 × 0.6') + '.</p>',
+        ans: f(D.mul(d('1.5'), d('0.6'))), expect: '0.9',
+        wrong: [[F('9'), 'Check the size. 1.5 × 0.6 is less than 1.5.'], [F('2.1'), 'You added. Multiply 15 × 6 = 90, then think about place value.']],
+        hints: ['Think 15 × 6 = 90. Then: tenths × tenths = hundredths.'],
+        explain: '15 × 6 = 90. Tenths × tenths gives hundredths: 90 hundredths = 0.90 = 0.9.' }
+    ],
+    asserts: [
+      ['p1', D.str(p1a) === '342' && D.str(p1b) === '5.67'],
+      ['p3 0.405 < 0.45', signIdx(d('0.405'), d('0.45')) === 0],
+      ['p4 three choices equal 2.3', p4opts.filter(function (o) { return o[2].eq(F('2.3')); }).length === 3],
+      ['p5 2.44', D.str(p5) === '2.44'],
+      ['p6', D.str(sumA) === '16.45' && D.str(difA) === '4.65'],
+      ['p7 p8 p9', D.str(prod) === '0.12' && D.str(quo) === '8' && D.str(p9) === '0.9'],
+      ['c1 2.09 < 2.1', signIdx(d('2.09'), d('2.1')) === 0]
+    ]
+  });
+})();
+</script>
+</body>
+</html>

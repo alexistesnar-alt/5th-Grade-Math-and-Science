@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 1 Practice: Finding Volume — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="practice.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← All practice</a>
+<div class="page-hdr">
+  <span class="eyebrow">Extra Practice · Unit 1</span>
+  <h1>Finding Volume</h1>
+  <p>Count unit cubes, use layers, and use V = l × w × h and V = B × h. Find the volume of a figure made of two prisms.</p>
+  <p class="stds">NC.5.MD.4 · NC.5.MD.5</p>
+  <div class="pr-hdr-links"><a class="plink" href="../math/unit1.html">Unit 1 page</a><a class="plink gold" href="../learning-lab/index.html">Learning Lab →</a></div>
+</div>
+<div id="app"></div>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="practice.js"></script>
+<script>
+(function () {
+  var P = Practice, F = P.F, S = P.svg, m = P.m, ev = P.evalExpr;
+
+  /* ---------- computed answers ---------- */
+  var p1 = { l: 3, w: 2, h: 2 }; p1.V = p1.l * p1.w * p1.h; p1.hidden = (p1.l - 1) * (p1.w - 1) * (p1.h - 1); p1.seen = p1.V - p1.hidden;
+  var p2 = { l: 4, w: 3, h: 5 }; p2.layer = p2.l * p2.w; p2.V = p2.layer * p2.h;
+  var p3 = { l: 8, w: 5, h: 3 }; p3.B = p3.l * p3.w; p3.V = p3.B * p3.h;
+  var p4opts = ['(4 × 5) × 6', '4 × (5 × 6)', '20 × 6', '4 + 5 + 6', '4 × 5 + 6', '30 × 4'], p4V = 4 * 5 * 6;
+  var p5 = { B: 24, h: 7 }; p5.V = p5.B * p5.h;
+  var p6 = { V: 90, l: 5, w: 3 }; p6.h = F(p6.V).div(p6.l * p6.w);
+  var bot = { l: 6, w: 4, h: 2 }, top = { l: 2, w: 4, h: 3 };
+  var p7V = bot.l * bot.w * bot.h + top.l * top.w * top.h, p7box = bot.l * bot.w * (bot.h + top.h);
+  var p8 = { l: 7, w: 3, h: 4 }; p8.B = p8.l * p8.w; p8.V = p8.B * p8.h;
+  var binA = 3 * 2 * 2, binB = 4 * 1 * 2;
+  var c1 = { l: 5, w: 2, h: 3 }; c1.V = c1.l * c1.w * c1.h;
+  var cA = { l: 3, w: 2, h: 4 }, cB = { l: 5, w: 2, h: 2 }, c2V = cA.l * cA.w * cA.h + cB.l * cB.w * cB.h;
+  var Lshape = [[0,0,0],[1,0,0],[2,0,0],[0,1,0],[1,1,0],[2,1,0],[0,0,1],[0,1,1]];
+
+  function box(d, o) { o = o || {}; return { x: o.x || 0, y: o.y || 0, z: o.z || 0, l: d.l, w: d.w, h: d.h, color: o.color, grid: o.grid }; }
+
+  Practice.init({
+    id: 'unit1',
+    warmup: {
+      routine: 'Which One Doesn\'t Belong?',
+      title: 'Four solids',
+      cells: [
+        S.solid([box({ l: 2, w: 2, h: 2 })], { s: 26, maxw: 140, label: 'A: a cube 2 by 2 by 2' }),
+        S.solid([box({ l: 4, w: 2, h: 1 })], { s: 26, maxw: 150, label: 'B: a prism 4 by 2 by 1' }),
+        S.solid(S.cubes(Lshape), { s: 26, maxw: 140, label: 'C: an L-shaped solid made of 8 cubes' }),
+        S.solid([box({ l: 3, w: 2, h: 2 })], { s: 26, maxw: 150, label: 'D: a prism 3 by 2 by 2' })
+      ],
+      responses: [
+        '<b>A</b> is the only cube. All of its edges are the same length.',
+        '<b>B</b> is the only one that is just 1 layer tall.',
+        '<b>C</b> is the only one that is not a rectangular prism.',
+        '<b>D</b> is the only one made of 12 cubes. The others each use 8 cubes.'
+      ],
+      after: 'Did you notice? A, B, and C look different, but they all have a volume of 8 cubic units.'
+    },
+    goals: [
+      'Let\'s find volume by counting unit cubes and layers.',
+      'Let\'s use V = l × w × h and V = B × h.',
+      'Let\'s find the volume of a figure made of two prisms.'
+    ],
+    problems: [
+      { id: 'p1', type: 'num',
+        q: '<p>This prism is made of unit cubes. What is its volume?</p>',
+        fig: S.solid([box(p1)], { s: 38, maxw: 230, label: 'prism 3 cubes long, 2 cubes deep, 2 cubes tall' }),
+        ans: p1.V, expect: '12', unit: 'cubic units',
+        wrong: [[p1.l + p1.w + p1.h, 'You added the edges (3 + 2 + 2). Volume counts <b>all</b> the cubes, not the edges.'],
+                [p1.seen, 'Close! Some cubes are hidden in the back. Count one layer, then count the layers.']],
+        hints: ['Count the cubes in the top layer first.', 'The top layer has 3 × 2 cubes. How many layers are there?'],
+        explain: 'Each layer has 3 × 2 = 6 cubes. There are 2 layers. 6 × 2 = 12 cubic units.' },
+
+      { id: 'p2', type: 'num',
+        q: '<p>The bottom layer of this prism is shaded. Find the number of cubes in one layer. Then find the volume.</p>',
+        fig: S.solid([box({ l: p2.l, w: p2.w, h: 1 }, { color: 'gold' }), box({ l: p2.l, w: p2.w, h: p2.h - 1 }, { z: 1 })], { s: 30, maxw: 240, label: 'prism 4 long, 3 deep, 5 tall with the bottom layer shaded' }),
+        blanks: [
+          { label: 'Cubes in one layer', ans: p2.layer, expect: '12', wrong: [[p2.l + p2.w, 'You added 4 + 3. A layer is 4 rows of 3 cubes, so multiply.']] },
+          { label: 'Volume', ans: p2.V, expect: '60', unit: 'cubic units', wrong: [[p2.layer + p2.h, 'You added the layer and the height. There are 5 layers of 12 cubes, so multiply.']] }
+        ],
+        hints: ['The bottom layer is 4 cubes long and 3 cubes deep.', 'Count the layers going up. Then multiply: (cubes in one layer) × (number of layers).'],
+        explain: 'One layer has 4 × 3 = 12 cubes. There are 5 layers. 12 × 5 = 60 cubic units.' },
+
+      { id: 'p3', type: 'num',
+        q: '<p>A gift box is 8 cm long, 5 cm wide, and 3 cm tall. What is its volume?</p>',
+        fig: S.solid([box(p3, { grid: false })], { s: 24, maxw: 300, labels: S.dims(box(p3), '8 cm', '5 cm', '3 cm'), label: 'box 8 cm by 5 cm by 3 cm' }),
+        ans: p3.V, expect: '120', unit: 'cubic cm',
+        wrong: [[p3.l + p3.w + p3.h, 'You added the side lengths. To find volume, multiply length × width × height.'],
+                [p3.B, '40 is the area of the base (8 × 5). Now multiply by the height, 3 cm.']],
+        hints: ['Use V = l × w × h.', 'First find 8 × 5. Then multiply by 3.'],
+        explain: 'V = 8 × 5 × 3 = 40 × 3 = 120 cubic centimeters.' },
+
+      { id: 'p4', type: 'multi',
+        q: '<p>A prism is 4 units long, 5 units wide, and 6 units tall. Select <b>all</b> the expressions that give its volume.</p>',
+        fig: S.solid([box({ l: 4, w: 5, h: 6 }, { grid: false })], { s: 20, maxw: 220, labels: S.dims(box({ l: 4, w: 5, h: 6 }), '4', '5', '6'), label: 'prism 4 by 5 by 6' }),
+        options: p4opts.map(function (t) {
+          var v = ev(t);
+          return { t: m(t), ok: v.eq(p4V), why: t.indexOf('+ 6') > 0 && t.indexOf('×') > 0 ? 'It adds the 6 instead of multiplying by it. It equals ' + v + '.' : 'Adding the edges does not give volume. It equals ' + v + '.' };
+        }),
+        hints: ['The volume is 4 × 5 × 6. You can multiply in any order.', 'Find the value of each expression. Which ones equal 120?'],
+        explain: 'The volume is 120 cubic units. (4 × 5) × 6, 4 × (5 × 6), 20 × 6, and 30 × 4 all equal 120. You can group the factors any way you like.' },
+
+      { id: 'p5', type: 'num',
+        q: '<p>The base of a fish tank has an area of <b>24 square inches</b>. The tank is <b>7 inches</b> tall. What is the volume of the tank?</p>',
+        fig: S.solid([box({ l: 6, w: 4, h: 7 }, { grid: false })], { s: 16, maxw: 170, labels: [{ p: [3, 2, 7], t: 'B = 24 sq in', dy: -10 }, { p: [0, 0, 3.5], t: '7 in', dx: -8, dy: 5, a: 'end' }], label: 'tank with base area 24 square inches and height 7 inches' }),
+        ans: p5.V, expect: '168', unit: 'cubic inches',
+        wrong: [[p5.B + p5.h, 'You added. Volume = area of the base × height.']],
+        hints: ['Use V = B × h. B is the area of the base.', 'Multiply 24 × 7. Try 20 × 7 plus 4 × 7.'],
+        explain: 'V = B × h = 24 × 7 = 168 cubic inches.' },
+
+      { id: 'p6', type: 'num',
+        q: '<p>A box has a volume of <b>90 cubic cm</b>. It is 5 cm long and 3 cm wide. How tall is the box?</p>',
+        ans: p6.h, expect: '6', unit: 'cm',
+        wrong: [[p6.l * p6.w, '15 is the area of the base (5 × 3). How many layers of 15 make 90?'],
+                [p6.V - p6.l - p6.w, 'You subtracted. Think: 5 × 3 × ? = 90.']],
+        hints: ['Each layer has 5 × 3 = 15 cubes.', 'How many 15s make 90? Think 15 × ? = 90.'],
+        explain: 'Each layer has 5 × 3 = 15 cubic cm. 15 × 6 = 90, so the box is 6 cm tall.' },
+
+      { id: 'p7', type: 'num',
+        q: '<p>This figure is made of two rectangular prisms. The bottom prism is 6 m by 4 m by 2 m. The top prism is 2 m by 4 m by 3 m. What is the total volume?</p>',
+        fig: S.solid([box(bot, { grid: false }), box(top, { z: bot.h, grid: false, color: 'gold' })], { s: 26, maxw: 320,
+          labels: [{ p: [3, 0, 0], t: '6 m', dy: 20 }, { p: [6, 2, 0], t: '4 m', dx: 10, dy: 12, a: 'start' }, { p: [0, 0, 1], t: '2 m', dx: -8, dy: 5, a: 'end' },
+                   { p: [0, 0, 3.5], t: '3 m', dx: -8, dy: 5, a: 'end' }],
+          label: 'two prisms: bottom 6 by 4 by 2, top 2 by 4 by 3' }),
+        ans: p7V, expect: '72', unit: 'cubic m',
+        wrong: [[p7box, 'That counts the empty space too (6 × 4 × 5). Find each prism\'s volume. Then add.'],
+                [bot.l * bot.w * bot.h, '48 is only the bottom prism. Add the top prism too.'],
+                [top.l * top.w * top.h, '24 is only the top prism. Add the bottom prism too.']],
+        hints: ['Find the volume of the bottom prism: 6 × 4 × 2.', 'Find the volume of the top prism: 2 × 4 × 3. Then add the two volumes.'],
+        explain: 'Bottom: 6 × 4 × 2 = 48. Top: 2 × 4 × 3 = 24. Total: 48 + 24 = 72 cubic meters.' },
+
+      { id: 'p8', type: 'error',
+        q: '<p>Mia found the volume of a prism that is 7 units long, 3 units wide, and 4 units tall. Here is her work. Find her mistake.</p>',
+        steps: ['Area of the base: ' + m('7 × 3 = 21') + ' square units', 'Volume: ' + m('21 + 4 = 25'), 'The volume is ' + m('25') + ' cubic units.'],
+        bad: 1,
+        stepNotes: ['Step 1 is correct. 7 × 3 = 21 is the area of the base.', null, 'Step 3 only repeats the answer. Look at where the 25 came from.'],
+        ans: p8.V, expect: '84', unit: 'cubic units',
+        wrong: [[25, 'That is Mia\'s answer. Fix her mistake first.']],
+        hints: ['V = B × h. Did Mia multiply by the height?', 'She should find 21 × 4.'],
+        explain: 'Mia added the height. She should multiply: V = B × h = 21 × 4 = 84 cubic units.' },
+
+      { id: 'p9', type: 'mc',
+        q: '<p>Bin A is 3 ft long, 2 ft wide, and 2 ft tall. Bin B is 4 ft long, 1 ft wide, and 2 ft tall. Which statement is true?</p>',
+        options: [
+          { t: 'Bin A holds 4 more cubic feet than Bin B.' },
+          { t: 'Bin B holds 4 more cubic feet than Bin A.', why: 'Check again. Bin B is 4 × 1 × 2 = 8 cubic feet.' },
+          { t: 'They hold the same amount.', why: 'The edge lengths add to the same total, but volume uses multiplication. Find 3 × 2 × 2 and 4 × 1 × 2.' },
+          { t: 'Bin A holds 1 more cubic foot than Bin B.', why: 'Find each volume: 3 × 2 × 2 and 4 × 1 × 2. Then subtract.' }
+        ],
+        answer: (binA - binB === 4) ? 0 : -1,
+        hints: ['Find the volume of each bin.', 'Bin A: 3 × 2 × 2. Bin B: 4 × 1 × 2. Which is bigger, and by how much?'],
+        explain: 'Bin A: 3 × 2 × 2 = 12 cubic feet. Bin B: 4 × 1 × 2 = 8 cubic feet. 12 − 8 = 4.' },
+
+      { id: 'p10', type: 'open',
+        q: '<p>Lin says a prism that is 2 by 3 by 4 has the <b>same volume</b> as a prism that is 4 by 3 by 2. Is she right? Explain your thinking.</p>',
+        model: 'Yes, Lin is right. 2 × 3 × 4 = 24 and 4 × 3 × 2 = 24. You can multiply numbers in any order and get the same product. It is like turning the same prism on its side.',
+        look: ['say if Lin is right?', 'find both volumes, or explain the order of the factors?', 'use the words "because" or "so"?'] }
+    ],
+    synthesisTitle: 'Ways to find volume',
+    synthesis: '<p><b>Volume</b> is how much space a solid takes up. We measure it in <b>cubic units</b>.</p><ul>' +
+      '<li>Count the unit cubes. Count one layer, then multiply by the number of layers.</li>' +
+      '<li>' + m('V = l × w × h') + ' (length × width × height)</li>' +
+      '<li>' + m('V = B × h') + ' (B is the area of the base)</li>' +
+      '<li>A figure made of two prisms: find each volume, then <b>add</b>.</li></ul>',
+    cooldown: [
+      { id: 'c1', type: 'num',
+        q: '<p>What is the volume of this prism?</p>',
+        fig: S.solid([box(c1)], { s: 34, maxw: 260, label: 'prism 5 cubes long, 2 deep, 3 tall' }),
+        ans: c1.V, expect: '30', unit: 'cubic units',
+        wrong: [[c1.l * c1.w, 'That is one layer. How many layers are there?'], [c1.l * c1.w * c1.h - (c1.l - 1) * (c1.w - 1) * (c1.h - 1), 'Close! Some cubes are hidden in the back. Count one layer, then count the layers.']],
+        hints: ['One layer has 5 × 2 cubes. Count the layers.'],
+        explain: 'One layer has 5 × 2 = 10 cubes. There are 3 layers. 10 × 3 = 30 cubic units.' },
+      { id: 'c2', type: 'num',
+        q: '<p>Prism A is 3 in by 2 in by 4 in. Prism B is 5 in by 2 in by 2 in. They are put together. What is the total volume?</p>',
+        fig: S.solid([box(cA, { grid: false, color: 'gold' }), box(cB, { x: cA.l, grid: false })], { s: 24, maxw: 300,
+          labels: [{ p: [1.5, 0, 0], t: '3 in', dy: 20 }, { p: [5.5, 0, 0], t: '5 in', dy: 20 }, { p: [0, 0, 2], t: '4 in', dx: -8, dy: 5, a: 'end' },
+                   { p: [8, 1, 0], t: '2 in', dx: 10, dy: 12, a: 'start' }], label: 'prism A 3 by 2 by 4 next to prism B 5 by 2 by 2' }),
+        ans: c2V, expect: '44', unit: 'cubic inches',
+        wrong: [[cA.l * cA.w * cA.h, 'That is only Prism A. Add Prism B.'], [cB.l * cB.w * cB.h, 'That is only Prism B. Add Prism A.'], [8 * 2 * 4, 'That counts empty space too. Find each prism, then add.']],
+        hints: ['Prism A: 3 × 2 × 4. Prism B: 5 × 2 × 2. Then add.'],
+        explain: 'A: 3 × 2 × 4 = 24. B: 5 × 2 × 2 = 20. Total: 24 + 20 = 44 cubic inches.' }
+    ],
+    asserts: [
+      ['warm-up A, B, C use 8 cubes', 2 * 2 * 2 === 8 && 4 * 2 * 1 === 8 && Lshape.length === 8],
+      ['warm-up D uses 12 cubes', 3 * 2 * 2 === 12],
+      ['p4 has four right choices', p4opts.filter(function (t) { return ev(t).eq(120); }).length === 4],
+      ['bin A minus bin B is 4', binA === 12 && binB === 8],
+      ['p7 parts', bot.l * bot.w * bot.h === 48 && top.l * top.w * top.h === 24]
+    ]
+  });
+})();
+</script>
+</body>
+</html>

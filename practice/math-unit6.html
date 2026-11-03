@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 6 Practice: More Decimal and Fraction Operations — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="practice.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← All practice</a>
+<div class="page-hdr">
+  <span class="eyebrow">Extra Practice · Unit 6</span>
+  <h1>More Decimal and Fraction Operations</h1>
+  <p>Add and subtract fractions and mixed numbers with unlike denominators, multiply fractions, and convert measurements.</p>
+  <p class="stds">NC.5.NF.1 · NC.5.NF.4 · NC.5.MD.1</p>
+  <div class="pr-hdr-links"><a class="plink" href="../math/unit6.html">Unit 6 page</a><a class="plink gold" href="../learning-lab/index.html">Learning Lab →</a></div>
+</div>
+<div id="app"></div>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="practice.js"></script>
+<script>
+(function () {
+  var P = Practice, F = P.F, S = P.svg, m = P.m, fr = P.fr, mx = P.mx;
+  var B = '#C9D6EC', G = '#FFE082';
+  var tf = [[F(1, 2).add(F(1, 3)), F(2, 5), fr(1, 2) + ' + ' + fr(1, 3) + ' = ' + fr(2, 5)], [F(1, 2).add(F(1, 4)), F(3, 4), fr(1, 2) + ' + ' + fr(1, 4) + ' = ' + fr(3, 4)],
+            [F(2, 3), F(4, 6), fr(2, 3) + ' = ' + fr(4, 6)], [F(3 * 12), F(36), '3 feet = 36 inches']];
+  var p5d = [24, 48, 14, 12, 16];
+  var p5why = { 14: '14 is 8 + 6. A common denominator must be a multiple of both 8 and 6.', 12: '12 is a multiple of 6, but not of 8.', 16: '16 is a multiple of 8, but not of 6.' };
+  var est = [F(23, 8), F(11, 10)], estSum = 3 + 1, estOpts = [3, 4, 5, 6];
+
+  Practice.init({
+    id: 'unit6',
+    warmup: {
+      routine: 'True or False?',
+      title: 'True or false?',
+      list: tf.map(function (t) { return t[2]; }),
+      responses: [
+        '1. <b>False.</b> ' + fr(2, 5) + ' is less than ' + fr(1, 2) + ', so it can\'t be ' + fr(1, 2) + ' plus more. ' + fr(1, 2) + ' + ' + fr(1, 3) + ' = ' + fr(5, 6) + '.',
+        '2. <b>True.</b> ' + fr(1, 2) + ' = ' + fr(2, 4) + ', and ' + fr(2, 4) + ' + ' + fr(1, 4) + ' = ' + fr(3, 4) + '.',
+        '3. <b>True.</b> Cut each third in half and you get sixths: ' + fr(2, 3) + ' = ' + fr(4, 6) + '.',
+        '4. <b>True.</b> 1 foot = 12 inches, and 3 × 12 = 36.'
+      ],
+      after: 'To add fractions, the pieces need to be the same size.'
+    },
+    goals: [
+      'Let\'s add and subtract fractions with unlike denominators.',
+      'Let\'s add and subtract mixed numbers.',
+      'Let\'s multiply fractions and convert measurements.'
+    ],
+    problems: [
+      { id: 'p1', type: 'num',
+        q: '<p>Find ' + fr(2, 3) + ' + ' + fr(1, 4) + '. The bars show thirds, fourths, and twelfths.</p>',
+        fig: S.bars([{ parts: 3, fills: { 0: B, 1: B }, label: '2/3' }, { parts: 4, fills: { 0: G }, label: '1/4' }, { parts: 12, label: '12ths' }], { width: 440, labelW: 56, label: 'fraction bars: two thirds, one fourth, and a bar in twelfths' }),
+        ans: F(2, 3).add(F(1, 4)), expect: '11/12',
+        wrong: [[F(3, 7), 'You added the tops and the bottoms. First make the pieces the same size: twelfths.'], [F(3, 12), 'You changed the denominators to 12, but not the numerators. ' + fr(2, 3) + ' = ' + fr(8, 12) + '.']],
+        hints: ['Write both fractions in twelfths.', fr(2, 3) + ' = ' + fr(8, 12) + ' and ' + fr(1, 4) + ' = ' + fr(3, 12) + '.'],
+        explain: fr(8, 12) + ' + ' + fr(3, 12) + ' = ' + fr(11, 12) + '.' },
+
+      { id: 'p2', type: 'num',
+        q: '<p>Find ' + fr(5, 6) + ' − ' + fr(1, 4) + '.</p>',
+        ans: F(5, 6).sub(F(1, 4)), expect: '7/12',
+        wrong: [[F(2), 'You subtracted the tops and the bottoms (' + fr(4, 2) + '). Find a common denominator first.'], [F(4, 12), 'You changed the denominators to 12, but not the numerators. ' + fr(5, 6) + ' = ' + fr(10, 12) + '.']],
+        hints: ['12 is a multiple of 6 and of 4.', fr(5, 6) + ' = ' + fr(10, 12) + ' and ' + fr(1, 4) + ' = ' + fr(3, 12) + '.'],
+        explain: fr(10, 12) + ' − ' + fr(3, 12) + ' = ' + fr(7, 12) + '.' },
+
+      { id: 'p3', type: 'num',
+        q: '<p>Find ' + mx(3, 1, 2) + ' + ' + mx(1, 2, 3) + '.</p>',
+        ans: F(7, 2).add(F(5, 3)), expect: '5 1/6',
+        wrong: [[F(23, 5), 'You added the tops and the bottoms of the fractions. Use sixths: ' + fr(3, 6) + ' + ' + fr(4, 6) + '.'], [F(25, 6), 'Almost! ' + fr(7, 6) + ' is more than 1. It is ' + mx(1, 1, 6) + '. Add that extra 1 to the whole numbers.']],
+        hints: ['Add the whole numbers: 3 + 1. Then add the fractions.', fr(1, 2) + ' = ' + fr(3, 6) + ' and ' + fr(2, 3) + ' = ' + fr(4, 6) + '.'],
+        explain: '3 + 1 = 4. ' + fr(3, 6) + ' + ' + fr(4, 6) + ' = ' + fr(7, 6) + ' = ' + mx(1, 1, 6) + '. 4 + ' + mx(1, 1, 6) + ' = ' + mx(5, 1, 6) + '.' },
+
+      { id: 'p4', type: 'num',
+        q: '<p>Find ' + mx(4, 1, 4) + ' − ' + mx(2, 2, 3) + '.</p>',
+        ans: F(17, 4).sub(F(8, 3)), expect: '1 7/12',
+        wrong: [[F(29, 12), 'You subtracted ' + fr(1, 4) + ' from ' + fr(2, 3) + ' (the wrong way). ' + fr(3, 12) + ' is less than ' + fr(8, 12) + ', so take 1 whole from the 4 first.']],
+        hints: ['Use twelfths: ' + mx(4, 3, 12) + ' − ' + mx(2, 8, 12) + '.', 'You can\'t take ' + fr(8, 12) + ' from ' + fr(3, 12) + '. Trade 1 whole: ' + mx(4, 3, 12) + ' = ' + mx(3, 15, 12) + '.'],
+        explain: mx(3, 15, 12) + ' − ' + mx(2, 8, 12) + ' = ' + mx(1, 7, 12) + '.' },
+
+      { id: 'p5', type: 'multi',
+        q: '<p>You want to add ' + fr(3, 8) + ' + ' + fr(5, 6) + '. Select <b>all</b> the numbers that would work as a common denominator.</p>',
+        two: true,
+        options: p5d.map(function (dd) { return { t: m(dd), ok: dd % 8 === 0 && dd % 6 === 0, why: p5why[dd] }; }),
+        hints: ['A common denominator is a multiple of both 8 and 6.', 'List multiples of 8: 8, 16, 24, 32, 40, 48... Which are also multiples of 6?'],
+        explain: '24 and 48 are multiples of both 8 and 6. So both work. 24 is the smallest.' },
+
+      { id: 'p6', type: 'num',
+        q: '<p>One lap around the track is ' + fr(3, 8) + ' mile. Ali runs 6 laps. How many miles does he run?</p>',
+        fig: S.tape([{ parts: [0, 1, 2, 3, 4, 5].map(function () { return { t: '3/8', size: 13 }; }), brace: { from: 0, to: 6, t: '6 laps' } }], { width: 480, label: 'tape diagram with 6 parts of three eighths' }),
+        ans: F(3, 8).mul(6), expect: '2 1/4', unit: 'miles',
+        wrong: [[F(18, 48), 'You multiplied the denominator too. 6 groups of 3 eighths is 18 <b>eighths</b>.'], [F(9, 8), 'You added 6 + 3. Multiply: 6 × 3 eighths.']],
+        hints: ['6 groups of 3 eighths. How many eighths?', fr(18, 8) + ' — how many wholes is that?'],
+        explain: '6 × ' + fr(3, 8) + ' = ' + fr(18, 8) + ' = ' + mx(2, 2, 8) + ' = ' + mx(2, 1, 4) + ' miles.' },
+
+      { id: 'p7', type: 'num',
+        q: '<p>Convert each measurement. (1 foot = 12 inches. 1 kilogram = 1,000 grams.)</p>',
+        blanks: [
+          { label: '3 1/2 feet = ? inches', ans: F(7, 2).mul(12), expect: '42', unit: 'inches', wrong: [[36, '36 inches is 3 feet. Add the half foot: ' + fr(1, 2) + ' of 12 inches.'], [F(7, 2).div(12), 'Inches are smaller than feet, so there will be more of them. Multiply by 12.']] },
+          { label: '2,500 grams = ? kg', ans: F(2500).div(1000), expect: '2.5', unit: 'kg', wrong: [[2500000, 'Kilograms are bigger than grams, so there will be fewer of them. Divide by 1,000.'], [25, 'Check place value. 2,500 ÷ 1,000 = 2.5.']] }
+        ],
+        hints: ['Small units to big units: divide. Big units to small units: multiply.', '3 feet = 36 inches. Half a foot = 6 inches.'],
+        explain: '3 ' + fr(1, 2) + ' × 12 = 36 + 6 = 42 inches. 2,500 ÷ 1,000 = 2.5 kg.' },
+
+      { id: 'p8', type: 'mc',
+        q: '<p>Which is the best estimate for ' + mx(2, 7, 8) + ' + ' + mx(1, 1, 10) + '?</p>',
+        two: true,
+        options: estOpts.map(function (v) { return { t: m(v), v: F(v), why: v < 4 ? mx(2, 7, 8) + ' is almost 3, not 2.' : mx(1, 1, 10) + ' is close to 1. Round each number to the nearest whole.' }; }),
+        ans: F(estSum),
+        hints: [mx(2, 7, 8) + ' is close to which whole number? What about ' + mx(1, 1, 10) + '?'],
+        explain: mx(2, 7, 8) + ' is about 3. ' + mx(1, 1, 10) + ' is about 1. 3 + 1 = 4.' },
+
+      { id: 'p9', type: 'error',
+        q: '<p>Ty found ' + fr(1, 2) + ' + ' + fr(2, 5) + '. Here is his work. Find his mistake.</p>',
+        steps: ['Use 10 as the denominator.', fr(1, 2) + ' = ' + fr(5, 10), fr(2, 5) + ' = ' + fr(2, 10), fr(5, 10) + ' + ' + fr(2, 10) + ' = ' + fr(7, 10)],
+        bad: 2,
+        stepNotes: ['10 is a multiple of 2 and 5, so 10 works.', 'Step 2 is correct: 1 × 5 = 5 and 2 × 5 = 10.', null, 'The adding in Step 4 is right, but one of the fractions is wrong.'],
+        ans: F(1, 2).add(F(2, 5)), expect: '9/10',
+        wrong: [[F(7, 10), 'That is Ty\'s answer. Fix the step with the mistake.'], [F(3, 7), 'Find a common denominator first.']],
+        hints: ['Check each fraction. Is ' + fr(2, 5) + ' really ' + fr(2, 10) + '?', 'To get from fifths to tenths, multiply the top and bottom by 2.'],
+        explain: fr(2, 5) + ' = ' + fr(4, 10) + ', not ' + fr(2, 10) + '. ' + fr(5, 10) + ' + ' + fr(4, 10) + ' = ' + fr(9, 10) + '.' },
+
+      { id: 'p10', type: 'open',
+        q: '<p>Why do you need a common denominator to add ' + fr(1, 3) + ' + ' + fr(1, 4) + '? Use words or describe a drawing.</p>',
+        model: 'Thirds and fourths are different sizes, so I can\'t just count them together. I cut both into twelfths so the pieces are the same size. 1/3 = 4/12 and 1/4 = 3/12. Now I can add: 4/12 + 3/12 = 7/12.',
+        look: ['say the pieces are different sizes?', 'use twelfths?', 'find 7/12?'] }
+    ],
+    synthesisTitle: 'Same-size pieces',
+    synthesis: '<ul><li>To add or subtract fractions, the pieces must be the same size. Find a common denominator (a multiple of both).</li>' +
+      '<li>Mixed numbers: add or subtract the wholes and the fractions. Regroup when you need to (' + fr(7, 6) + ' = ' + mx(1, 1, 6) + ', or trade 1 whole for 12 twelfths).</li>' +
+      '<li>Fraction × whole number: 6 × ' + fr(3, 8) + ' = ' + fr(18, 8) + '. The eighths stay eighths.</li>' +
+      '<li>Converting: big unit to small unit → multiply. Small unit to big unit → divide.</li></ul>',
+    cooldown: [
+      { id: 'c1', type: 'num',
+        q: '<p>Find ' + fr(3, 5) + ' + ' + fr(1, 3) + '.</p>',
+        ans: F(3, 5).add(F(1, 3)), expect: '14/15',
+        wrong: [[F(4, 8), 'You added the tops and bottoms. Use fifteenths.']],
+        hints: [fr(3, 5) + ' = ' + fr(9, 15) + ' and ' + fr(1, 3) + ' = ' + fr(5, 15) + '.'],
+        explain: fr(9, 15) + ' + ' + fr(5, 15) + ' = ' + fr(14, 15) + '.' },
+      { id: 'c2', type: 'num',
+        q: '<p>A board is 4.5 meters long. How many centimeters is that? (1 meter = 100 centimeters.)</p>',
+        ans: F('4.5').mul(100), expect: '450', unit: 'cm',
+        wrong: [[F('0.045'), 'Centimeters are smaller than meters, so there will be more of them. Multiply by 100.']],
+        hints: ['Big unit to small unit: multiply by 100.'],
+        explain: '4.5 × 100 = 450 centimeters.' }
+    ],
+    asserts: [
+      ['warm-up true/false', !tf[0][0].eq(tf[0][1]) && tf[1][0].eq(tf[1][1]) && tf[2][0].eq(tf[2][1]) && tf[3][0].eq(tf[3][1])],
+      ['p5 two common denominators', p5d.filter(function (dd) { return dd % 8 === 0 && dd % 6 === 0; }).join() === '24,48'],
+      ['p8 rounded estimate', Math.round(est[0].num()) === 3 && Math.round(est[1].num()) === 1],
+      ['p4 regroup', F(17, 4).eq(F(3).add(F(15, 12)))]
+    ]
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2 Practice: Fractions as Quotients and Fraction Multiplication — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="practice.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← All practice</a>
+<div class="page-hdr">
+  <span class="eyebrow">Extra Practice · Unit 2</span>
+  <h1>Fractions as Quotients and Fraction Multiplication</h1>
+  <p>See a fraction as division. Multiply a fraction by a whole number and by another fraction.</p>
+  <p class="stds">NC.5.NF.3 · NC.5.NF.4 · NC.5.OA.2</p>
+  <div class="pr-hdr-links"><a class="plink" href="../math/unit2.html">Unit 2 page</a><a class="plink gold" href="../learning-lab/index.html">Learning Lab →</a></div>
+</div>
+<div id="app"></div>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="practice.js"></script>
+<script>
+(function () {
+  var P = Practice, F = P.F, S = P.svg, m = P.m, fr = P.fr, ev = P.evalExpr;
+  var PC = ['#FFE082', '#C9D6EC', '#BFE3CB', '#F6C9C3', '#E0D4F2'];   // one color per person
+  function share(n, people) {      // n wholes, each cut into `people` parts, part i goes to person i
+    var list = []; for (var k = 0; k < n; k++) { var f = {}, t = {}; for (var i = 0; i < people; i++) { f[i] = PC[i]; t[i] = 'ABCDE'[i]; } list.push({ parts: people, fills: f, texts: t }); }
+    return list;
+  }
+  var p8opts = [['3 × 8 ÷ 4', m('3 × 8 ÷ 4'), ''], ['(3 × 8) ÷ 4', m('(3 × 8) ÷ 4'), ''], ['24 ÷ 4', m('24 ÷ 4'), ''],
+                ['3 ÷ 32', fr(3, 32), 'This is much smaller than 1. But 3/4 of 8 is more than half of 8.'], ['8 ÷ 4 × 3', m('8 ÷ 4 × 3'), ''],
+                ['3/4 + 8', fr(3, 4) + ' ' + m('+ 8'), 'This adds 8 instead of multiplying by 8.']];
+  var p8V = F(3, 4).mul(8);
+
+  Practice.init({
+    id: 'unit2',
+    warmup: {
+      routine: 'Notice and Wonder',
+      title: 'Sharing sandwiches',
+      prompt: '<p>Four friends, A, B, C, and D, share 3 sandwiches. Each sandwich is cut into 4 equal pieces.</p>',
+      figure: S.bars(share(3, 4), { width: 400, label: '3 sandwiches, each cut into 4 pieces labeled A, B, C, D' }),
+      responses: [
+        'I notice there are 3 sandwiches and each one is cut into 4 equal pieces.',
+        'I notice each friend gets one piece from every sandwich.',
+        'I notice each piece is ' + fr(1, 4) + ' of a sandwich.',
+        'I wonder how much sandwich each friend gets in all. (Each friend gets 3 pieces, so ' + fr(3, 4) + ' of a sandwich.)',
+        'I wonder if 3 ÷ 4 and ' + fr(3, 4) + ' mean the same thing. (They do!)'
+      ]
+    },
+    goals: [
+      'Let\'s see a fraction as a division problem.',
+      'Let\'s multiply a fraction by a whole number.',
+      'Let\'s use area diagrams to multiply two fractions.'
+    ],
+    problems: [
+      { id: 'p1', type: 'num',
+        q: '<p>5 kids share 2 pizzas equally. How much pizza does each kid get?</p>',
+        fig: S.bars(share(2, 5), { width: 400, label: '2 pizzas, each cut into 5 pieces labeled A to E' }),
+        ans: F(2).div(5), expect: '2/5', unit: 'of a pizza',
+        wrong: [[F(5, 2), 'That would be 5 pizzas shared by 2 kids. Here, 2 pizzas are shared by 5 kids.'],
+                [F(1, 5), 'Each kid gets ' + fr(1, 5) + ' of <b>each</b> pizza. There are 2 pizzas.']],
+        hints: ['Each pizza is cut into 5 pieces. Look at the pieces marked A.', 'Kid A gets 1 piece from each of the 2 pizzas. Each piece is ' + fr(1, 5) + '.'],
+        explain: '2 ÷ 5 = ' + fr(2, 5) + '. Each kid gets 2 pieces, and each piece is ' + fr(1, 5) + ' of a pizza.' },
+
+      { id: 'p2', type: 'mc',
+        q: '<p>Which expression has the same value as ' + fr(7, 3) + '?</p>',
+        options: [{ t: m('7 ÷ 3'), v: ev('7 ÷ 3') }, { t: m('3 ÷ 7'), v: ev('3 ÷ 7'), why: '3 ÷ 7 is ' + fr(3, 7) + '. The numerator is the number being divided.' },
+                  { t: m('7 × 3'), v: ev('7 × 3'), why: 'A fraction bar means divide, not multiply.' }, { t: m('7 − 3'), v: ev('7 − 3'), why: 'A fraction bar means divide, not subtract.' }],
+        ans: F(7, 3),
+        hints: ['A fraction bar means "divided by."', 'The numerator (top) is divided by the denominator (bottom).'],
+        explain: fr(7, 3) + ' means 7 ÷ 3. The top number is divided by the bottom number.' },
+
+      { id: 'p3', type: 'num',
+        q: '<p>A rope is 8 feet long. It is cut into 3 equal pieces. How long is each piece? You can write a fraction or a mixed number.</p>',
+        ans: F(8).div(3), expect: '2 2/3', unit: 'feet',
+        wrong: [[F(3, 8), 'That would be 3 feet cut into 8 pieces. Here, 8 feet are cut into 3 pieces.'], [F(2), 'Close! 3 × 2 = 6, so there are 2 feet left over. Share those too.']],
+        hints: ['Each piece is 8 ÷ 3 feet.', '8 ÷ 3 = ' + fr(8, 3) + '. You can also think: 2 whole feet each, with 2 feet left to share.'],
+        explain: '8 ÷ 3 = ' + fr(8, 3) + ' = ' + P.mx(2, 2, 3) + ' feet.' },
+
+      { id: 'p4', type: 'num',
+        q: '<p>Find ' + m('4 ×') + ' ' + fr(2, 5) + '. Use the tape diagram.</p>',
+        fig: S.tape([{ parts: [{ t: '2/5' }, { t: '2/5' }, { t: '2/5' }, { t: '2/5' }], brace: { from: 0, to: 4, t: '4 groups of 2/5' } }], { width: 440, label: 'tape diagram with 4 parts, each 2/5' }),
+        ans: F(2, 5).mul(4), expect: '8/5',
+        wrong: [[F(8, 20), 'You multiplied the denominator too. 4 groups of 2 fifths is 8 fifths. The size of each piece (fifths) stays the same.'],
+                [F(6, 5), 'You added 4 + 2. Multiply: 4 groups of 2 fifths.']],
+        hints: ['4 groups of 2 fifths. How many fifths in all?', '4 × 2 = 8. So it is 8 fifths.'],
+        explain: '4 × ' + fr(2, 5) + ' = ' + fr(8, 5) + ' = ' + P.mx(1, 3, 5) + '.' },
+
+      { id: 'p5', type: 'num',
+        q: '<p>A ribbon is 6 feet long. Jada uses ' + fr(2, 3) + ' of the ribbon. How many feet does she use?</p>',
+        fig: S.tape([{ parts: [{ t: '?', fill: '#FFE9A6' }, { t: '?', fill: '#FFE9A6' }, { t: '?' }], brace: { from: 0, to: 3, t: '6 feet' } }], { width: 420, label: 'tape diagram of 6 feet in 3 equal parts, 2 parts shaded' }),
+        ans: F(2, 3).mul(6), expect: '4', unit: 'feet',
+        wrong: [[F(2), 'That is ' + fr(1, 3) + ' of 6. Jada uses 2 of the thirds.'], [F(9), 'You divided by 2 and multiplied by 3. Divide by 3 to find one third. Then multiply by 2.']],
+        hints: ['Split 6 feet into 3 equal parts. How long is each part?', 'Each part is 2 feet. Jada uses 2 parts.'],
+        explain: fr(1, 3) + ' of 6 is 2. So ' + fr(2, 3) + ' of 6 is 2 × 2 = 4 feet.' },
+
+      { id: 'p6', type: 'num',
+        q: '<p>The square is 1 unit by 1 unit. The blue columns show ' + fr(3, 4) + '. The yellow rows show ' + fr(2, 3) + '. What fraction of the square is the dark part, where they overlap? This is ' + fr(2, 3) + ' × ' + fr(3, 4) + '.</p>',
+        fig: S.areaFrac(4, 3, 3, 2, { top: '3/4', left: '2/3', label: 'unit square in 4 columns and 3 rows; 3 columns and 2 rows shaded; 6 parts overlap' }),
+        ans: F(2, 3).mul(F(3, 4)), expect: '6/12',
+        wrong: [[F(5, 7), 'You added the tops and added the bottoms. Count the dark parts and all the parts instead.'],
+                [F(2, 3).add(F(3, 4)), 'You added the fractions. The overlap shows multiplication.'], [F(6, 7), 'Count all the parts in the square, not just some. There are 4 × 3 parts.']],
+        hints: ['Count the dark parts.', 'How many equal parts is the whole square cut into? Count them all.'],
+        explain: '6 of the 12 equal parts are dark. ' + fr(2, 3) + ' × ' + fr(3, 4) + ' = ' + fr(6, 12) + ', which is the same as ' + fr(1, 2) + '.' },
+
+      { id: 'p7', type: 'num',
+        q: '<p>Find ' + fr(3, 5) + ' × ' + fr(1, 2) + '.</p>',
+        ans: F(3, 5).mul(F(1, 2)), expect: '3/10',
+        wrong: [[F(4, 7), 'You added the tops and bottoms. When you multiply fractions, multiply the numerators and multiply the denominators.'],
+                [F(3, 5).add(F(1, 2)), 'You added the fractions. This problem asks you to multiply.']],
+        hints: ['Half of ' + fr(3, 5) + ' is how much?', 'Multiply the numerators: 3 × 1. Multiply the denominators: 5 × 2.'],
+        explain: fr(3, 5) + ' × ' + fr(1, 2) + ' = ' + fr('3 × 1', '5 × 2') + ' = ' + fr(3, 10) + '.' },
+
+      { id: 'p8', type: 'multi',
+        q: '<p>Select <b>all</b> the expressions with the same value as ' + fr(3, 4) + ' ' + m('× 8') + '.</p>',
+        options: p8opts.map(function (o) { return { t: o[1], ok: ev(o[0]).eq(p8V), why: o[2] }; }),
+        hints: [fr(3, 4) + ' × 8 means ' + fr(3, 4) + ' of 8.', 'Find the value of each one. Which ones equal 6?'],
+        explain: fr(3, 4) + ' × 8 = 6. So do 3 × 8 ÷ 4, (3 × 8) ÷ 4, 24 ÷ 4, and 8 ÷ 4 × 3.' },
+
+      { id: 'p9', type: 'error',
+        q: '<p>Elena found ' + fr(2, 3) + ' × ' + fr(4, 5) + '. Here is her work. Find her mistake.</p>',
+        steps: ['Multiply the numerators: ' + m('2 × 4 = 8'), 'Multiply the denominators: ' + m('3 + 5 = 8'), 'Answer: ' + fr(8, 8) + ' = ' + m('1')],
+        bad: 1,
+        stepNotes: ['Step 1 is correct. 2 × 4 = 8.', null, 'Step 3 is right for ' + fr(8, 8) + '. Check where the bottom 8 came from.'],
+        ans: F(2, 3).mul(F(4, 5)), expect: '8/15',
+        wrong: [[F(1), 'That is Elena\'s answer. Fix her mistake first.']],
+        hints: ['Look at the sign in Step 2.', 'She should multiply 3 × 5.'],
+        explain: 'Elena added the denominators. She should multiply: 3 × 5 = 15. The answer is ' + fr(8, 15) + '.' },
+
+      { id: 'p10', type: 'open',
+        q: '<p>Four friends share 3 granola bars equally. Diego says each friend gets ' + fr(3, 4) + ' of a bar. Explain why Diego is right. You can describe a drawing.</p>',
+        model: 'Cut each bar into 4 equal pieces. That makes 12 pieces. Each friend gets 1 piece from each bar, so 3 pieces. Each piece is 1/4 of a bar, so each friend gets 3/4 of a bar. 3 ÷ 4 = 3/4.',
+        look: ['cut each bar into 4 parts?', 'say each friend gets 3 pieces of size 1/4?', 'connect 3 ÷ 4 to 3/4?'] }
+    ],
+    synthesisTitle: 'Fractions and multiplication',
+    synthesis: '<ul><li>A fraction is a division: ' + fr('a', 'b') + ' = a ÷ b. Sharing 3 sandwiches with 4 people gives ' + fr(3, 4) + ' each.</li>' +
+      '<li>Fraction × whole number: 4 × ' + fr(2, 5) + ' is 4 groups of 2 fifths = ' + fr(8, 5) + '. The fifths stay fifths.</li>' +
+      '<li>Fraction of a number: ' + fr(2, 3) + ' of 6 → find ' + fr(1, 3) + ' of 6 (2), then take 2 of them (4).</li>' +
+      '<li>Fraction × fraction: multiply the numerators and multiply the denominators. An area diagram shows why.</li></ul>',
+    cooldown: [
+      { id: 'c1', type: 'num',
+        q: '<p>4 kids share 5 yards of ribbon equally. How many yards does each kid get?</p>',
+        ans: F(5).div(4), expect: '1 1/4', unit: 'yards',
+        wrong: [[F(4, 5), 'That would be 4 yards shared by 5 kids. Here, 5 yards are shared by 4 kids.']],
+        hints: ['Each kid gets 5 ÷ 4 yards.'],
+        explain: '5 ÷ 4 = ' + fr(5, 4) + ' = ' + P.mx(1, 1, 4) + ' yards.' },
+      { id: 'c2', type: 'num',
+        q: '<p>Use the diagram to find ' + fr(2, 5) + ' × ' + fr(3, 4) + '.</p>',
+        fig: S.areaFrac(4, 5, 3, 2, { top: '3/4', left: '2/5', label: 'unit square in 4 columns and 5 rows; 3 columns and 2 rows shaded' }),
+        ans: F(2, 5).mul(F(3, 4)), expect: '6/20',
+        wrong: [[F(5, 9), 'You added the tops and bottoms. Count the dark parts and all the parts.']],
+        hints: ['Count the dark parts. Then count all the parts in the square.'],
+        explain: '6 of 20 parts are dark. ' + fr(2, 5) + ' × ' + fr(3, 4) + ' = ' + fr(6, 20) + ' = ' + fr(3, 10) + '.' }
+    ],
+    asserts: [
+      ['warm-up: 3 ÷ 4 = 3/4', F(3).div(4).eq(F(3, 4))],
+      ['p6 overlap count 6 of 12', F(2 * 3, 3 * 4).eq(F(1, 2))],
+      ['p8 four right choices', p8opts.filter(function (o) { return ev(o[0]).eq(6); }).length === 4],
+      ['c2 overlap 6 of 20', F(2 * 3, 5 * 4).eq(F(3, 10))]
+    ]
+  });
+})();
+</script>
+</body>
+</html>

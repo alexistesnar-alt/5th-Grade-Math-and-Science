@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 4 Practice: Multi-digit Multiplication and Division — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="practice.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← All practice</a>
+<div class="page-hdr">
+  <span class="eyebrow">Extra Practice · Unit 4</span>
+  <h1>Multi-digit Multiplication and Division</h1>
+  <p>Multiply with the standard algorithm. Divide with up to four-digit dividends and two-digit divisors, and decide what a remainder means.</p>
+  <p class="stds">NC.5.NBT.5 · NC.5.NBT.6 · NC.5.NF.3</p>
+  <div class="pr-hdr-links"><a class="plink" href="../math/unit4.html">Unit 4 page</a><a class="plink gold" href="../learning-lab/index.html">Learning Lab →</a></div>
+</div>
+<div id="app"></div>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="practice.js"></script>
+<script>
+(function () {
+  var P = Practice, F = P.F, S = P.svg, m = P.m, fr = P.fr, mx = P.mx;
+  function q(a, b) { return Math.floor(a / b); }
+  function r(a, b) { return a % b; }
+  function n(x) { return x.toLocaleString('en-US'); }
+  var nt = [[25, 4], [25, 8], [25, 12], [25, 24]];
+  var p4 = [[483, 12], [250, 13], [1000, 31], [700, 24], [3003, 15]];
+  var students = 254, seats = 48, buses = q(students, seats) + (r(students, seats) ? 1 : 0);
+  var p6q = q(1000, 32), p6r = r(1000, 32);
+
+  Practice.init({
+    id: 'unit4',
+    warmup: {
+      routine: 'Number Talk',
+      title: 'Find the value in your head',
+      list: nt.map(function (x) { return x[0] + ' × ' + x[1]; }),
+      responses: nt.map(function (x, i) {
+        return '<b>' + x[0] + ' × ' + x[1] + ' = ' + n(x[0] * x[1]) + '.</b> ' +
+          ['Four quarters make a dollar, so 25 × 4 = 100.', '8 is double 4, so double 100.', '12 is 4 + 8, so add 100 + 200. Or 25 × 12 = 25 × 10 + 25 × 2.', '24 is double 12, so double 300.'][i];
+      }),
+      after: 'Each problem helped with the next one. Breaking a number into parts is the same idea as partial products.'
+    },
+    goals: [
+      'Let\'s multiply multi-digit numbers with the standard algorithm.',
+      'Let\'s divide with up to four-digit dividends and two-digit divisors.',
+      'Let\'s decide what to do with a remainder.'
+    ],
+    problems: [
+      { id: 'p1', type: 'num',
+        q: '<p>Find ' + m('346 × 27') + '.</p>',
+        ans: 346 * 27, expect: '9342',
+        wrong: [[346 * 7 + 346 * 2, 'You used 346 × 2 for the tens. The 2 in 27 means 2 tens, so find 346 × 20 = 6,920.'], [346 + 27, 'You added. Multiply instead.']],
+        hints: ['First find 346 × 7.', 'Then find 346 × 20. Add the two products.'],
+        explain: '346 × 7 = 2,422. 346 × 20 = 6,920. 2,422 + 6,920 = 9,342.' },
+
+      { id: 'p2', type: 'num',
+        q: '<p>This area diagram shows ' + m('43 × 25') + '. Find the missing partial product. Then find the total.</p>',
+        fig: S.areaRect([{ w: 240, t: '40' }, { w: 90, t: '3' }], [{ h: 90, t: '20' }, { h: 50, t: '5' }], [['800', '?'], ['200', '15']], { label: 'area diagram 40 plus 3 by 20 plus 5 with one part unknown' }),
+        blanks: [
+          { label: 'Missing part (?)', ans: 3 * 20, expect: '60', wrong: [[3 + 20, 'That adds. The part is 3 × 20.'], [3 * 2, '3 × 2 = 6, but the 20 is 2 tens. 3 × 20 = 60.']] },
+          { label: 'Total: 43 × 25', ans: 43 * 25, expect: '1075', wrong: [[800 + 200 + 15, 'You left out the missing part. Add all 4 parts.']] }
+        ],
+        hints: ['The missing part is 3 × 20.', 'Add all 4 parts: 800 + 60 + 200 + 15.'],
+        explain: '3 × 20 = 60. 800 + 60 + 200 + 15 = 1,075.' },
+
+      { id: 'p3', type: 'num',
+        q: '<p>A school orders 18 boxes of pencils. Each box has 144 pencils. How many pencils is that?</p>',
+        ans: 18 * 144, expect: '2592', unit: 'pencils',
+        wrong: [[144 * 8 + 144, 'The 1 in 18 means 1 ten. 144 × 10 = 1,440, not 144.'], [144 + 18, 'You added. 18 boxes of 144 means multiply.']],
+        hints: ['Find 144 × 18.', '144 × 8 = 1,152 and 144 × 10 = 1,440.'],
+        explain: '144 × 8 = 1,152. 144 × 10 = 1,440. 1,152 + 1,440 = 2,592 pencils.' },
+
+      { id: 'p4', type: 'multi',
+        q: '<p>Select <b>all</b> the division problems that have a remainder of <b>3</b>.</p>',
+        two: true,
+        options: p4.map(function (x) { return { t: m(n(x[0]) + ' ÷ ' + x[1]), ok: r(x[0], x[1]) === 3, why: n(x[0]) + ' ÷ ' + x[1] + ' = ' + q(x[0], x[1]) + ' R ' + r(x[0], x[1]) + '.' }; }),
+        hints: ['For each one, find the biggest multiple of the divisor that fits.', 'For 483 ÷ 12: 12 × 40 = 480. What is left?'],
+        explain: '483 ÷ 12 = 40 R 3, 250 ÷ 13 = 19 R 3, and 3,003 ÷ 15 = 200 R 3.' },
+
+      { id: 'p5', type: 'num',
+        q: '<p>Find ' + m('2,184 ÷ 24') + '.</p>',
+        ans: F(2184).div(24), expect: '91',
+        wrong: [[901, 'Check the place value. 24 × 900 is much more than 2,184. Try 24 × 90.'], [F(2184).sub(24), 'You subtracted. How many 24s are in 2,184?']],
+        hints: ['Start with a big chunk: 24 × 90 = 2,160.', '2,184 − 2,160 = 24. How many more 24s is that?'],
+        explain: '24 × 90 = 2,160. 2,184 − 2,160 = 24, which is 1 more group. 90 + 1 = 91.' },
+
+      { id: 'p6', type: 'num',
+        q: '<p>Find ' + m('1,000 ÷ 32') + '. Write the quotient and the remainder.</p>',
+        blanks: [
+          { label: 'Quotient', ans: p6q, expect: '31', wrong: [[32, 'Check: 32 × 32 = 1,024. That is more than 1,000.'], [30, '32 × 30 = 960. There is still room for another 32.']] },
+          { label: 'Remainder', ans: p6r, expect: '8', wrong: [[40, '40 is more than 32. You can fit one more group of 32.']] }
+        ],
+        hints: ['32 × 30 = 960. Is there room for more?', '32 × 31 = 992. How much is left from 1,000?'],
+        explain: '32 × 31 = 992. 1,000 − 992 = 8. So 1,000 ÷ 32 = 31 R 8.' },
+
+      { id: 'p7', type: 'mc',
+        q: '<p>254 students are going on a field trip. Each bus holds 48 students. How many buses are needed so every student has a seat?</p>',
+        options: [{ t: '5 buses', why: 'With 5 buses, 14 students would have no seat.' }, { t: '6 buses' },
+                  { t: '5 R 14 buses', why: 'You can\'t order part of a bus. Decide what the remainder means.' }, { t: '14 buses', why: '14 is the number of students left over, not the number of buses.' }],
+        answer: buses === 6 ? 1 : -1,
+        hints: ['254 ÷ 48 = 5 R 14.', 'What happens to the 14 students who are left?'],
+        explain: '254 ÷ 48 = 5 R 14. The 14 extra students still need a bus, so we need 6 buses.' },
+
+      { id: 'p8', type: 'num',
+        q: '<p>4 friends share 30 feet of ribbon equally. How many feet does each friend get? Use a fraction or mixed number for the leftover part.</p>',
+        ans: F(30).div(4), expect: '7 1/2', unit: 'feet',
+        wrong: [[7, 'Close! 4 × 7 = 28, so 2 feet are left. Share those 2 feet too.'], [2, 'That is the remainder. How much does each friend get?'], [F(4, 30), 'That would be 4 feet shared by 30 friends.']],
+        hints: ['30 ÷ 4 = 7 R 2.', 'Share the 2 leftover feet among 4 friends: ' + fr(2, 4) + ' foot each.'],
+        explain: '30 ÷ 4 = ' + fr(30, 4) + ' = ' + mx(7, 1, 2) + ' feet. The 2 leftover feet are shared, so each gets ' + fr(2, 4) + ' = ' + fr(1, 2) + ' more.' },
+
+      { id: 'p9', type: 'error',
+        q: '<p>Leo found ' + m('523 × 14') + '. Here is his work. Find his mistake.</p>',
+        steps: [m('523 × 4 = 2,092'), m('523 × 1 = 523'), m('2,092 + 523 = 2,615')],
+        bad: 1,
+        stepNotes: ['Step 1 is correct. 523 × 4 = 2,092.', null, 'The adding is right, but one of the numbers he added is wrong. Look at Step 2.'],
+        ans: 523 * 14, expect: '7322',
+        wrong: [[2615, 'That is Leo\'s answer. The 1 in 14 is 1 ten.']],
+        hints: ['What does the 1 in 14 mean?', 'It means 1 ten. So find 523 × 10.'],
+        explain: 'The 1 in 14 means 10. 523 × 10 = 5,230. 2,092 + 5,230 = 7,322.' },
+
+      { id: 'p10', type: 'open',
+        q: '<p>Explain how you can use multiplication to check that ' + m('1,000 ÷ 32 = 31 R 8') + '.</p>',
+        model: 'Multiply the quotient by the divisor: 32 × 31 = 992. Then add the remainder: 992 + 8 = 1,000. We get back the number we started with, so the answer is right. The remainder 8 is less than 32, so no more groups fit.',
+        look: ['multiply 32 × 31?', 'add the remainder 8?', 'say you got back 1,000?'] }
+    ],
+    synthesisTitle: 'Multiplying and dividing big numbers',
+    synthesis: '<ul><li>Standard algorithm: multiply by the ones, then by the tens (remember the 0!), then add the partial products.</li>' +
+      '<li>Divide with partial quotients: take away big friendly groups (like 24 × 90), then smaller ones.</li>' +
+      '<li>Check division with multiplication: quotient × divisor + remainder = dividend.</li>' +
+      '<li>Think about what a remainder means. Round up (6 buses), drop it (full boxes), or share it as a fraction (' + mx(7, 1, 2) + ' feet).</li></ul>',
+    cooldown: [
+      { id: 'c1', type: 'num',
+        q: '<p>Find ' + m('3,312 ÷ 46') + '.</p>',
+        ans: F(3312).div(46), expect: '72',
+        wrong: [[702, 'Check the place value. 46 × 700 is much more than 3,312.']],
+        hints: ['Try 46 × 70 = 3,220. How much is left?'],
+        explain: '46 × 70 = 3,220. 3,312 − 3,220 = 92 = 46 × 2. 70 + 2 = 72.' },
+      { id: 'c2', type: 'num',
+        q: '<p>Find ' + m('58 × 36') + '.</p>',
+        ans: 58 * 36, expect: '2088',
+        wrong: [[58 * 6 + 58 * 3, 'The 3 in 36 is 3 tens. Find 58 × 30.']],
+        hints: ['Find 58 × 6 and 58 × 30. Then add.'],
+        explain: '58 × 6 = 348. 58 × 30 = 1,740. 348 + 1,740 = 2,088.' }
+    ],
+    asserts: [
+      ['number talk values', nt.map(function (x) { return x[0] * x[1]; }).join() === '100,200,300,600'],
+      ['p4 three with remainder 3', p4.filter(function (x) { return r(x[0], x[1]) === 3; }).length === 3],
+      ['p5 check', 24 * 91 === 2184 && 24 * 90 === 2160],
+      ['p6 check', 32 * 31 + 8 === 1000],
+      ['p7 buses', buses === 6 && q(254, 48) === 5 && r(254, 48) === 14],
+      ['p9 partials', 523 * 4 === 2092 && 523 * 10 === 5230],
+      ['c1 check', 46 * 72 === 3312]
+    ]
+  });
+})();
+</script>
+</body>
+</html>
