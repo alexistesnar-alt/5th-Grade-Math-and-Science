@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 3 Notebook: The Gray Ghosts — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="notes.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="page-wrap" id="nb"><noscript><p>This notebook needs JavaScript turned on. Ask your teacher for a paper copy.</p></noscript></main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="notes.js"></script>
+<script>
+/* Unit 3 notebook. To change a lesson, edit the words below (keep the quotes and commas). */
+NB.render({
+  key: "unit3", unit: 3,
+  title: "The Gray Ghosts",
+  lead: "Hemlock trees in our mountains are turning gray and dying. What happens to the rest of the ecosystem?",
+  stds: [
+    ["LS.5.2.1", "Engage in argument from evidence to compare the characteristics of several common ecosystems (including estuaries and salt marshes, oceans, lakes and ponds, rivers and streams, forests, and grasslands) in terms of their ability to support a variety of populations."],
+    ["LS.5.2.2", "Use models to classify organisms within an ecosystem according to the function they serve: producers, consumers, or decomposers."],
+    ["LS.5.2.3", "Use models to infer the effects that may result from the interconnected relationships of plants and animals to their ecosystem."]
+  ],
+  anchor: "<p>Along the streams of the Southern Appalachian Mountains, giant eastern hemlock trees once made deep, cool shade. Now many of them stand gray and bare, like ghosts. A tiny insect from Asia, the <b>hemlock woolly adelgid</b> (uh-DEL-jid), is killing them. What happens to the rest of the forest when the hemlocks die?</p>",
+  lessons: [
+  /* ---------------- Lesson 1 ---------------- */
+  {
+    title: "What Lives Here?",
+    warm: "<p>Picture a mountain stream. Tall hemlock trees shade the water. Brook trout swim in the cold, clear water. Moss grows on wet rocks. Birds nest in the branches.</p><p>Now look at a hemlock branch up close. Tiny white, fuzzy balls cover the bottom of the needles. Each fuzzy ball hides an adelgid. The tree looks gray.</p>",
+    goal: "describe the living and nonliving parts of the hemlock forest ecosystem.",
+    acts: [
+      { title: "Living or nonliving?", blocks: [
+        { t: "p", html: "<b>Biotic</b> things are living or were once living. <b>Abiotic</b> things are nonliving." },
+        { t: "sort", q: "Sort the parts of the hemlock forest.", bins: ["Biotic (living)", "Abiotic (nonliving)"], items: [
+          ["Hemlock tree", 0, "A hemlock is a plant. It grows and needs water, so it is living."],
+          ["Brook trout", 0, "Trout are fish. They are living."],
+          ["Moss", 0, "Moss is a small plant. It is living."],
+          ["Woolly adelgid", 0, "The adelgid is a tiny insect. It is living."],
+          ["Salamander", 0, "A salamander is an animal. It is living."],
+          ["Sunlight", 1, "Sunlight is energy. It is not alive."],
+          ["Stream water", 1, "Water is needed by living things, but water itself is not alive."],
+          ["Rocks", 1, "Rocks do not grow, eat or reproduce. They are nonliving."],
+          ["Air temperature", 1, "Temperature is a condition of the air. It is not alive."]
+        ]}
+      ]},
+      { title: "Who lives together?", blocks: [
+        { t: "table", caption: "Words for groups in an ecosystem", head: ["Word", "What it means", "Example"], rows: [
+          ["Population", "all of one kind of organism in an area", "all the brook trout in one stream"],
+          ["Community", "all the populations that live together in an area", "trout, hemlocks, moss, birds and insects"],
+          ["Habitat", "the place where an organism lives and gets what it needs", "a cold, shady stream for brook trout"],
+          ["Ecosystem", "the community plus the nonliving things, working together", "the hemlock forest and its stream"]
+        ]},
+        { t: "blanks", text: "All the brook trout in one stream make a {population|It is all of one kind of organism.}. The trout, hemlocks, birds and moss together make a {community|It is many kinds of organisms living together.}. A cold, shady stream is the trout’s {habitat|It is the place where the trout lives and gets what it needs.}. The living things plus the water, rocks and sunlight make an {ecosystem|It includes living AND nonliving parts.}.",
+          extra: ["food chain", "decomposer"] }
+      ]}
+    ],
+    synth: { idea: "<p>An <b>ecosystem</b> is all the living (biotic) and nonliving (abiotic) things in an area and how they interact. A <b>population</b> is one kind of organism. A <b>community</b> is all the populations together. A <b>habitat</b> is where an organism lives and gets what it needs.</p>",
+      vocab: [
+        ["ecosystem", "all the living and nonliving things in an area and how they interact"],
+        ["biotic", "living, or once living"],
+        ["abiotic", "nonliving, like water, rocks, sunlight and air"],
+        ["population", "all of one kind of organism living in one area"],
+        ["community", "all the populations living together in one area"],
+        ["habitat", "the place where an organism lives and gets food, water and shelter"]
+      ]},
+    cool: [
+      { t: "mc", q: "Which is an abiotic part of the hemlock forest?", opts: ["Brook trout", "Moss", "Stream water", "Woolly adelgid"],
+        ans: 2, fb: [
+          "Brook trout are fish. They are biotic (living).",
+          "Moss is a plant. It is biotic (living).",
+          "Water is nonliving, so it is abiotic.",
+          "The adelgid is an insect. It is biotic (living)."] }
+    ]
+  },
+  /* ---------------- Lesson 2 ---------------- */
+  {
+    title: "Comparing Ecosystems",
+    warm: "<p>Hemlocks grow in mountain forests. But North Carolina has many ecosystems. There is the ocean. There are salt marshes and estuaries along the coast. There are lakes, ponds, rivers, streams, forests and grasslands. Each one is home to different populations.</p>",
+    goal: "compare ecosystems and argue which ones can support many kinds of populations.",
+    acts: [
+      { title: "Land or water?", blocks: [
+        { t: "sort", q: "Is each ecosystem on land or in water?", bins: ["Terrestrial (land)", "Aquatic (water)"], items: [
+          ["Forest", 0, "A forest is on land, so it is terrestrial."],
+          ["Grassland", 0, "A grassland is on land, so it is terrestrial."],
+          ["Ocean", 1, "The ocean is water, so it is aquatic."],
+          ["Lake or pond", 1, "Lakes and ponds are water, so they are aquatic."],
+          ["River or stream", 1, "Rivers and streams are moving water, so they are aquatic."],
+          ["Estuary", 1, "An estuary is where a river meets the ocean. It is aquatic."],
+          ["Salt marsh", 1, "A salt marsh is flooded by ocean tides. It is an aquatic ecosystem."]
+        ]}
+      ]},
+      { title: "Look at the evidence", blocks: [
+        { t: "table", caption: "Comparing ecosystems", head: ["Ecosystem", "Water", "What it has", "Some populations"], rows: [
+          ["Forest", "rain and streams", "many trees, shade, rich soil", "deer, owls, salamanders, hemlocks"],
+          ["Grassland", "less rain", "grasses, few trees, lots of sun", "rabbits, grasshoppers, hawks"],
+          ["Ocean", "salt water", "huge and deep; sunlight only near the top", "plankton, sharks, whales, sea turtles"],
+          ["Lake or pond", "still fresh water", "plants along the edges", "frogs, bass, ducks, cattails"],
+          ["River or stream", "moving fresh water", "cool, clear water", "trout, crayfish, mayflies"],
+          ["Estuary and salt marsh", "fresh and salt water mix", "shallow water, marsh grass, many nutrients from rivers", "oysters, blue crabs, shrimp, young fish, herons"]
+        ]},
+        { t: "mc", q: "Which claim does the evidence BEST support?", opts: [
+            "Oceans cannot support life because the water is salty.",
+            "Estuaries can support many populations because fresh and salt water mix and rivers bring nutrients.",
+            "Grasslands support the most kinds of fish.",
+            "Streams cannot support animals because the water moves."],
+          ans: 1, fb: [
+            "The table lists many ocean populations, like sharks and whales.",
+            "Estuaries have food, shelter and nutrients, so many populations can live there.",
+            "Grasslands are on land. Fish live in water.",
+            "The table shows trout, crayfish and mayflies living in streams."] },
+        { t: "reveal", q: "Did you know?", btn: "Tap to see", a: "<p>North Carolina’s Albemarle-Pamlico Sound is one of the largest estuary systems in the United States. Many fish, crabs and shrimp start their lives there.</p>" }
+      ]},
+      { title: "Make an argument", blocks: [
+        { t: "text", q: "Pick one ecosystem. Make a claim about why it can support many populations. Use evidence from the table.", rows: 4, ph: "Claim: … Evidence: … Reasoning: …",
+          model: "Claim: A salt marsh can support many populations. Evidence: Fresh and salt water mix there, rivers bring nutrients, and marsh grass gives shelter. Reasoning: More food and shelter means more kinds of living things can live there, like oysters, blue crabs, shrimp, young fish and herons.",
+          check: "Did you give a claim, at least one piece of evidence from the table, and a reason?" }
+      ]}
+    ],
+    synth: { idea: "<p>Ecosystems can be <b>terrestrial</b> (land) or <b>aquatic</b> (water). Ecosystems with plenty of food, water, shelter and sunlight can support more kinds of populations. Estuaries and salt marshes, where fresh and salt water mix, are some of the richest ecosystems.</p>",
+      vocab: [
+        ["terrestrial", "on land"],
+        ["aquatic", "in water"],
+        ["estuary", "a place where a river meets the ocean, so fresh water and salt water mix"],
+        ["salt marsh", "a grassy coastal wetland that is flooded by ocean tides"],
+        ["population", "all of one kind of organism in one area"]
+      ]},
+    cool: [
+      { t: "mc", q: "What is an estuary?", opts: [
+          "A forest high in the mountains",
+          "A place where a river meets the ocean and fresh and salt water mix",
+          "A dry grassland with few trees",
+          "The deepest part of the ocean"],
+        ans: 1, fb: [
+          "A mountain forest is a terrestrial ecosystem.",
+          "Estuaries are where rivers flow into the sea.",
+          "A grassland is on land. An estuary is aquatic.",
+          "An estuary is shallow and near the coast."] }
+    ]
+  },
+  /* ---------------- Lesson 3 ---------------- */
+  {
+    title: "Who Eats Whom?",
+    warm: "<p>In the hemlock forest, sunlight shines on the hemlock’s needles. A woolly adelgid sucks food out of the hemlock’s twigs. A tiny beetle eats adelgids. A bird eats the beetle. When a hemlock dies and falls, mushrooms grow on the log.</p>",
+    goal: "classify organisms by the job they do in an ecosystem: producer, consumer or decomposer.",
+    acts: [
+      { title: "Three jobs", blocks: [
+        { t: "reveal", q: "What job does each organism do?", btn: "Tap to see", a: "<p><b>Producers</b> make their own food using energy from sunlight. Plants are producers.</p><p><b>Consumers</b> get energy by eating other organisms.</p><p><b>Decomposers</b> break down dead plants and animals. This puts nutrients back into the soil for plants to use.</p>" },
+        { t: "sort", q: "Classify each organism by its job.", bins: ["Producer", "Consumer", "Decomposer"], items: [
+          ["Hemlock tree", 0, "A hemlock makes its own food from sunlight. It is a producer."],
+          ["Moss", 0, "Moss is a plant. It makes its own food from sunlight."],
+          ["Grass", 0, "Grass is a plant. It makes its own food from sunlight."],
+          ["Woolly adelgid", 1, "The adelgid eats by sucking food from hemlock twigs. It is a consumer."],
+          ["Brook trout", 1, "Trout eat insects. They are consumers."],
+          ["Owl", 1, "Owls eat mice and other animals. They are consumers."],
+          ["Mushroom", 2, "Mushrooms cannot make food from sunlight. They break down dead things, so they are decomposers."],
+          ["Bacteria in the soil", 2, "These tiny living things break down dead plants and animals. They are decomposers."],
+          ["Earthworm", 2, "Earthworms eat dead leaves and help turn them into soil, so we call them decomposers."]
+        ]}
+      ]},
+      { title: "Follow the energy", blocks: [
+        { t: "order", q: "Build a food chain. Put it in the order that energy moves.", items: ["Sun", "Hemlock tree", "Woolly adelgid", "Beetle that eats adelgids", "Bird"],
+          hint: "Energy starts with the sun. The producer comes next. Then each eater comes after the thing it eats.",
+          done: "Sun → hemlock → adelgid → beetle → bird. The energy moves from the food to the eater." },
+        { t: "mc", q: "In the food chain Hemlock → Adelgid → Beetle, what do the arrows show?", opts: [
+            "Which organism is biggest",
+            "The way energy moves, from the organism that is eaten to the one that eats it",
+            "Which organism eats the hemlock last",
+            "The way the wind blows"],
+          ans: 1, fb: [
+            "Arrows in a food chain are not about size.",
+            "Arrows point toward the eater. They show energy transfer.",
+            "Only the adelgid eats the hemlock in this chain. The arrows show energy moving.",
+            "Food chain arrows have nothing to do with wind."] }
+      ]},
+      { title: "Label the food web", blocks: [
+        { t: "label", q: "Label each numbered part with the job it does.", svg: '<svg viewBox="0 0 400 300" role="img" aria-label="Food web in a hemlock forest"><defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#5B6475"/></marker></defs><circle cx="45" cy="45" r="24" fill="#FFC107" stroke="#E0A800" stroke-width="2"/><rect x="95" y="200" width="12" height="50" fill="#7A5230"/><polygon points="101,85 62,165 140,165" fill="#2F6B3A"/><polygon points="101,120 52,212 150,212" fill="#2F6B3A"/><circle cx="205" cy="150" r="20" fill="#fff" stroke="#9AA2B1" stroke-width="2" stroke-dasharray="3 3"/><circle cx="199" cy="146" r="4" fill="#DDE1E8"/><circle cx="210" cy="154" r="4" fill="#DDE1E8"/><ellipse cx="295" cy="150" rx="15" ry="10" fill="#3B2A1A"/><path d="M283 143 l-7 -5 M283 157 l-7 5 M307 143 l7 -5 M307 157 l7 5" stroke="#3B2A1A" stroke-width="2"/><ellipse cx="335" cy="58" rx="22" ry="12" fill="#6B7FA8"/><circle cx="356" cy="49" r="9" fill="#6B7FA8"/><path d="M364 47 l10 3 l-10 3 Z" fill="#E0A800"/><rect x="232" y="252" width="110" height="18" rx="9" fill="#8B5A2B"/><rect x="296" y="236" width="6" height="16" fill="#EFE6D8"/><ellipse cx="299" cy="236" rx="15" ry="8" fill="#B4472E"/><g stroke="#5B6475" stroke-width="2" fill="none" marker-end="url(#ah3)"><path d="M66 60 L86 92"/><path d="M146 150 L180 150"/><path d="M228 150 L274 150"/><path d="M302 136 L326 76"/><path d="M150 214 L276 242" stroke-dasharray="5 4"/></g><g font-family="Inter,system-ui,sans-serif" font-size="12.5" fill="#1B2333" text-anchor="middle"><text x="45" y="88">Sun</text><text x="101" y="268">Hemlock tree</text><text x="205" y="188">Woolly adelgid</text><text x="295" y="180">Beetle</text><text x="335" y="30">Bird</text><text x="287" y="290">Mushroom on a fallen log</text><text x="200" y="250" font-size="11" fill="#5B6475">dead trees</text></g></svg>',
+          spots: [
+            { x: 45, y: 45, ans: "energy source", hint: "All the energy in this food web starts here." },
+            { x: 101, y: 150, ans: "producer", hint: "This tree makes its own food from sunlight." },
+            { x: 226, y: 128, ans: "consumer", hint: "This insect eats by sucking food from the hemlock." },
+            { x: 306, y: 64, ans: "consumer", hint: "This animal eats the beetle." },
+            { x: 320, y: 230, ans: "decomposer", hint: "This organism breaks down the dead log." }
+          ], extra: ["habitat"], caption: "Arrows show the way energy moves. The dashed arrow shows dead trees being broken down." }
+      ]}
+    ],
+    synth: { idea: "<p><b>Producers</b> (plants) make their own food using energy from the sun. <b>Consumers</b> eat other organisms. <b>Decomposers</b> break down dead things and return nutrients to the soil. A <b>food chain</b> shows one path of energy. A <b>food web</b> shows many food chains connected together.</p>",
+      vocab: [
+        ["producer", "a living thing that makes its own food using sunlight, like a plant"],
+        ["consumer", "a living thing that gets energy by eating other living things"],
+        ["decomposer", "a living thing that breaks down dead plants and animals, like a mushroom"],
+        ["food chain", "a model that shows one path of energy from the sun to producers to consumers"],
+        ["food web", "many food chains in an ecosystem connected together"],
+        ["energy transfer", "energy moving from one living thing to another when it is eaten"]
+      ]},
+    cool: [
+      { t: "mc", q: "A mushroom grows on a fallen hemlock log. What is its job in the ecosystem?", opts: ["Producer", "Consumer that hunts", "Decomposer", "Nonliving part"],
+        ans: 2, fb: [
+          "Mushrooms cannot make food from sunlight. They are not plants.",
+          "Mushrooms do not hunt. They get food from dead things.",
+          "Mushrooms break down dead logs and return nutrients to the soil.",
+          "Mushrooms are living things (fungi)."] }
+    ]
+  },
+  /* ---------------- Lesson 4 ---------------- */
+  {
+    title: "When One Thing Changes",
+    warm: "<p>Scientists studied a mountain stream before and after its hemlocks died. Before: deep shade, cold water and lots of brook trout. After: the gray trees lost their needles. More sunlight hits the stream. The water is warmer in summer.</p>",
+    goal: "use models to infer what happens to an ecosystem when one population changes.",
+    acts: [
+      { title: "Data from the stream", blocks: [
+        { t: "table", caption: "A mountain stream over time (example data based on real studies)", head: ["Year", "Hemlocks alive (out of 100)", "Summer water temperature (°F)", "Brook trout counted"], rows: [
+          ["2005", 95, 60, 120], ["2010", 60, 63, 90], ["2015", 25, 66, 55], ["2020", 10, 68, 40]] },
+        { t: "chart", type: "line", title: "Brook trout counted", labels: ["2005", "2010", "2015", "2020"], values: [120, 90, 55, 40], max: 150, step: 50, unit: "trout", xlabel: "Year", ylabel: "trout counted" },
+        { t: "mc", q: "What can you infer from the data?", opts: [
+            "The trout ate the hemlocks.",
+            "As hemlocks died, the stream got warmer and fewer brook trout lived there.",
+            "The water got colder each year.",
+            "Hemlocks and trout are not connected."],
+          ans: 1, fb: [
+            "Trout eat insects, not trees.",
+            "Fewer hemlocks means less shade, warmer water and fewer trout, which need cold water.",
+            "The temperature went up: 60, 63, 66, 68.",
+            "The data shows both going down together. The hemlocks shade the stream that the trout need."] }
+      ]},
+      { title: "A chain reaction", blocks: [
+        { t: "order", q: "Put the effects in order.", items: [
+            "Adelgids arrive and feed on hemlocks.",
+            "Hemlocks lose their needles and die.",
+            "More sunlight reaches the stream.",
+            "The stream water gets warmer.",
+            "Fewer brook trout can live there."],
+          hint: "Start with the cause: the insect. Then think about what each change leads to.",
+          done: "One change in an ecosystem can cause many other changes." },
+        { t: "multi", q: "Which effects might happen when many hemlocks die?", opts: [
+            "Birds that nest in hemlocks lose their homes.",
+            "Stream water gets warmer.",
+            "The sun gives off less energy.",
+            "Decomposers have more dead wood to break down.",
+            "Brook trout get more cold water."],
+          ans: [0, 1, 3], why: ["", "", "The sun is not changed by trees on Earth.", "", "Less shade makes the water warmer, not colder."],
+          done: "Plants and animals in an ecosystem are connected, so a change spreads." }
+      ]},
+      { title: "Bringing balance back", blocks: [
+        { t: "reveal", q: "How are people helping the hemlocks?", btn: "Tap to see", a: "<p>Scientists release tiny beetles that eat only adelgids. Where adelgids come from, predators like these keep them in check. Some hemlocks are also treated to protect them. The goal is to help the ecosystem become <b>stable</b> again.</p>" },
+        { t: "text", q: "Predict: If the beetles eat many adelgids, what will happen to the hemlocks and the trout?", rows: 3, ph: "If the beetles eat many adelgids, then…",
+          model: "Fewer adelgids would feed on the hemlocks, so more hemlocks could survive and grow. Then the stream would stay shady and cool, and more brook trout could live there.",
+          check: "Did you follow the chain from beetles to adelgids to hemlocks to trout?" }
+      ]}
+    ],
+    synth: { idea: "<p>In an ecosystem, plants and animals depend on each other and on nonliving things. When one population changes, like hemlocks dying, the effects spread through the food web. A <b>stable</b> ecosystem stays balanced over time. An insect brought in from far away, like the adelgid, can upset that balance.</p>",
+      vocab: [
+        ["stable", "staying balanced and not changing much over time"],
+        ["invasive species", "a living thing from somewhere else that spreads and harms an ecosystem"],
+        ["food web", "many food chains in an ecosystem connected together"],
+        ["community", "all the populations living together in one area"]
+      ]},
+    cool: [
+      { t: "mc", q: "In a food web, grass → rabbit → hawk. If a disease kills most of the rabbits, what will MOST likely happen?", opts: [
+          "The hawks will have more food.",
+          "The hawks will have less food, and the grass may grow more.",
+          "The grass will die.",
+          "Nothing will change."],
+        ans: 1, fb: [
+          "Hawks eat rabbits. Fewer rabbits means less food for hawks.",
+          "Hawks lose food, and fewer rabbits are eating the grass.",
+          "Fewer rabbits eat the grass, so the grass will probably do better.",
+          "Living things in a food web are connected, so a change spreads."] }
+    ]
+  }
+  ],
+  /* ---------------- Practice ---------------- */
+  practice: [
+    { t: "mc", q: "In a pond, algae make their own food using sunlight. What are algae?", opts: ["Producers", "Consumers", "Decomposers", "Abiotic"],
+      ans: 0, fb: [
+        "Living things that make their own food from sunlight are producers.",
+        "Consumers eat other living things. Algae make their own food.",
+        "Decomposers break down dead things. Algae make food from sunlight.",
+        "Algae are living, so they are biotic."] },
+    { t: "multi", q: "Which are decomposers?", opts: ["Mushroom", "Hawk", "Bacteria in the soil", "Oak tree", "Grasshopper"],
+      ans: [0, 2], why: ["", "Hawks eat other animals. They are consumers.", "", "Oak trees make their own food. They are producers.", "Grasshoppers eat plants. They are consumers."],
+      done: "Mushrooms and bacteria break down dead things." },
+    { t: "table", caption: "Kinds of animals found in a one-day survey (example data)", head: ["Ecosystem", "Kinds of animals found"], rows: [["Estuary", 120], ["Pond", 45], ["Grassland", 60], ["Mountain stream", 30]] },
+    { t: "chart", title: "Kinds of animals found", labels: ["Estuary", "Pond", "Grassland", "Stream"], values: [120, 45, 60, 30], max: 125, step: 25, unit: "kinds", ylabel: "kinds of animals" },
+    { t: "mc", q: "Which claim does the data support?", opts: [
+        "The mountain stream supports the most kinds of animals.",
+        "The estuary supports the most kinds of animals.",
+        "Ponds and estuaries have the same number of kinds.",
+        "Grasslands have no animals."],
+      ans: 1, fb: [
+        "The stream had the fewest: 30.",
+        "The estuary had 120 kinds, more than any other ecosystem.",
+        "The pond had 45 and the estuary had 120.",
+        "The grassland had 60 kinds of animals."] },
+    { t: "mc", q: "In a wetland, snakes eat frogs and frogs eat insects. If the snakes are removed, what will MOST likely happen first?", opts: [
+        "Frogs will decrease and insects will increase.",
+        "Frogs will increase, and then insects will decrease.",
+        "Insects will eat the frogs.",
+        "Nothing will change."],
+      ans: 1, fb: [
+        "Snakes eat frogs. With no snakes, more frogs survive.",
+        "More frogs survive, and more frogs eat more insects.",
+        "Frogs eat insects, not the other way around.",
+        "Removing a population changes the food web."] },
+    { t: "text", q: "Brook trout do not eat hemlock trees. Explain how hemlocks dying can still harm brook trout.", rows: 4, ph: "When hemlocks die…",
+      model: "Hemlocks shade the stream and keep the water cold. When the hemlocks die, more sunlight reaches the water and it gets warmer. Brook trout need cold water, so fewer trout can live there.",
+      check: "Did you connect shade, water temperature and trout?" },
+    { t: "mc", q: "Which is a terrestrial ecosystem?", opts: ["Salt marsh", "Grassland", "Lake", "Ocean"],
+      ans: 1, fb: [
+        "A salt marsh is flooded by tides. It is aquatic.",
+        "A grassland is on land, so it is terrestrial.",
+        "A lake is water. It is aquatic.",
+        "The ocean is water. It is aquatic."] }
+  ]
+});
+</script>
+</body>
+</html>

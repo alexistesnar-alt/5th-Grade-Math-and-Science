@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 6 Notebook: An EGGcellent Material — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="notes.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="page-wrap" id="nb"><noscript><p>This notebook needs JavaScript turned on. Ask your teacher for a paper copy.</p></noscript></main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="notes.js"></script>
+<script>
+/* Unit 6 notebook. To change a lesson, edit the words below (keep the quotes and commas). */
+NB.render({
+  key: "unit6", unit: 6,
+  title: "An EGGcellent Material",
+  lead: "Can you fry an egg outside on a hot day? How do heating and cooling change materials, and why does that matter?",
+  stds: [
+    ["PS.5.1.3", "Carry out investigations to compare how heating and cooling affect some materials and how this relates to their purpose and practical applications."]
+  ],
+  anchor: "<p>On very hot summer days, people sometimes crack an egg onto a sidewalk to see if it will fry. Can you really fry an egg outside? What does heating do to an egg, and to other materials?</p>",
+  lessons: [
+  /* ---------------- Lesson 1 ---------------- */
+  {
+    title: "Feel the Heat",
+    warm: "<p>It is 100°F outside. A student puts a chocolate square, a crayon, an ice cube, a pat of butter and a cracked raw egg in separate cups on a sunny sidewalk. After one hour, she comes back to check.</p>",
+    goal: "predict and compare how heating changes different materials.",
+    acts: [
+      { title: "Predict", blocks: [
+        { t: "text", q: "Predict what will happen to each item in the sun.", ph: "Chocolate: … Crayon: … Ice: … Butter: … Egg: …", rows: 4 },
+        { t: "table", caption: "About when each material starts to change", head: ["Material", "What happens", "Temperature (°F)"], rows: [
+          ["Ice", "melts", 32], ["Chocolate", "melts", 88], ["Butter", "melts", 93], ["Crayon wax", "melts", 130], ["Egg white", "turns white and solid (cooks)", 145]] },
+        { t: "chart", title: "Temperature where each material starts to change", labels: ["Ice", "Chocolate", "Butter", "Crayon", "Egg white"], values: [32, 88, 93, 130, 145], max: 160, step: 40, unit: "°F", ylabel: "°F" },
+        { t: "multi", q: "Use the table. If each material warmed up to 100°F, which ones would change?", opts: ["Ice", "Chocolate", "Butter", "Crayon wax", "Egg white"],
+          ans: [0, 1, 2], why: ["", "", "", "Crayon wax needs about 130°F to melt. That is hotter than 100°F.", "Egg white needs about 145°F to cook. That is hotter than 100°F."],
+          done: "Ice, chocolate and butter all change below 100°F." }
+      ]},
+      { title: "Heating does different things", blocks: [
+        { t: "reveal", q: "Why do the materials change at different temperatures?", btn: "Tap to see", a: "<p>Every material has its own temperature where it changes. Heating can make some solids <b>melt</b> into liquids, like ice, chocolate, butter and wax.</p><p>Heating can also change a material into something new. When an egg cooks, the clear, runny egg white turns white and solid. Heating also makes most materials get a tiny bit bigger.</p>" },
+        { t: "mc", q: "A raw egg is heated in a pan. The clear part turns white and solid. What happened?", opts: [
+            "The egg melted.",
+            "Heating changed the egg into a new, solid material.",
+            "The egg froze.",
+            "Nothing changed."],
+          ans: 1, fb: [
+            "Melting turns a solid into a liquid. The egg went from runny to solid.",
+            "Heating cooked the egg, and cooked egg white is a different material than raw egg white.",
+            "Freezing happens when things get very cold, not hot.",
+            "The egg white changed from clear and runny to white and solid."] }
+      ]}
+    ],
+    synth: { idea: "<p><b>Heating</b> changes materials. Some materials <b>melt</b> from solid to liquid when they get warm enough. Each material changes at its own temperature. Heating can also change a material into something new, like a cooked egg.</p>",
+      vocab: [
+        ["heating", "adding heat so something gets warmer"],
+        ["melting", "a solid changing into a liquid when it is heated"],
+        ["material", "what an object is made of, like wood, metal, plastic or wax"]
+      ]},
+    cool: [
+      { t: "mc", q: "Use the table. Which material melts at the lowest temperature?", opts: ["Butter", "Crayon wax", "Ice", "Chocolate"],
+        ans: 2, fb: [
+          "Butter melts at about 93°F. Look for a smaller number.",
+          "Crayon wax needs about 130°F. That is one of the highest.",
+          "Ice melts at 32°F, the lowest number in the table.",
+          "Chocolate melts at about 88°F. Look for a smaller number."] }
+    ]
+  },
+  /* ---------------- Lesson 2 ---------------- */
+  {
+    title: "Can It Go Back?",
+    warm: "<p>A student melts chocolate chips in a bowl and pours them into a heart-shaped mold. She puts the mold in the fridge. The next day, the chocolate is a solid heart.</p><p>Her brother fries an egg and puts it in the fridge. The next day, it is a cold cooked egg, not a raw one.</p>",
+    goal: "sort changes into ones that can be undone and ones that cannot.",
+    acts: [
+      { title: "Can it go back?", blocks: [
+        { t: "reveal", q: "What is the difference between the chocolate and the egg?", btn: "Tap to see", a: "<p>A <b>reversible change</b> can be undone. Melted chocolate can be cooled and become solid chocolate again.</p><p>An <b>irreversible change</b> cannot be undone. A cooked egg can never become a raw egg again, even if you cool it.</p>" },
+        { t: "sort", q: "Sort each change.", bins: ["Reversible (can be undone)", "Irreversible (cannot be undone)"], items: [
+          ["Chocolate melting", 0, "Cool melted chocolate and it becomes solid again."],
+          ["Water freezing into ice", 0, "Warm the ice and it becomes water again."],
+          ["Butter melting", 0, "Put melted butter in the fridge and it gets solid again."],
+          ["Crayon wax melting", 0, "Melted crayon hardens again when it cools."],
+          ["An egg cooking", 1, "A cooked egg can never become raw again."],
+          ["Bread toasting", 1, "You cannot turn toast back into soft bread."],
+          ["Popcorn popping", 1, "Popped corn cannot go back to a hard kernel."],
+          ["Clay baked in a kiln", 1, "Baked clay becomes hard pottery. Water will not turn it back into soft clay."],
+          ["Pancake batter cooking", 1, "A cooked pancake cannot turn back into runny batter."]
+        ]}
+      ]},
+      { title: "Melting and freezing", blocks: [
+        { t: "label", q: "Label the model.", svg: '<svg viewBox="0 0 400 290" role="img" aria-label="Model: ice and water change back and forth; a raw egg changes to a cooked egg one way"><defs><marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#1E2D4F"/></marker></defs><rect x="40" y="50" width="60" height="60" rx="8" fill="#DDEFFB" stroke="#7FB2D9" stroke-width="2"/><path d="M52 62 l14 0 M52 70 l8 0" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M290 40 L296 120 H344 L350 40" fill="#fff" stroke="#9AA2B1" stroke-width="2"/><path d="M293 72 L296 118 H344 L347 72 Z" fill="#6FA8DC"/><g stroke="#1E2D4F" stroke-width="2.5" fill="none" marker-end="url(#ah6)"><path d="M112 66 H276"/><path d="M276 100 H112"/><path d="M112 222 H276"/></g><path d="M276 252 H112" stroke="#9AA2B1" stroke-width="2" stroke-dasharray="5 5"/><text x="194" y="258" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="700" fill="#B42318" text-anchor="middle">✕</text><path d="M40 150 V158 H350 V150" fill="none" stroke="#9AA2B1" stroke-width="2"/><ellipse cx="70" cy="222" rx="34" ry="24" fill="#F6F1E3" stroke="#D9CFB4" stroke-width="2" opacity=".85"/><circle cx="70" cy="222" r="11" fill="#F2B632"/><ellipse cx="320" cy="222" rx="34" ry="24" fill="#fff" stroke="#9AA2B1" stroke-width="2"/><circle cx="320" cy="222" r="11" fill="#F2B632"/><g font-family="Inter,system-ui,sans-serif" font-size="12.5" fill="#1B2333" text-anchor="middle"><text x="70" y="132">Ice (solid)</text><text x="320" y="138">Water (liquid)</text><text x="70" y="264">Raw egg</text><text x="320" y="264">Cooked egg</text></g><g font-family="Inter,system-ui,sans-serif" font-size="11" fill="#5B6475" text-anchor="middle"><text x="236" y="58">heat</text><text x="236" y="118">cool</text><text x="236" y="214">heat</text></g></svg>',
+          spots: [
+            { x: 160, y: 66, ans: "melting", hint: "Heating ice turns it from solid to liquid." },
+            { x: 160, y: 100, ans: "freezing", hint: "Cooling water turns it from liquid to solid." },
+            { x: 195, y: 158, ans: "reversible change", hint: "Ice and water can change back and forth." },
+            { x: 160, y: 222, ans: "irreversible change", hint: "The ✕ shows the cooked egg cannot go back." }
+          ], extra: ["evaporation"], caption: "The ✕ on the dashed arrow means the change cannot go back." },
+        { t: "blanks", text: "When ice is heated, it {melts|Solid becomes liquid.}. When water is cooled enough, it {freezes|Liquid becomes solid.}. Melting and freezing are {reversible|They can be undone.} changes. Cooking an egg is an {irreversible|It cannot be undone.} change.",
+          extra: ["evaporates"] }
+      ]}
+    ],
+    synth: { idea: "<p>Some changes from heating and cooling are <b>reversible</b>: you can undo them, like melting and freezing. Others are <b>irreversible</b>: the material becomes something new, like a cooked egg, toast or popcorn.</p>",
+      vocab: [
+        ["reversible change", "a change that can be undone, like melting chocolate and letting it harden again"],
+        ["irreversible change", "a change that cannot be undone, like cooking an egg"],
+        ["melting", "a solid changing into a liquid when it is heated"],
+        ["freezing", "a liquid changing into a solid when it is cooled"],
+        ["cooling", "taking heat away so something gets colder"]
+      ]},
+    cool: [
+      { t: "mc", q: "Which change is irreversible?", opts: ["Ice melting", "Bread toasting", "Wax melting", "Water freezing"],
+        ans: 1, fb: [
+          "Melted ice can freeze again, so it is reversible.",
+          "Toast can never turn back into soft bread.",
+          "Melted wax hardens again when it cools, so it is reversible.",
+          "Ice can melt back into water, so it is reversible."] }
+    ]
+  },
+  /* ---------------- Lesson 3 ---------------- */
+  {
+    title: "Cooling Things Down",
+    warm: "<p>A family makes ice pops. They pour juice into a mold and put it in the freezer. By mistake, they also put a full glass bottle of water in the freezer. The next morning, the ice pops are solid, and the glass bottle has cracked.</p>",
+    goal: "compare how cooling changes materials and why it matters.",
+    acts: [
+      { title: "Why did the bottle crack?", blocks: [
+        { t: "text", q: "Why do you think the glass bottle cracked?", ph: "I think…", rows: 2 },
+        { t: "reveal", btn: "See the science", a: "<p>Most materials get a tiny bit smaller when they cool. Water is special. When water freezes into ice, it takes up <b>more</b> space. The ice pushed on the glass and cracked it.</p><p>That is why you should never freeze a full glass bottle, and why water pipes can burst in very cold weather.</p>" }
+      ]},
+      { title: "Cooling data", blocks: [
+        { t: "table", caption: "A cup of water in the freezer", head: ["Minutes in the freezer", "Temperature (°F)", "What it looks like"], rows: [
+          [0, 70, "liquid"], [30, 50, "liquid"], [60, 36, "liquid"], [90, 32, "ice starting to form"], [120, 32, "half ice"], [150, 25, "all ice"]] },
+        { t: "chart", type: "line", title: "Water cooling in a freezer", labels: ["0", "30", "60", "90", "120", "150"], values: [70, 50, 36, 32, 32, 25], max: 80, step: 20, unit: "°F", xlabel: "Minutes", ylabel: "°F" },
+        { t: "mc", q: "At what temperature did the water start to freeze?", opts: ["70°F", "50°F", "32°F", "25°F"],
+          ans: 2, fb: [
+            "At 70°F, the water was still liquid. That is room temperature.",
+            "At 50°F, the water was still liquid.",
+            "Ice started to form at 32°F. That is the freezing point of water.",
+            "At 25°F the water was already all ice. It started freezing earlier, at 32°F."] }
+      ]},
+      { title: "Cooling in real life", blocks: [
+        { t: "multi", q: "Which are ways people use cooling to change a material?", opts: [
+            "Freezing juice to make ice pops",
+            "Cooling melted metal in a mold to make a solid part",
+            "Cooling a cooked egg to make it raw again",
+            "Putting gelatin in the fridge so it sets",
+            "Letting melted candle wax harden in a jar"],
+          ans: [0, 1, 3, 4], why: ["", "", "Cooking an egg is irreversible. Cooling will not make it raw again.", "", ""],
+          done: "Cooling can turn liquids into solids we can use." }
+      ]}
+    ],
+    synth: { idea: "<p><b>Cooling</b> changes materials too. Liquids can <b>freeze</b> into solids, and melted materials like chocolate, wax and metal harden when they cool. Water takes up more space when it freezes, so it can crack containers and pipes.</p>",
+      vocab: [
+        ["cooling", "taking heat away so something gets colder"],
+        ["freezing", "a liquid changing into a solid when it is cooled"],
+        ["reversible change", "a change that can be undone"]
+      ]},
+    cool: [
+      { t: "mc", q: "Why should you NOT freeze a full glass bottle of water?", opts: [
+          "Ice is heavier than glass.",
+          "Water takes up more space when it freezes and can crack the glass.",
+          "Glass melts in the freezer.",
+          "Water cannot freeze in glass."],
+        ans: 1, fb: [
+          "The problem is not weight. It is space.",
+          "Ice takes up more space than liquid water, so it pushes on the glass.",
+          "Freezers are cold. Glass does not melt there.",
+          "Water can freeze in glass. That is how the bottle cracked."] }
+    ]
+  },
+  /* ---------------- Lesson 4 ---------------- */
+  {
+    title: "The Right Material for the Job",
+    warm: "<p>A cook picks a metal pan, not a plastic bowl, to fry an egg. Candle makers melt wax and pour it into molds. Workers leave small gaps between the slabs of a concrete sidewalk.</p>",
+    goal: "connect how heating and cooling affect materials to how we use them.",
+    acts: [
+      { title: "Why that material?", blocks: [
+        { t: "mc", q: "Why are frying pans made of metal and not plastic?", opts: [
+            "Metal is prettier.",
+            "Metal stays solid at stove temperatures, but plastic can melt.",
+            "Plastic is too heavy.",
+            "Metal makes the egg taste better."],
+          ans: 1, fb: [
+            "Looks do not matter much for cooking.",
+            "A pan has to stay solid when it gets very hot. Many plastics melt or soften.",
+            "Plastic is usually lighter than metal.",
+            "The pan’s job is to hold the food safely while it cooks, not to change the taste."] },
+        { t: "mc", q: "Workers leave small gaps between sidewalk slabs. Why?", opts: [
+            "So water can freeze in them",
+            "Concrete gets a little bigger when it heats up in summer, so the gaps give it room",
+            "To save concrete",
+            "So grass can grow"],
+          ans: 1, fb: [
+            "Water freezing in cracks can actually damage sidewalks.",
+            "Heating makes most materials get a little bigger. The gaps keep the slabs from pushing and cracking.",
+            "The gaps are planned for a reason, not to save material.",
+            "Grass sometimes grows there, but that is not why the gaps are made."] }
+      ]},
+      { title: "Melt it or keep it solid?", blocks: [
+        { t: "sort", q: "For each use, do we want the material to melt or soften, or to stay solid when hot?", bins: ["We want it to melt or soften", "We want it to stay solid when hot"], items: [
+          ["Candle wax poured into a mold", 0, "Candle makers melt wax so they can pour it into a shape."],
+          ["Chocolate for dipping strawberries", 0, "The chocolate must melt so you can dip, then it hardens again."],
+          ["Glass heated and blown into a vase", 0, "Glass makers heat glass until it is soft so they can shape it."],
+          ["A metal pot for boiling water", 1, "A pot must stay solid on a hot stove."],
+          ["A baked clay mug for hot cocoa", 1, "Baked clay stays hard when hot liquid is poured in."],
+          ["A concrete sidewalk", 1, "A sidewalk must stay solid on the hottest days."]
+        ]}
+      ]},
+      { title: "Back to the egg", blocks: [
+        { t: "table", caption: "Surface temperatures on a sunny 100°F afternoon (example data)", head: ["Surface", "Temperature (°F)"], rows: [
+          ["Grass", 95], ["Concrete sidewalk", 135], ["Blacktop parking lot", 150], ["Frying pan on a stove", 325]] },
+        { t: "text", q: "Can you fry an egg on the sidewalk? Make a claim and use evidence from both tables (Lesson 1 and this one).", rows: 4, ph: "Claim: … Evidence: … Reasoning: …",
+          model: "Probably not. Egg white needs about 145°F to turn white and solid, but the sidewalk was only about 135°F. The blacktop, at 150°F, might cook the egg slowly, but it would not fry like it does in a pan at 325°F.",
+          check: "Did you compare the egg’s temperature (145°F) to the surface temperatures?" }
+      ]}
+    ],
+    synth: { idea: "<p>People choose materials based on how they act when heated or cooled. We use materials that melt, like wax and chocolate, when we want to shape them. We use materials that stay solid when hot, like metal and baked clay, for pans and mugs. Knowing how a material changes helps us use it safely.</p>",
+      vocab: [
+        ["material", "what an object is made of"],
+        ["heating", "adding heat so something gets warmer"],
+        ["cooling", "taking heat away so something gets colder"],
+        ["irreversible change", "a change that cannot be undone"]
+      ]},
+    cool: [
+      { t: "mc", q: "A toy maker wants to shape plastic into a toy car. What should they do?", opts: [
+          "Freeze the plastic until it cracks",
+          "Heat the plastic until it is soft, put it in a mold, then let it cool",
+          "Cook the plastic like an egg so it can never change",
+          "Leave the plastic in the rain"],
+        ans: 1, fb: [
+          "Cracked plastic would not make a toy car shape.",
+          "Heating softens the plastic so it fills the mold. Cooling makes it hard again in the new shape.",
+          "Plastic is not like an egg. Heating it to soften it is reversible.",
+          "Rain will not change the shape of plastic."] }
+    ]
+  }
+  ],
+  /* ---------------- Practice ---------------- */
+  practice: [
+    { t: "mc", q: "Which is a reversible change?", opts: ["Burning wood", "Cooking a pancake", "Melting an ice pop", "Baking a cake"],
+      ans: 2, fb: [
+        "Burned wood turns to ash. It cannot go back.",
+        "A cooked pancake cannot turn back into batter.",
+        "A melted ice pop can be frozen again.",
+        "A baked cake cannot turn back into batter."] },
+    { t: "multi", q: "Which are irreversible changes?", opts: ["Toasting bread", "Freezing juice", "Frying an egg", "Melting butter", "Burning paper"],
+      ans: [0, 2, 4], why: ["", "Frozen juice can melt back into juice.", "", "Melted butter can harden again in the fridge.", ""],
+      done: "Toast, a fried egg and burned paper cannot go back to how they were." },
+    { t: "table", caption: "Minutes to melt in a sunny window (example data)", head: ["Material", "Minutes to melt"], rows: [["Ice cube", 12], ["Chocolate square", 18], ["Butter pat", 25], ["Crayon", "did not melt"]] },
+    { t: "chart", title: "Minutes to melt in a sunny window", labels: ["Ice", "Chocolate", "Butter"], values: [12, 18, 25], max: 30, step: 10, unit: "minutes", ylabel: "minutes" },
+    { t: "mc", q: "What can you conclude from the data?", opts: [
+        "The crayon melted fastest.",
+        "The ice melted fastest, and the crayon did not get hot enough to melt.",
+        "Butter melted before chocolate.",
+        "Everything melted at the same time."],
+      ans: 1, fb: [
+        "The table says the crayon did not melt.",
+        "Ice took 12 minutes, the shortest time. Crayon wax needs a higher temperature.",
+        "Chocolate (18 minutes) melted before butter (25 minutes).",
+        "The times are different: 12, 18 and 25 minutes."] },
+    { t: "mc", q: "A chocolate bunny melts in a hot car. Then it is put in the fridge. What will happen?", opts: [
+        "It will become a bunny shape again.",
+        "It will become solid again, but it will not be bunny-shaped.",
+        "It will stay liquid forever.",
+        "It will turn into a new substance."],
+      ans: 1, fb: [
+        "The melted chocolate lost its mold, so the bunny shape is gone.",
+        "Melting is reversible, so the chocolate hardens again, in whatever shape it is in.",
+        "Cooling makes melted chocolate solid again.",
+        "Melting chocolate does not make a new substance. It is still chocolate."] },
+    { t: "text", q: "Explain the difference between a reversible change and an irreversible change. Give one example of each.", rows: 4, ph: "A reversible change… An irreversible change…",
+      model: "A reversible change can be undone, like melting chocolate and then cooling it so it is solid again. An irreversible change cannot be undone, like cooking an egg. A cooked egg can never become raw again.",
+      check: "Did you explain both words and give an example for each?" },
+    { t: "mc", q: "Which material is the BEST choice for a pot used to boil water on a stove?", opts: ["Wax", "Chocolate", "Metal", "Ice"],
+      ans: 2, fb: [
+        "Wax melts at a low temperature. It would melt on the stove.",
+        "Chocolate melts at about 88°F. It would melt right away.",
+        "Metal stays solid at stove temperatures.",
+        "Ice would melt on a stove."] }
+  ]
+});
+</script>
+</body>
+</html>

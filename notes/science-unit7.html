@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 7 Notebook: Skateology — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="notes.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="page-wrap" id="nb"><noscript><p>This notebook needs JavaScript turned on. Ask your teacher for a paper copy.</p></noscript></main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="notes.js"></script>
+<script>
+/* Unit 7 notebook. To change a lesson, edit the words below (keep the quotes and commas). */
+NB.render({
+  key: "unit7", unit: 7,
+  title: "Skateology",
+  lead: "Why does a skateboarder fall when the board hits a speed bump? How do forces, mass and speed explain motion?",
+  stds: [
+    ["PS.5.2.1", "Carry out investigations to explain how factors such as gravity, friction, and change in mass affect the motion of objects."],
+    ["PS.5.2.2", "Use mathematics and computational thinking to infer the motion of an object (including position, direction, and speed)."],
+    ["Math link: NC.5.NBT.7", "Divide whole numbers and decimals to find speed (speed = distance ÷ time)."]
+  ],
+  anchor: "<p>A skateboarder rolls fast down a smooth sidewalk. Her front wheels hit a speed bump. The board stops almost right away, but she keeps going forward and tumbles onto the grass. Why did the board stop, but not the rider?</p>",
+  lessons: [
+  /* ---------------- Lesson 1 ---------------- */
+  {
+    title: "Pushes and Pulls",
+    warm: "<p>At a skate park, a skater pushes off the ground with one foot to start. She rolls down a ramp and speeds up. She drags her back foot to slow down. Then she rolls up the other side of the ramp, slows down and stops.</p>",
+    goal: "describe the forces that change how a skateboard moves.",
+    acts: [
+      { title: "What is a force?", blocks: [
+        { t: "reveal", q: "What makes the skateboard start, stop, speed up and slow down?", btn: "Tap to see", a: "<p>A <b>force</b> is a push or a pull. Forces can start motion, stop motion, speed it up, slow it down or change its direction.</p><p>Some forces need to touch (<b>contact forces</b>), like a foot pushing the ground. Some forces work without touching (<b>non-contact forces</b>), like gravity and magnetism.</p>" },
+        { t: "sort", q: "Sort the forces.", bins: ["Contact force (touching)", "Non-contact force (no touching)"], items: [
+          ["A foot pushing off the ground", 0, "The foot touches the ground to push. That is a contact force."],
+          ["Gravity pulling the skater down the ramp", 1, "Gravity pulls without touching. It is a non-contact force."],
+          ["Friction between the wheels and the ground", 0, "Friction happens where two surfaces touch."],
+          ["A magnet pulling a paper clip", 1, "Magnets can pull without touching. That is a non-contact force."],
+          ["Kicking a ball", 0, "Your foot touches the ball. That is a contact force."],
+          ["A dropped ball falling to the floor", 1, "Nothing touches the ball while it falls. Gravity pulls it down."]
+        ]}
+      ]},
+      { title: "Label the forces", blocks: [
+        { t: "label", q: "Label the forces and the motion on the skater.", svg: '<svg viewBox="0 0 400 260" role="img" aria-label="Skater on a board with four arrows to label"><defs><marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#1E2D4F"/></marker><marker id="ah7g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#B07C00"/></marker></defs><line x1="0" y1="220" x2="400" y2="220" stroke="#9AA2B1" stroke-width="3"/><rect x="150" y="194" width="110" height="9" rx="4" fill="#8B5A2B"/><circle cx="170" cy="210" r="8" fill="#333"/><circle cx="240" cy="210" r="8" fill="#333"/><g stroke="#1E2D4F" stroke-width="6" stroke-linecap="round" fill="none"><circle cx="205" cy="72" r="14" fill="#1E2D4F"/><path d="M205 88 V140 M205 140 L182 192 M205 140 L230 192 M205 102 L178 126 M205 102 L236 118"/></g><g stroke="#B07C00" stroke-width="3" fill="none" marker-end="url(#ah7g)"><path d="M205 150 V188"/><path d="M110 112 H186"/><path d="M250 236 H140"/></g><path d="M232 34 H352" stroke="#1E2D4F" stroke-width="3" stroke-dasharray="8 6" fill="none" marker-end="url(#ah7)"/></svg>',
+          spots: [
+            { x: 290, y: 34, ans: "direction of motion", hint: "The dashed arrow shows which way the skater is moving." },
+            { x: 90, y: 112, ans: "push", hint: "A friend’s hands touch the skater’s back and start her moving." },
+            { x: 228, y: 166, ans: "gravity", hint: "This arrow points straight down, toward Earth." },
+            { x: 270, y: 238, ans: "friction", hint: "This force acts where the wheels touch the ground, against the motion." }
+          ], extra: ["magnetism"], caption: "A friend pushes the skater from behind. Gold arrows are forces." },
+        { t: "mc", q: "The skater drags her foot on the ground to slow down. Which force slows her?", opts: ["Gravity", "Magnetism", "Friction", "A push from the wind"],
+          ans: 2, fb: [
+            "Gravity pulls down. On flat ground it does not slow her forward motion.",
+            "There are no magnets here.",
+            "Her shoe rubs on the ground. Friction works against the motion.",
+            "The question says she drags her foot. The rubbing is friction."] }
+      ]}
+    ],
+    synth: { idea: "<p>A <b>force</b> is a push or a pull. Contact forces, like pushing and friction, happen when objects touch. Non-contact forces, like gravity and magnetism, act without touching. Forces change an object’s <b>motion</b>: they can start it, stop it, speed it up, slow it down or change its direction.</p>",
+      vocab: [
+        ["force", "a push or a pull"],
+        ["motion", "a change in an object’s position; moving"],
+        ["gravity", "a pull toward the center of Earth"],
+        ["friction", "a force that slows motion when two surfaces rub together"],
+        ["non-contact force", "a force that acts without touching, like gravity or magnetism"],
+        ["direction", "the way something moves, like forward, left, up or north"]
+      ]},
+    cool: [
+      { t: "mc", q: "Which is a non-contact force?", opts: ["A hand pushing a door", "Gravity pulling an apple down", "Friction on a sliding box", "A bat hitting a ball"],
+        ans: 1, fb: [
+          "The hand touches the door. That is a contact force.",
+          "Gravity pulls the apple without touching it.",
+          "Friction happens where the box touches the floor.",
+          "The bat touches the ball. That is a contact force."] }
+    ]
+  },
+  /* ---------------- Lesson 2 ---------------- */
+  {
+    title: "Gravity and Friction",
+    warm: "<p>A class rolls the same skateboard down the same ramp onto three different surfaces: smooth tile, carpet and grass. They measure how far it rolls on each one.</p>",
+    goal: "investigate how gravity and friction affect how far a skateboard rolls.",
+    acts: [
+      { title: "Different surfaces", blocks: [
+        { t: "text", q: "Predict: On which surface will the board roll farthest? Why?", ph: "I predict… because…", rows: 2 },
+        { t: "table", caption: "Distance rolled after the same ramp", head: ["Surface", "Distance rolled (cm)"], rows: [["Smooth tile", 420], ["Carpet", 180], ["Grass", 65]] },
+        { t: "chart", title: "Distance rolled on each surface", labels: ["Tile", "Carpet", "Grass"], values: [420, 180, 65], max: 450, step: 150, unit: "cm", ylabel: "centimeters" },
+        { t: "mc", q: "Which BEST explains the data?", opts: [
+            "Grass has less friction, so the board went farthest on grass.",
+            "Rougher surfaces make more friction, so the board slows down sooner.",
+            "Gravity is stronger on tile.",
+            "The board was heavier on carpet."],
+          ans: 1, fb: [
+            "Grass had the shortest distance (65 cm). Grass is rough and has more friction.",
+            "Grass is roughest, so the board stopped soonest. Smooth tile has the least friction.",
+            "Gravity is the same on every surface in the classroom.",
+            "The class used the same board each time, so the mass did not change."] }
+      ]},
+      { title: "A steeper ramp", blocks: [
+        { t: "table", caption: "Ramp height and distance rolled on tile", head: ["Ramp height (cm)", "Distance rolled (cm)"], rows: [[10, 210], [20, 420], [30, 610]] },
+        { t: "mc", q: "What happens when the ramp is higher?", opts: [
+            "The board rolls a shorter distance.",
+            "Gravity speeds the board up more on the way down, so it rolls farther.",
+            "Friction goes away.",
+            "Nothing changes."],
+          ans: 1, fb: [
+            "The data shows the distance gets longer: 210, 420, 610 cm.",
+            "A higher ramp lets gravity speed the board up more, so it goes farther.",
+            "Friction is still there. The board still stops in the end.",
+            "The distance changed a lot as the ramp got higher."] },
+        { t: "reveal", q: "Is friction always bad?", btn: "Tap to see", a: "<p>No! Friction is helpful too. Grip tape on top of a skateboard adds friction so your feet do not slip. Brakes use friction to stop bikes. Without friction, you could not even walk.</p>" }
+      ]}
+    ],
+    synth: { idea: "<p><b>Gravity</b> pulls objects toward Earth, so a skateboard speeds up going down a ramp. <b>Friction</b> is a force between two surfaces rubbing together that slows motion. Rough surfaces make more friction than smooth ones.</p>",
+      vocab: [
+        ["gravity", "a pull toward the center of Earth"],
+        ["friction", "a force that slows motion when two surfaces rub together"],
+        ["distance", "how far something moves"]
+      ]},
+    cool: [
+      { t: "mc", q: "A skateboard rolling on flat ground slows down and stops by itself. Why?", opts: [
+          "Gravity pushes it backward.",
+          "Friction between the wheels and the ground slows it down.",
+          "It runs out of speed because it is tired.",
+          "Magnets in the ground pull it."],
+        ans: 1, fb: [
+          "Gravity pulls down, not backward, on flat ground.",
+          "Friction (and a little air) works against the motion until the board stops.",
+          "Objects do not get tired. A force must slow them down.",
+          "There are no magnets pulling the board."] }
+    ]
+  },
+  /* ---------------- Lesson 3 ---------------- */
+  {
+    title: "Mass Matters",
+    warm: "<p>A classmate gives an empty rolling cart one push, and it rolls far across the gym. Then two students sit on the cart. The classmate gives the same push. The cart barely moves.</p>",
+    goal: "investigate how a change in mass affects motion.",
+    acts: [
+      { title: "Same push, different mass", blocks: [
+        { t: "table", caption: "Distance after the same push", head: ["What is on the cart", "Total mass (kg)", "Distance rolled (m)"], rows: [["Nothing (empty cart)", 2, 8], ["A backpack", 12, 3], ["A student", 42, 1]] },
+        { t: "chart", title: "Distance rolled after the same push", labels: ["2 kg", "12 kg", "42 kg"], values: [8, 3, 1], max: 10, step: 2, unit: "m", xlabel: "Total mass", ylabel: "meters" },
+        { t: "mc", q: "What pattern do you see?", opts: [
+            "More mass makes the cart roll farther.",
+            "With the same push, more mass means the cart rolls a shorter distance.",
+            "Mass does not change anything.",
+            "The empty cart rolled the shortest distance."],
+          ans: 1, fb: [
+            "It is the opposite: the 42 kg cart went only 1 m.",
+            "As the mass went up (2, 12, 42 kg), the distance went down (8, 3, 1 m).",
+            "The distances are very different: 8 m, 3 m and 1 m.",
+            "The empty cart went the farthest: 8 m."] }
+      ]},
+      { title: "More mass, more force", blocks: [
+        { t: "reveal", q: "Why does mass matter?", btn: "Tap to see", a: "<p>The more <b>mass</b> an object has, the more force it takes to start it moving, stop it, or change its direction. A full shopping cart is harder to push <i>and</i> harder to stop than an empty one.</p>" },
+        { t: "blanks", text: "An object with more {mass|It means how much matter is in the object.} needs more {force|It is a push or a pull.} to start moving. It also needs more force to {stop|It is the opposite of start.} or to change its direction.",
+          extra: ["speed", "position"] },
+        { t: "mc", q: "Which would be the HARDEST to stop?", opts: ["A bike rolling at 10 mph", "A loaded truck rolling at 10 mph", "A skateboard rolling at 10 mph", "A soccer ball rolling at 10 mph"],
+          ans: 1, fb: [
+            "A bike has much less mass than a loaded truck.",
+            "They all move at the same speed, but the truck has the most mass, so it takes the most force to stop.",
+            "A skateboard has very little mass.",
+            "A soccer ball has very little mass."] }
+      ]},
+      { title: "Back to the speed bump", blocks: [
+        { t: "text", q: "Use what you know about forces: Why did the board stop at the speed bump, but the skater kept going?", rows: 4, ph: "The board stopped because… The skater kept going because…",
+          model: "The speed bump pushed back on the wheels, and that force stopped the board. Nothing pushed back on the skater’s body, so her body kept moving forward and she fell off. A skater with more mass would be even harder to stop.",
+          check: "Did you say which part had a force acting on it and which part did not?" }
+      ]}
+    ],
+    synth: { idea: "<p><b>Mass</b> affects motion. The more mass an object has, the more force it takes to start it, stop it or change its direction. At the speed bump, a force stopped the board, but no force stopped the rider, so she kept moving forward.</p>",
+      vocab: [
+        ["mass", "how much matter is in an object"],
+        ["force", "a push or a pull"],
+        ["motion", "moving; a change in position"]
+      ]},
+    cool: [
+      { t: "mc", q: "You give a soccer ball and a bowling ball the same kick. What will happen?", opts: [
+          "The bowling ball will go farther.",
+          "The soccer ball will go farther, because it has less mass.",
+          "They will go the same distance.",
+          "Neither ball will move."],
+        ans: 1, fb: [
+          "The bowling ball has more mass, so the same kick moves it less.",
+          "Less mass means the same force can move it farther.",
+          "They have very different masses, so the same kick moves them differently.",
+          "A kick is a force, so both balls will move at least a little."] }
+    ]
+  },
+  /* ---------------- Lesson 4 ---------------- */
+  {
+    title: "Position, Direction and Speed",
+    warm: "<p>A skater rolls along a straight path marked every meter, like a giant number line. A timer counts the seconds. At 0 seconds she is at the 0 m mark. At 2 seconds she is at the 6 m mark. At 4 seconds she is at the 12 m mark.</p>",
+    goal: "use math to describe where an object is, which way it moves and how fast it goes.",
+    acts: [
+      { title: "Position and direction", blocks: [
+        { t: "reveal", q: "What do position, direction and distance mean?", btn: "Tap to see", a: "<p><b>Position</b> is where an object is compared to a starting point, like “6 meters from the start.” <b>Direction</b> is which way it moves, like forward, east or toward the ramp. <b>Distance</b> is how far it moved.</p>" },
+        { t: "table", caption: "The skater’s position", head: ["Time (s)", "Position (m)"], rows: [[0, 0], [1, 3], [2, 6], [3, 9], [4, 12]] },
+        { t: "chart", type: "line", title: "The skater’s position over time", labels: ["0 s", "1 s", "2 s", "3 s", "4 s"], values: [0, 3, 6, 9, 12], max: 20, step: 5, unit: "m", xlabel: "Time", ylabel: "position (m)" },
+        { t: "num", q: "How many meters does the skater move each second?", unit: "meters", ans: 3,
+          wrong: [[12, "12 m is her position at 4 seconds. How far does she go in just 1 second? Look from 0 s to 1 s."], [4, "4 is the number of seconds. Look at how much her position changes each second."]],
+          miss: "Look at the table: 0, 3, 6, 9, 12. How much does it go up each second?", why: "Her position goes up by 3 m every second." },
+        { t: "num", q: "If she keeps the same speed, what will her position be at 6 seconds?", unit: "meters", ans: 18,
+          wrong: [[15, "15 m is where she will be at 5 seconds. Add 3 more meters for 6 seconds."], [24, "She moves 3 m each second, not 4. 6 × 3 = ?"]],
+          miss: "She moves 3 m every second. Keep the pattern going: 12, 15, …", why: "6 seconds × 3 m each second = 18 m." }
+      ]},
+      { title: "Speed = distance ÷ time", blocks: [
+        { t: "p", html: "<span class=\"work\">speed = distance ÷ time</span><br>Example: A skater rolls 20 meters in 4 seconds. 20 ÷ 4 = 5. Her speed is <b>5 meters per second</b> (5 m/s)." },
+        { t: "num", q: "A skater rolls 60 meters in 12 seconds. What is her speed?", unit: "m/s", ans: 5,
+          wrong: [[720, "You multiplied. Speed is distance ÷ time: 60 ÷ 12."], [0.2, "You divided time by distance. Put the distance first: 60 ÷ 12."], [48, "You subtracted. Speed is distance ÷ time."], [72, "You added. Speed is distance ÷ time."]],
+          miss: "Divide the distance by the time: 60 ÷ 12.", why: "60 ÷ 12 = 5 m/s." },
+        { t: "num", q: "A skater rolls 7.5 meters in 3 seconds. What is her speed?", unit: "m/s", ans: 2.5,
+          wrong: [[22.5, "You multiplied. Speed is distance ÷ time: 7.5 ÷ 3."], [0.4, "You divided time by distance. Put the distance first: 7.5 ÷ 3."], [25, "Check the decimal point. 7.5 ÷ 3 is a little more than 2."]],
+          miss: "Divide the distance by the time: 7.5 ÷ 3.", why: "7.5 ÷ 3 = 2.5 m/s." },
+        { t: "num", q: "A toy car rolls 12.6 meters in 6 seconds. What is its speed?", unit: "m/s", ans: 2.1,
+          wrong: [[75.6, "You multiplied. Speed is distance ÷ time: 12.6 ÷ 6."], [21, "Check the decimal point. 12.6 ÷ 6 is about 2, not 20."], [2.01, "Check your division: 6 × 2.1 = 12.6."]],
+          miss: "Divide the distance by the time: 12.6 ÷ 6.", why: "12.6 ÷ 6 = 2.1 m/s." }
+      ]},
+      { title: "Who is fastest?", blocks: [
+        { t: "table", caption: "Three skaters", head: ["Skater", "Distance (m)", "Time (s)"], rows: [["Skater A", 30, 6], ["Skater B", 24, 3], ["Skater C", 45, 9]] },
+        { t: "mc", q: "Which skater is fastest?", opts: ["Skater A", "Skater B", "Skater C", "They are all the same speed."],
+          ans: 1, fb: [
+            "Skater A: 30 ÷ 6 = 5 m/s. Check the others.",
+            "Skater B: 24 ÷ 3 = 8 m/s. That is faster than A and C (5 m/s each).",
+            "Skater C went the farthest but took the longest. 45 ÷ 9 = 5 m/s.",
+            "A and C are both 5 m/s, but B is 24 ÷ 3 = 8 m/s."] }
+      ]}
+    ],
+    synth: { idea: "<p><b>Position</b> tells where an object is. <b>Direction</b> tells which way it moves. <b>Speed</b> tells how fast: speed = distance ÷ time. By finding patterns in data, we can predict where a moving object will be later.</p>",
+      vocab: [
+        ["position", "where an object is, compared to a starting point"],
+        ["direction", "the way an object moves"],
+        ["speed", "how fast an object moves; distance ÷ time"],
+        ["distance", "how far an object moves"]
+      ]},
+    cool: [
+      { t: "num", q: "A skater rolls 36 meters in 4 seconds. What is her speed?", unit: "m/s", ans: 9,
+        wrong: [[144, "You multiplied. Speed is distance ÷ time: 36 ÷ 4."], [32, "You subtracted. Speed is distance ÷ time."]],
+        miss: "Divide: 36 ÷ 4.", why: "36 ÷ 4 = 9 m/s." },
+      { t: "mc", q: "Two skaters each roll 40 meters. Skater A takes 8 seconds. Skater B takes 10 seconds. Who is faster?", opts: ["Skater A", "Skater B", "They are the same speed.", "You cannot tell."],
+        ans: 0, fb: [
+          "A covers the same distance in less time: 40 ÷ 8 = 5 m/s.",
+          "B takes longer, so B is slower: 40 ÷ 10 = 4 m/s.",
+          "Same distance but different times means different speeds.",
+          "You can tell! Divide distance by time for each skater."] }
+    ]
+  }
+  ],
+  /* ---------------- Practice ---------------- */
+  practice: [
+    { t: "mc", q: "Which force pulls a skater down a ramp?", opts: ["Friction", "Gravity", "Magnetism", "A push"],
+      ans: 1, fb: [
+        "Friction slows the skater. It does not pull her down the ramp.",
+        "Gravity pulls everything toward Earth, so the skater speeds up going down.",
+        "There are no magnets here.",
+        "Nobody is pushing. The skater moves downhill on her own because of gravity."] },
+    { t: "multi", q: "Which would make a rolling skateboard slow down?", opts: ["Rolling onto grass", "Rolling uphill", "Dragging a foot on the ground", "Rolling down a steeper ramp", "Rolling onto smooth tile"],
+      ans: [0, 1, 2], why: ["", "", "", "A steeper ramp makes the board speed up, because gravity pulls it downhill.", "Smooth tile has little friction. The board keeps rolling."],
+      done: "Friction (grass, a dragging foot) and gravity going uphill both slow the board." },
+    { t: "table", caption: "Position of a toy car", head: ["Time (s)", "Position (m)"], rows: [[0, 10], [2, 8], [4, 6], [6, 4]] },
+    { t: "chart", type: "line", title: "Position of a toy car", labels: ["0 s", "2 s", "4 s", "6 s"], values: [10, 8, 6, 4], max: 12, step: 3, unit: "m", xlabel: "Time", ylabel: "position (m)" },
+    { t: "mc", q: "Use the data. Which statement describes the car’s motion?", opts: [
+        "It is moving away from the 0 m mark.",
+        "It is moving toward the 0 m mark.",
+        "It is not moving.",
+        "It is speeding up."],
+      ans: 1, fb: [
+        "Its position number is getting smaller (10, 8, 6, 4), so it is getting closer to 0.",
+        "Its position goes from 10 m down to 4 m, so it is moving back toward the 0 m mark.",
+        "Its position changes, so it is moving.",
+        "It moves 2 m every 2 seconds. Its speed stays the same."] },
+    { t: "num", q: "What is the toy car’s speed? (Hint: how far does it move in 2 seconds?)", unit: "m/s", ans: 1,
+      wrong: [[2, "The car moves 2 meters every 2 seconds. Divide: 2 ÷ 2."], [6, "6 m is the total distance in 6 seconds. Divide: 6 ÷ 6."]],
+      miss: "Find distance ÷ time. From 0 s to 6 s it moves from 10 m to 4 m.", why: "It moves 6 m in 6 s. 6 ÷ 6 = 1 m/s." },
+    { t: "num", q: "A runner goes 100 meters in 12.5 seconds. What is the runner’s speed?", unit: "m/s", ans: 8,
+      wrong: [[1250, "You multiplied. Speed is distance ÷ time: 100 ÷ 12.5."], [0.125, "You divided time by distance. Put the distance first."], [80, "Check the decimal point. 12.5 × 8 = 100."]],
+      miss: "Divide: 100 ÷ 12.5. Try thinking: 12.5 × ? = 100.", why: "12.5 × 8 = 100, so 100 ÷ 12.5 = 8 m/s." },
+    { t: "mc", q: "Students push a wagon with the same force each time. Which wagon will roll the shortest distance?", opts: ["An empty wagon", "A wagon with 1 brick", "A wagon with 3 bricks", "They will all roll the same."],
+      ans: 2, fb: [
+        "The empty wagon has the least mass, so it will roll the farthest.",
+        "1 brick adds some mass, but 3 bricks add more.",
+        "The most mass needs the most force. With the same push, it rolls the shortest distance.",
+        "Different masses move differently with the same push."] },
+    { t: "text", q: "Explain two ways to make a skateboard roll farther after one push.", rows: 3, ph: "One way… Another way…",
+      model: "1) Roll on a smoother surface, like tile, so there is less friction. 2) Use less mass (take off a heavy backpack), so the same push moves it farther. You could also start from the top of a ramp so gravity speeds it up.",
+      check: "Did you connect each idea to friction, mass or gravity?" }
+  ]
+});
+</script>
+</body>
+</html>

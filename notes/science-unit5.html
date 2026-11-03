@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 5 Notebook: The Green Lady — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="notes.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="page-wrap" id="nb"><noscript><p>This notebook needs JavaScript turned on. Ask your teacher for a paper copy.</p></noscript></main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="notes.js"></script>
+<script>
+/* Unit 5 notebook. To change a lesson, edit the words below (keep the quotes and commas). */
+NB.render({
+  key: "unit5", unit: 5,
+  title: "The Green Lady and Where Did It Come From? Where Did It Go?",
+  lead: "Why did the Statue of Liberty turn green? Why does burning steel wool get heavier? Where does matter come from, and where does it go?",
+  stds: [
+    ["PS.5.1.1", "Carry out investigations to compare the weight of objects before and after an interaction."],
+    ["PS.5.1.2", "Carry out investigations to explain whether the mixing of two or more substances results in new substances."]
+  ],
+  anchor: "<p>When the Statue of Liberty was put up in New York Harbor in 1886, her copper skin was shiny reddish-brown, like a new penny. Within about 30 years, she had turned green.</p><p>In a classroom, a teacher burns a pad of steel wool on a scale. The steel wool glows orange, and the scale reading goes <b>up</b>. Where did the green come from? Where did the extra weight come from?</p>",
+  lessons: [
+  /* ---------------- Lesson 1 ---------------- */
+  {
+    title: "Observing Substances",
+    warm: "<p>Picture two pennies side by side. One is brand new: shiny, orange-brown and smooth. The other is very old: dull and dark brown, with green spots around the edges.</p>",
+    goal: "describe substances using their properties and two kinds of data.",
+    acts: [
+      { title: "Describe it", blocks: [
+        { t: "text", q: "Write three properties you could use to describe a penny.", ph: "1. … 2. … 3. …", rows: 3 },
+        { t: "reveal", btn: "See the science", a: "<p>A <b>substance</b> is one kind of matter, like copper, water or salt. A <b>property</b> is something you can observe or measure about a substance, like its color, shape, texture, hardness, smell, whether a magnet pulls on it, or its mass.</p>" }
+      ]},
+      { title: "Two kinds of data", blocks: [
+        { t: "p", html: "<b>Qualitative data</b> describes with words. <b>Quantitative data</b> uses numbers and units." },
+        { t: "sort", q: "Sort each observation.", bins: ["Qualitative (words)", "Quantitative (numbers)"], items: [
+          ["The penny is shiny.", 0, "“Shiny” is a word that describes. There is no number."],
+          ["The penny has a mass of 2.5 grams.", 1, "This uses a number and a unit (grams)."],
+          ["The steel wool is gray and fuzzy.", 0, "Color and texture are described with words."],
+          ["The water is 20°C.", 1, "This is a measured number with a unit."],
+          ["The liquid smells like vinegar.", 0, "A smell is described with words."],
+          ["The block is 4 centimeters long.", 1, "This is a measured number with a unit."],
+          ["The mixture turned blue.", 0, "A color change is described with words."],
+          ["The scale reads 105 grams.", 1, "A scale reading is a number."]
+        ]}
+      ]},
+      { title: "Mass and weight", blocks: [
+        { t: "reveal", q: "What is the difference between mass and weight?", btn: "Tap to see", a: "<p><b>Mass</b> is how much matter (stuff) is in an object. <b>Weight</b> is how hard gravity pulls on that matter. On Earth, more mass means more weight. In class we use a balance or scale and measure in grams.</p>" },
+        { t: "mc", q: "Which is quantitative data about a copper sheet?", opts: ["It is reddish-brown.", "It feels smooth.", "It has a mass of 50 grams.", "It looks shiny."],
+          ans: 2, fb: [
+            "Color is described with a word, so it is qualitative.",
+            "“Smooth” describes texture with a word. That is qualitative.",
+            "50 grams is a measured number. That is quantitative.",
+            "“Shiny” is a describing word. That is qualitative."] }
+      ]}
+    ],
+    synth: { idea: "<p>Substances can be described by their <b>properties</b>. <b>Qualitative data</b> uses words, like color or smell. <b>Quantitative data</b> uses numbers, like mass in grams. Scientists collect both kinds of data before and after an interaction to see what changed.</p>",
+      vocab: [
+        ["substance", "one kind of matter, like copper, water or salt"],
+        ["property", "something you can observe or measure about a substance"],
+        ["qualitative data", "observations that use words, like color, smell or texture"],
+        ["quantitative data", "observations that use numbers, like 25 grams"],
+        ["mass", "the amount of matter in an object, measured in grams"],
+        ["weight", "how hard gravity pulls on an object"]
+      ]},
+    cool: [
+      { t: "mc", q: "“The steel wool weighs 20 grams.” What kind of data is this?", opts: ["Qualitative", "Quantitative", "A prediction", "A property that cannot be measured"],
+        ans: 1, fb: [
+          "Qualitative data uses words. This sentence has a number.",
+          "It uses a number and a unit, so it is quantitative.",
+          "This is a measurement, not a guess.",
+          "Weight can be measured. It was measured with a scale."] }
+    ]
+  },
+  /* ---------------- Lesson 2 ---------------- */
+  {
+    title: "Mix It Up: New Substance or Not?",
+    warm: "<p>A class mixes things in clear cups.</p><p>Cup 1: salt and water. The salt seems to disappear.<br>Cup 2: sand and iron filings. You can still see both.<br>Cup 3: baking soda and vinegar. It fizzes and bubbles fast, and the cup feels cold.</p>",
+    goal: "decide whether mixing substances makes a new substance.",
+    acts: [
+      { title: "Clues to look for", blocks: [
+        { t: "text", q: "Which cup do you think made a new substance? What is your evidence?", ph: "I think cup… because…", rows: 2 },
+        { t: "reveal", btn: "See the clues", a: "<p><b>Clues that a new substance formed (a chemical change):</b> bubbles of gas when no gas was added, a new color, light, a big temperature change, a new smell, or a solid forming when two liquids mix.</p><p>If the substances keep their own properties and can be separated, <b>no new substance formed</b>. That is a <b>physical change</b>.</p>" }
+      ]},
+      { title: "Sort the changes", blocks: [
+        { t: "sort", q: "Did a new substance form?", bins: ["Physical change (no new substance)", "Chemical change (new substance)"], items: [
+          ["Salt dissolving in water", 0, "The salt is still there. If the water evaporates, the salt is left behind."],
+          ["Sand mixed with iron filings", 0, "A magnet can pull the iron back out. Both keep their properties."],
+          ["Baking soda and vinegar fizzing", 1, "The bubbles are a new gas (carbon dioxide). A new substance formed."],
+          ["An iron nail rusting", 1, "Rust is a new, flaky, reddish substance. It is not iron anymore."],
+          ["Copper turning green", 1, "The green coating is a new substance made from copper and things in the air."],
+          ["Ice melting", 0, "Melted ice is still water. Only its state changed."],
+          ["Paper burning", 1, "Burning makes ash, smoke and gases. These are new substances."],
+          ["Cutting paper into pieces", 0, "The pieces are still paper. Only the size and shape changed."],
+          ["Milk going sour", 1, "Sour milk smells and tastes different. New substances formed."]
+        ]}
+      ]},
+      { title: "What about dissolving?", blocks: [
+        { t: "blanks", text: "When salt {dissolves|It breaks into pieces too tiny to see and spreads through the water.} in water, it seems to disappear. But it is still there. If the water {evaporates|The water turns into a gas and leaves.}, the salt is left behind. So dissolving is a {physical change|No new substance forms.}. When baking soda and vinegar make bubbles of gas, a new {substance|It means one kind of matter.} forms, so it is a {chemical change|A new substance forms.}.",
+          extra: ["condenses", "property"] }
+      ]}
+    ],
+    synth: { idea: "<p>Sometimes mixing substances makes a <b>new substance</b>. That is a chemical change. Clues include a gas, a new color, light or a temperature change. Other times the substances keep their properties and can be separated, like salt dissolving in water. That is a physical change. The Statue of Liberty’s green coating is a new substance, so it formed by a chemical change.</p>",
+      vocab: [
+        ["physical change", "a change in size, shape or state where no new substance forms"],
+        ["chemical change", "a change that makes a new substance"],
+        ["dissolve", "to break apart into tiny pieces and mix evenly into a liquid, like sugar in water"],
+        ["interaction", "when two or more things act on each other, like substances mixing"],
+        ["substance", "one kind of matter"]
+      ]},
+    cool: [
+      { t: "mc", q: "Sugar dissolves in a cup of tea. Did a new substance form?", opts: [
+          "Yes, because the sugar disappeared.",
+          "No, the sugar is still there. It is a physical change.",
+          "Yes, because the tea got hotter.",
+          "No, because sugar cannot dissolve."],
+        ans: 1, fb: [
+          "Dissolved sugar is still there. You can taste it, and you could get it back by evaporating the water.",
+          "The tea tastes sweet because the sugar is still there. Dissolving is a physical change.",
+          "Adding sugar does not make tea hotter.",
+          "Sugar does dissolve in tea. It just does not make a new substance."] }
+    ]
+  },
+  /* ---------------- Lesson 3 ---------------- */
+  {
+    title: "Weigh It Before and After",
+    warm: "<p>A student puts baking soda and vinegar in a zip-top bag but keeps them apart. The whole bag weighs 150 grams on a scale. She seals the bag. Then she mixes them. The bag fizzes and puffs up with gas.</p>",
+    goal: "compare the weight of substances before and after they interact.",
+    acts: [
+      { title: "Predict", blocks: [
+        { t: "mc", q: "Predict: What will the sealed bag weigh after mixing?", opts: ["More than 150 grams", "Exactly 150 grams", "Less than 150 grams"],
+          ans: 1, fb: [
+            "Nothing got into the sealed bag, so there is no extra matter to add weight.",
+            "The bag is sealed, so no matter can get in or out. The gas is new, but it is made from the matter that was already in the bag.",
+            "The gas is still trapped inside the sealed bag. It has mass, so nothing was lost."] }
+      ]},
+      { title: "Closed or open?", blocks: [
+        { t: "table", caption: "Results from four investigations", head: ["Investigation", "Before (g)", "After (g)"], rows: [
+          ["Sealed bag: baking soda + vinegar", 150, 150],
+          ["Open cup: baking soda + vinegar", 150, 146],
+          ["Ice melting in a closed cup", 80, 80],
+          ["100 g water + 10 g salt, stirred until dissolved", 110, 110]] },
+        { t: "mc", q: "Why did the open cup lose 4 grams?", opts: [
+            "The matter was destroyed.",
+            "The gas escaped into the air. Gas has mass too.",
+            "The vinegar got lighter by itself.",
+            "The scale was broken."],
+          ans: 1, fb: [
+            "Matter is never destroyed. It went somewhere.",
+            "The cup was open, so the gas left the cup. The scale could not weigh it anymore.",
+            "The vinegar reacted with the baking soda and made a gas that floated away.",
+            "The scale worked for the other tests. The open cup let gas escape."] },
+        { t: "num", q: "A student pours 10 grams of salt into 100 grams of water. The salt dissolves. What is the mass of the salt water?", unit: "grams", ans: 110,
+          wrong: [[100, "The salt did not disappear. It is still in the water, so its mass still counts. Add 100 + 10."], [90, "You subtracted. Nothing left the cup, so add: 100 + 10."]],
+          miss: "Add the mass of the water and the mass of the salt.", why: "100 g + 10 g = 110 g. Dissolving does not change the total mass." }
+      ]},
+      { title: "Conservation of mass", blocks: [
+        { t: "blanks", text: "In a {closed system|Nothing can get in or out.}, the mass before an interaction equals the mass after. Matter is not created or destroyed. This is called {conservation of mass|It is the big idea of this lesson.}. In an open container, a {gas|Bubbles are made of this.} can escape, so the scale shows less mass.",
+          extra: ["solid", "chemical change"] }
+      ]}
+    ],
+    synth: { idea: "<p>Matter is not created or destroyed in an interaction. In a closed system, the total mass before equals the total mass after. This is <b>conservation of mass</b>. If a container is open, gas can escape (or come in from the air), so the scale reading can change.</p>",
+      vocab: [
+        ["conservation of mass", "matter is not created or destroyed, so total mass stays the same in a closed system"],
+        ["interaction", "when two or more things act on each other"],
+        ["mass", "the amount of matter in an object"],
+        ["weight", "how hard gravity pulls on an object"]
+      ]},
+    cool: [
+      { t: "num", q: "A closed jar holds 40 grams of water and 5 grams of sugar. After the sugar dissolves, what is the total mass?", unit: "grams", ans: 45,
+        wrong: [[40, "The sugar is still in the jar, so its mass counts. Add 40 + 5."], [35, "You subtracted. Nothing left the closed jar, so add."]],
+        miss: "Add the water and the sugar: 40 + 5.", why: "40 g + 5 g = 45 g. In a closed jar, mass is conserved." }
+    ]
+  },
+  /* ---------------- Lesson 4 ---------------- */
+  {
+    title: "Back to the Green Lady",
+    warm: "<p>Back to our scale. A 20-gram pad of steel wool burns and glows orange. When it cools, it is darker and crumbly. The scale now reads 22 grams.</p>",
+    goal: "explain where the extra mass came from and why the statue turned green.",
+    acts: [
+      { title: "Where did the mass come from?", blocks: [
+        { t: "text", q: "The steel wool gained 2 grams. Where do you think the extra mass came from?", ph: "I think the extra mass came from…", rows: 2 },
+        { t: "reveal", btn: "See the science", a: "<p>Steel wool is made mostly of iron. When it burns, the iron joins with <b>oxygen from the air</b>. Together they make a new substance, iron oxide.</p><p>The oxygen was always there in the air. It just was not on the scale before. Now it is part of the steel wool, so the scale reads more. No matter was created.</p>" },
+        { t: "mc", q: "Was the burning steel wool a closed system?", opts: [
+            "Yes, because it was on a scale",
+            "No, because oxygen from the air could get to it",
+            "Yes, because nothing was added",
+            "No, because the scale was open"],
+          ans: 1, fb: [
+            "Being on a scale does not make it closed. Air could reach the steel wool.",
+            "The steel wool was open to the air, so oxygen could join it and add mass.",
+            "Something was added: oxygen from the air.",
+            "The scale itself does not matter. What matters is that air could reach the steel wool."] }
+      ]},
+      { title: "The Green Lady", blocks: [
+        { t: "reveal", q: "Why did the Statue of Liberty turn green?", btn: "Tap to see", a: "<p>The statue’s copper skin interacted with oxygen, water and other substances in the air for many years. They formed a new green substance called a <b>patina</b>. That is a chemical change. The patina even helps protect the copper underneath.</p>" },
+        { t: "order", q: "Put the statue’s story in order.", items: [
+            "1886: a shiny, penny-colored copper statue",
+            "Copper interacts with oxygen and water in the air",
+            "The copper turns dull and dark brown",
+            "Over many years, a green patina forms"],
+          hint: "Copper first darkens, like an old penny. The green takes many years.",
+          done: "The green patina is a new substance made from the copper and substances in the air." },
+        { t: "multi", q: "Which are chemical changes?", opts: ["Copper turning green", "Steel wool burning", "Ice melting", "An iron nail rusting", "Salt dissolving in water"],
+          ans: [0, 1, 3], why: ["", "", "Melted ice is still water. No new substance formed.", "", "Dissolved salt is still salt. You can get it back by evaporating the water."],
+          done: "Each of these made a new substance." }
+      ]},
+      { title: "Explain it", blocks: [
+        { t: "text", q: "Explain where the matter in the green patina came from.", rows: 4, ph: "The matter came from…",
+          model: "Some of it came from the copper of the statue, and some came from the air: oxygen, water and other substances. They joined to make a new substance. Matter was not created. It came from substances that were already there.",
+          check: "Did you name both the copper and the air?" }
+      ]}
+    ],
+    synth: { idea: "<p>When substances interact, matter is not created or destroyed. It changes form. The steel wool got heavier because oxygen from the air joined it. The Statue of Liberty turned green because copper interacted with substances in the air to make a new substance. Both are chemical changes.</p>",
+      vocab: [
+        ["chemical change", "a change that makes a new substance"],
+        ["conservation of mass", "matter is not created or destroyed"],
+        ["qualitative data", "observations that use words, like “turned green”"],
+        ["quantitative data", "observations that use numbers, like “22 grams”"]
+      ]},
+    cool: [
+      { t: "mc", q: "An iron nail is left outside and rusts. The rusty nail has more mass than before. Why?", opts: [
+          "Rust is made of nothing, so it adds mass.",
+          "Oxygen and water from the air joined with the iron.",
+          "The nail grew like a plant.",
+          "Rust is lighter than iron."],
+        ans: 1, fb: [
+          "Matter cannot come from nothing. The extra mass came from the air.",
+          "Matter from the air joined the iron to make rust, so the mass went up.",
+          "Nails are not alive and cannot grow.",
+          "The rusty nail gained mass, because matter from the air joined it."] }
+    ]
+  }
+  ],
+  /* ---------------- Practice ---------------- */
+  practice: [
+    { t: "mc", q: "An ice cube in a sealed jar has a mass of 200 grams. The ice melts. What is the mass now?", opts: ["Less than 200 grams", "200 grams", "More than 200 grams", "0 grams"],
+      ans: 1, fb: [
+        "The jar is sealed, so no water can escape. Melting does not lose matter.",
+        "Melting is a physical change, and the jar is closed. Mass stays the same.",
+        "Nothing was added to the jar.",
+        "The water is still in the jar. It just changed from solid to liquid."] },
+    { t: "mc", q: "A fizzy tablet is dropped into an open cup of water. Before: 120 grams. After the fizzing stops: 117 grams. What BEST explains this?", opts: [
+        "Matter was destroyed.",
+        "Gas bubbles escaped into the air.",
+        "The water got heavier.",
+        "The tablet was not there."],
+      ans: 1, fb: [
+        "Matter is not destroyed. It went somewhere.",
+        "The cup was open, so the gas from the bubbles left the cup.",
+        "The mass went down, not up.",
+        "The tablet was in the cup, and it made a gas."] },
+    { t: "table", caption: "Mass of a sealed bottle during a reaction", head: ["Minute", "Mass (g)"], rows: [[0, 250], [2, 250], [4, 250], [6, 250]] },
+    { t: "chart", type: "line", title: "Mass of the sealed bottle", labels: ["0", "2", "4", "6"], values: [250, 250, 250, 250], min: 200, max: 300, step: 25, unit: "grams", xlabel: "Minute", ylabel: "grams" },
+    { t: "mc", q: "What does the data show?", opts: [
+        "The mass went up as gas formed.",
+        "The mass stayed the same because the bottle was sealed.",
+        "The mass went down as gas escaped.",
+        "No reaction happened, because the mass did not change."],
+      ans: 1, fb: [
+        "Every reading is 250 grams. It did not go up.",
+        "In a closed system, mass is conserved, even when a new substance forms.",
+        "The bottle was sealed, so no gas escaped. Every reading is 250 grams.",
+        "A reaction can happen without changing the total mass in a closed system."] },
+    { t: "multi", q: "Which are clues that a new substance may have formed?", opts: ["Gas bubbles appear", "A new color appears", "The object is cut into pieces", "Light is given off", "The solid dissolves in water"],
+      ans: [0, 1, 3], why: ["", "", "Cutting changes size and shape, but makes no new substance.", "", "Dissolving is a physical change. The substance is still there."],
+      done: "Gas, a new color and light are clues of a chemical change." },
+    { t: "num", q: "A student mixes 30 grams of iron filings with 50 grams of sand. What is the mass of the mixture?", unit: "grams", ans: 80,
+      wrong: [[20, "You subtracted. Mixing does not remove any matter, so add 30 + 50."]],
+      miss: "Add the two masses: 30 + 50.", why: "30 g + 50 g = 80 g. A magnet could even separate them again." },
+    { t: "text", q: "A student says, “Burning steel wool creates new matter, because it gets heavier.” Explain the mistake.", rows: 4, ph: "The student is wrong because…",
+      model: "Matter is not created. The steel wool gets heavier because oxygen from the air joins the iron to make a new substance. The oxygen was already there, just not on the scale.",
+      check: "Did you say where the extra mass came from?" },
+    { t: "mc", q: "Which observation is qualitative?", opts: ["The mixture has a mass of 75 g.", "The solution is cloudy and white.", "The water is 22°C.", "The bubbles lasted 30 seconds."],
+      ans: 1, fb: [
+        "75 g is a number, so it is quantitative.",
+        "“Cloudy and white” describes with words, so it is qualitative.",
+        "22°C is a number, so it is quantitative.",
+        "30 seconds is a number, so it is quantitative."] }
+  ]
+});
+</script>
+</body>
+</html>

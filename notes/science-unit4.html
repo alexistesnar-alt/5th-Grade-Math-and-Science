@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 4 Notebook: The Great Smoky Mountains — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="notes.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="page-wrap" id="nb"><noscript><p>This notebook needs JavaScript turned on. Ask your teacher for a paper copy.</p></noscript></main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="notes.js"></script>
+<script>
+/* Unit 4 notebook. To change a lesson, edit the words below (keep the quotes and commas). */
+NB.render({
+  key: "unit4", unit: 4,
+  title: "The Great Smoky Mountains",
+  lead: "Why do the Smoky Mountains look smoky? How do the sun, water, air and ocean shape our weather?",
+  stds: [
+    ["ESS.5.1.1", "Analyze and interpret data to compare daily and seasonal changes in weather conditions (including wind speed and direction, precipitation, and temperature) and patterns."],
+    ["ESS.5.1.2", "Analyze and interpret weather data to explain current and upcoming weather conditions (including severe weather such as hurricanes and tornadoes) in a given location."],
+    ["ESS.5.1.3", "Construct an explanation to summarize the ocean's influences on weather and climate in North Carolina."],
+    ["ESS.5.1.4", "Use models to explain how the sun's energy drives the processes of the water cycle (including evaporation, transpiration, condensation, precipitation)."]
+  ],
+  anchor: "<p>From an overlook in the Great Smoky Mountains, the ridges fade into blue-gray mist, one behind another. Some mornings, white clouds sit in the valleys like smoke. The Cherokee name for this land is often translated as “place of blue smoke.” Why do the mountains look smoky?</p>",
+  lessons: [
+  /* ---------------- Lesson 1 ---------------- */
+  {
+    title: "Where Does the Smoke Come From?",
+    warm: "<p>Early on a summer morning, a hiker stands at a mountain overlook. White mist fills the valleys below. By lunchtime the sun is hot and the mist is gone. Later in the afternoon, dark clouds build up over the peaks, and it rains.</p>",
+    goal: "use a model to explain how the sun’s energy moves water through the water cycle.",
+    acts: [
+      { title: "Predict", blocks: [
+        { t: "text", q: "Where did the morning mist go when the sun came out? Where might the mist have come from?", ph: "I think the mist…" },
+        { t: "reveal", btn: "See the science", a: "<p>Mist and fog are tiny drops of liquid water floating in the air. When the sun warms them, they <b>evaporate</b> and become <b>water vapor</b>, an invisible gas.</p><p>The forest adds lots of water vapor too. Trees and plants give off water vapor from their leaves. This is called <b>transpiration</b>. The trees also give off natural gases that help make the bluish haze.</p>" }
+      ]},
+      { title: "Label the water cycle", blocks: [
+        { t: "label", q: "Label the four parts of the water cycle.", svg: '<svg viewBox="0 0 400 280" role="img" aria-label="Water cycle model with a lake, a forested mountain, a cloud and the sun"><defs><marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#1E2D4F"/></marker></defs><rect x="0" y="0" width="400" height="280" fill="#EEF4FB"/><circle cx="48" cy="44" r="22" fill="#FFC107" stroke="#E0A800" stroke-width="2"/><polygon points="230,240 320,110 400,240" fill="#7D8F7A"/><polygon points="290,185 300,160 310,185" fill="#2F6B3A"/><polygon points="318,175 328,148 338,175" fill="#2F6B3A"/><polygon points="344,190 354,165 364,190" fill="#2F6B3A"/><rect x="200" y="238" width="200" height="42" fill="#8DB580"/><rect x="0" y="236" width="205" height="44" fill="#6FA8DC"/><g fill="#fff" stroke="#9AA2B1" stroke-width="1.5"><circle cx="175" cy="58" r="20"/><circle cx="200" cy="46" r="24"/><circle cx="228" cy="58" r="20"/><rect x="160" y="58" width="80" height="20" rx="10" stroke="none"/></g><g stroke="#4A7FC1" stroke-width="2.5" stroke-linecap="round"><path d="M182 92 v14 M200 98 v14 M218 92 v14 M191 120 v14 M209 126 v14 M227 116 v14"/></g><g stroke="#1E2D4F" stroke-width="2.5" fill="none" marker-end="url(#ah4)"><path d="M80 226 C 70 200, 100 185, 92 160 S 120 120, 150 92"/><path d="M325 145 C 315 125, 300 120, 280 100 S 255 85, 246 80"/><path d="M228 150 L238 222"/></g><path d="M66 58 L 150 140" stroke="#E0A800" stroke-width="2" stroke-dasharray="4 4"/><g font-family="Inter,system-ui,sans-serif" font-size="12.5" fill="#1B2333" text-anchor="middle"><text x="48" y="84">Sun</text><text x="70" y="262">Lake</text><text x="345" y="262">Forest</text></g></svg>',
+          spots: [
+            { x: 112, y: 150, ans: "evaporation", hint: "The sun warms the lake water and it rises as water vapor." },
+            { x: 296, y: 122, ans: "transpiration", hint: "This water vapor comes out of the leaves of the trees." },
+            { x: 200, y: 46, ans: "condensation", hint: "Water vapor cools and turns into tiny drops that make a cloud." },
+            { x: 200, y: 160, ans: "precipitation", hint: "Water falls from the cloud as rain." }
+          ], extra: ["melting", "freezing"], caption: "The sun’s energy (dashed line) warms the water and the plants." }
+      ]},
+      { title: "The sun runs the cycle", blocks: [
+        { t: "order", q: "Put the steps of the water cycle in order, starting with the sun.", items: [
+            "The sun warms water in lakes, streams and leaves.",
+            "Water evaporates or transpires and becomes water vapor.",
+            "Water vapor rises and cools.",
+            "Water vapor condenses into tiny drops that form clouds or fog.",
+            "Drops join together and fall as precipitation."],
+          hint: "Water has to become a gas before it can rise. It has to cool before it can condense.",
+          done: "The sun’s energy keeps water moving around and around the cycle." },
+        { t: "blanks", text: "The {sun|It is the energy source for the whole cycle.} gives energy to the water cycle. When liquid water turns into a gas, it is called {evaporation|Liquid water becomes a gas.}. Water vapor that leaves plant leaves is called {transpiration|Think: trees and plants.}. When water vapor cools and turns into tiny drops, it is called {condensation|Gas becomes tiny liquid drops. Clouds and fog form.}. Rain, snow, sleet and hail are all {precipitation|It is water that falls from clouds.}.",
+          extra: ["water vapor", "moon"] }
+      ]}
+    ],
+    synth: { idea: "<p>The sun’s energy drives the water cycle. Water <b>evaporates</b> from oceans, lakes and streams and <b>transpires</b> from plant leaves, becoming water vapor. As the vapor rises and cools, it <b>condenses</b> into clouds and fog. Then it falls as <b>precipitation</b>. The Smokies’ thick forests add so much water vapor that the mountains often look smoky.</p>",
+      vocab: [
+        ["evaporation", "when liquid water is heated and turns into water vapor (a gas)"],
+        ["transpiration", "when plants give off water vapor through their leaves"],
+        ["condensation", "when water vapor cools and turns into tiny drops of liquid water"],
+        ["precipitation", "water that falls from clouds: rain, snow, sleet or hail"],
+        ["water vapor", "water in the form of an invisible gas"]
+      ]},
+    cool: [
+      { t: "mc", q: "Water vapor coming out of the leaves of trees is called…", opts: ["precipitation", "condensation", "transpiration", "freezing"],
+        ans: 2, fb: [
+          "Precipitation is water falling from clouds.",
+          "Condensation is water vapor turning into drops, like a cloud forming.",
+          "Transpiration is water vapor leaving plant leaves.",
+          "Freezing is liquid water turning to ice."] },
+      { t: "mc", q: "What gives the water cycle its energy?", opts: ["The moon", "The sun", "The wind", "The ocean"],
+        ans: 1, fb: [
+          "The moon does not heat water.",
+          "The sun heats water so it can evaporate and keeps the cycle going.",
+          "Wind moves clouds, but the sun’s energy makes the wind too.",
+          "The ocean holds water, but the sun gives the energy to evaporate it."] }
+    ]
+  },
+  /* ---------------- Lesson 2 ---------------- */
+  {
+    title: "Measuring Weather",
+    warm: "<p>A weather station sits on top of a peak in the Smokies. It has spinning cups, an arrow that turns in the wind, a tube that catches rain, a thermometer and a barometer. Every hour it records the weather.</p>",
+    goal: "use weather tools and data to describe how weather changes during a day.",
+    acts: [
+      { title: "Weather tools", blocks: [
+        { t: "blanks", text: "A {thermometer|This tool measures how hot or cold the air is.} measures temperature. A {barometer|This tool measures air pressure.} measures air pressure. An {anemometer|This tool has spinning cups.} measures wind speed. A {wind vane|This tool turns to point into the wind.} shows wind direction. A {rain gauge|This tool collects rain in a tube.} measures precipitation.",
+          extra: ["microscope"] },
+        { t: "reveal", q: "Which way is a “north wind” blowing?", btn: "Tap to see", a: "<p>Winds are named for the direction they come <b>from</b>. A north wind blows from the north toward the south. A wind vane points toward the direction the wind is coming from.</p>" }
+      ]},
+      { title: "A day of weather", blocks: [
+        { t: "table", caption: "Temperature at a mountain weather station on one summer day", head: ["Time", "Temperature (°F)"], rows: [
+          ["6 AM", 58], ["9 AM", 64], ["12 PM", 75], ["3 PM", 79], ["6 PM", 72], ["9 PM", 63]] },
+        { t: "chart", type: "line", title: "Temperature during one day", labels: ["6 AM", "9 AM", "12 PM", "3 PM", "6 PM", "9 PM"], values: [58, 64, 75, 79, 72, 63], min: 50, max: 85, step: 5, unit: "°F", ylabel: "°F" },
+        { t: "mc", q: "When was it warmest? Why?", opts: [
+            "6 AM, because the sun had just come up",
+            "3 PM, because the sun had been heating the land and air all day",
+            "9 PM, because it was dark",
+            "It was the same all day."],
+          ans: 1, fb: [
+            "6 AM was the coolest time, 58°F. The sun had not warmed things up yet.",
+            "The highest temperature, 79°F, was at 3 PM, after hours of sunshine.",
+            "After sunset, the temperature drops. 9 PM was 63°F.",
+            "The temperature went from 58°F up to 79°F and back down."] },
+        { t: "num", q: "How many degrees did the temperature rise from 6 AM to 3 PM?", unit: "°F", ans: 21,
+          wrong: [[137, "You added 79 + 58. To find how much it rose, subtract: 79 − 58."], [17, "Check the numbers: 6 AM was 58°F and 3 PM was 79°F."]],
+          miss: "Subtract the 6 AM temperature from the 3 PM temperature: 79 − 58.", why: "79 − 58 = 21 degrees." }
+      ]},
+      { title: "Weather or climate?", blocks: [
+        { t: "sort", q: "Is each sentence about weather or climate?", bins: ["Weather (right now or soon)", "Climate (the pattern over many years)"], items: [
+          ["It is raining in Gatlinburg right now.", 0, "This is about right now, so it is weather."],
+          ["The Smokies get a lot of rain every year.", 1, "This is a pattern over many years, so it is climate."],
+          ["Today’s high is 79°F.", 0, "This is about one day, so it is weather."],
+          ["Summers in North Carolina are usually hot and humid.", 1, "“Usually” tells you this is a long-term pattern: climate."],
+          ["A cold front will arrive tonight.", 0, "This is about tonight, so it is weather."],
+          ["Mount Mitchell usually gets snow every winter.", 1, "This happens year after year, so it is climate."]
+        ]}
+      ]}
+    ],
+    synth: { idea: "<p><b>Weather</b> is what the air is like at one place and time: temperature, precipitation, wind speed and direction, and air pressure. <b>Climate</b> is the usual weather pattern over many years. Weather tools give us data, and the data shows patterns, like temperatures rising during the day and falling at night.</p>",
+      vocab: [
+        ["weather", "what the air is like at one place and time"],
+        ["climate", "the usual weather of a place over many years"],
+        ["temperature", "how hot or cold something is"],
+        ["air pressure", "how hard the air presses down on Earth"],
+        ["wind speed", "how fast the wind is moving"],
+        ["wind direction", "the direction the wind is coming from"],
+        ["thermometer", "a tool that measures temperature"],
+        ["barometer", "a tool that measures air pressure"],
+        ["anemometer", "a tool with spinning cups that measures wind speed"],
+        ["wind vane", "a tool that shows wind direction"],
+        ["rain gauge", "a tool that measures how much rain fell"]
+      ]},
+    cool: [
+      { t: "mc", q: "Which tool measures wind speed?", opts: ["Barometer", "Anemometer", "Rain gauge", "Thermometer"],
+        ans: 1, fb: [
+          "A barometer measures air pressure.",
+          "An anemometer has spinning cups. The faster they spin, the faster the wind.",
+          "A rain gauge measures precipitation.",
+          "A thermometer measures temperature."] }
+    ]
+  },
+  /* ---------------- Lesson 3 ---------------- */
+  {
+    title: "Fronts, Forecasts and Severe Weather",
+    warm: "<p>The weather app says: “Cold front arriving this afternoon. Strong thunderstorms possible. Tonight: clearing and much cooler.” The barometer reading has been dropping all morning.</p>",
+    goal: "use weather data to explain the weather now and predict what is coming.",
+    acts: [
+      { title: "Seasonal patterns", blocks: [
+        { t: "table", caption: "Average high temperature in Asheville, NC", head: ["Month", "Average high (°F)"], rows: [["January", 47], ["April", 67], ["July", 84], ["October", 68]] },
+        { t: "chart", title: "Average high temperature in Asheville", labels: ["Jan", "Apr", "Jul", "Oct"], values: [47, 67, 84, 68], max: 100, step: 20, unit: "°F", ylabel: "°F" },
+        { t: "mc", q: "What seasonal pattern does the data show?", opts: [
+            "It is warmest in winter and coldest in summer.",
+            "It is warmest in summer (July) and coldest in winter (January).",
+            "The temperature is the same all year.",
+            "April is the hottest month."],
+          ans: 1, fb: [
+            "This is backwards. January is 47°F and July is 84°F.",
+            "July has the highest average (84°F) and January the lowest (47°F).",
+            "The averages change from 47°F to 84°F.",
+            "April is 67°F. July is warmer at 84°F."] }
+      ]},
+      { title: "Air masses and fronts", blocks: [
+        { t: "reveal", q: "What are air masses and fronts?", btn: "Tap to see", a: "<p>An <b>air mass</b> is a huge body of air with about the same temperature and moisture. Air masses from the north are cold and dry. Air masses from the Gulf of Mexico or the Atlantic Ocean are warm and moist.</p><p>A <b>front</b> is where two air masses meet. Fronts often bring clouds, rain and a change in temperature. When a cold front passes, storms can form, then the air turns cooler and the sky often clears.</p><p><b>Air pressure</b> clues: falling pressure often means clouds and storms are coming. Rising pressure often means clear, calm weather.</p>" },
+        { t: "mc", q: "Look back at the warm-up. The barometer is falling and a cold front is coming. What is the BEST forecast?", opts: [
+            "Sunny and hotter for the next three days",
+            "Storms, then cooler and clearing",
+            "Snow all week",
+            "No change at all"],
+          ans: 1, fb: [
+            "Falling pressure and a cold front usually mean storms and cooler air, not hot and sunny.",
+            "A cold front often brings storms, then cooler, clearer weather behind it.",
+            "Nothing in the data shows freezing temperatures.",
+            "Fronts bring a change in the weather."] }
+      ]},
+      { title: "Severe weather", blocks: [
+        { t: "sort", q: "Does each fact describe a hurricane or a tornado?", bins: ["Hurricane", "Tornado"], items: [
+          ["Forms over warm ocean water", 0, "Hurricanes get their energy from warm ocean water."],
+          ["A spinning column of air that touches the ground", 1, "That is a tornado."],
+          ["Can be hundreds of miles wide", 0, "Hurricanes are huge storms. Tornadoes are much smaller."],
+          ["Usually less than a mile wide", 1, "Tornadoes are small but can have very strong winds."],
+          ["Can push ocean water onto the coast (storm surge)", 0, "Storm surge comes with hurricanes, because they form over the ocean."],
+          ["Forms from a strong thunderstorm, usually over land", 1, "Tornadoes come from strong thunderstorms."],
+          ["Season runs from June 1 to November 30", 0, "That is the Atlantic hurricane season."],
+          ["A warning may come only minutes ahead", 1, "Tornadoes form fast, so warnings are often short."]
+        ]}
+      ]}
+    ],
+    synth: { idea: "<p>Weather changes day to day and with the seasons. <b>Air masses</b> and <b>fronts</b> move across North Carolina and change the weather. Falling air pressure often means storms are coming. <b>Hurricanes</b> form over warm ocean water. <b>Tornadoes</b> form from strong thunderstorms. Forecasters use weather data to predict what will happen next.</p>",
+      vocab: [
+        ["air mass", "a huge body of air with about the same temperature and moisture"],
+        ["front", "the place where two air masses meet; it often brings a change in weather"],
+        ["forecast", "a prediction of what the weather will be"],
+        ["hurricane", "a huge, spinning storm that forms over warm ocean water"],
+        ["tornado", "a spinning column of air that reaches from a thunderstorm to the ground"],
+        ["air pressure", "how hard the air presses down; falling pressure often means storms"]
+      ]},
+    cool: [
+      { t: "mc", q: "Why do hurricanes form over the ocean instead of over land?", opts: [
+          "They need warm ocean water for energy.",
+          "The ocean has no wind.",
+          "Land is too cold for any storms.",
+          "Fish make hurricanes."],
+        ans: 0, fb: [
+          "Warm ocean water gives hurricanes the energy and moisture they need. They weaken over land.",
+          "There is plenty of wind over the ocean. Hurricanes need warm water.",
+          "Storms like thunderstorms and tornadoes form over land. Hurricanes need warm ocean water.",
+          "Fish do not make weather."] }
+    ]
+  },
+  /* ---------------- Lesson 4 ---------------- */
+  {
+    title: "The Ocean and North Carolina",
+    warm: "<p>On a summer afternoon, people at Wrightsville Beach feel a cool breeze blowing in from the ocean. In January, Wilmington on the coast has an average high near 57°F, but Asheville in the mountains has an average high of about 47°F.</p>",
+    goal: "explain how the ocean affects weather and climate in North Carolina.",
+    acts: [
+      { title: "Sea breeze and land breeze", blocks: [
+        { t: "text", q: "Why does the beach often get a cool breeze from the ocean in the afternoon?", ph: "I think…", rows: 2 },
+        { t: "reveal", btn: "See the science", a: "<p>During the day, the sun warms land faster than water. The air over the land gets warm and rises. Cooler air from over the ocean moves in to take its place. That is a <b>sea breeze</b>.</p><p>At night, land cools off faster than water. Then the breeze blows from the land out to the sea. That is a <b>land breeze</b>.</p>" },
+        { t: "mc", q: "At 2 PM on a sunny day at the beach, which way does the breeze usually blow?", opts: [
+            "From the land out to the ocean",
+            "From the ocean toward the land",
+            "Straight up into space",
+            "There is never wind at the beach."],
+          ans: 1, fb: [
+            "That is a land breeze. It usually happens at night.",
+            "In the afternoon the land is warmer, so cooler air moves in from the ocean: a sea breeze.",
+            "Warm air rises over the land, but the breeze you feel moves sideways, from sea to land.",
+            "Beaches often have breezes because land and water warm up at different rates."] }
+      ]},
+      { title: "The Gulf Stream", blocks: [
+        { t: "reveal", q: "What is the Gulf Stream?", btn: "Tap to see", a: "<p>The <b>Gulf Stream</b> is a warm ocean current. It flows north from the tropics and passes close to North Carolina’s coast near Cape Hatteras. It keeps the coast milder in winter and adds warm, moist air. Its warm water can also give energy to hurricanes.</p>" },
+        { t: "table", caption: "Average high temperatures (°F)", head: ["City", "Where", "January", "July"], rows: [["Wilmington", "coast", 57, 90], ["Asheville", "mountains", 47, 84]] },
+        { t: "mc", q: "Which statement does the data support?", opts: [
+            "The mountains have warmer winters than the coast.",
+            "The coast has milder winters than the mountains.",
+            "Both cities have the same temperatures.",
+            "The ocean makes the coast colder in winter."],
+          ans: 1, fb: [
+            "In January, Asheville (47°F) is colder than Wilmington (57°F).",
+            "Wilmington is 10 degrees warmer in January. The ocean and the Gulf Stream help keep the coast milder.",
+            "The numbers are different for each city.",
+            "Wilmington, on the coast, is warmer in January, not colder."] }
+      ]},
+      { title: "Explain it", blocks: [
+        { t: "text", q: "Explain two ways the ocean affects weather or climate in North Carolina.", rows: 4, ph: "One way is… Another way is…",
+          model: "First, the ocean warms up and cools down more slowly than land, so the coast gets sea breezes on summer afternoons and has milder winters. Second, the warm Gulf Stream current flows near our coast. Its warm water and moist air can give energy to hurricanes.",
+          check: "Did you give two different ways and explain each one?" }
+      ]}
+    ],
+    synth: { idea: "<p>The ocean shapes North Carolina’s weather and climate. Water warms and cools more slowly than land, so the coast has milder temperatures, with <b>sea breezes</b> by day and <b>land breezes</b> at night. The warm <b>Gulf Stream</b> keeps the coast milder and can feed hurricanes with warm water and moisture.</p>",
+      vocab: [
+        ["Gulf Stream", "a warm ocean current that flows north past the North Carolina coast"],
+        ["sea breeze", "a cool breeze that blows from the ocean toward land during the day"],
+        ["land breeze", "a breeze that blows from land toward the ocean at night"],
+        ["climate", "the usual weather of a place over many years"]
+      ]},
+    cool: [
+      { t: "multi", q: "Which are ways the ocean affects North Carolina?", opts: [
+          "Sea breezes cool the beach on summer afternoons.",
+          "Warm Gulf Stream water can make hurricanes stronger.",
+          "The ocean causes tornadoes in the mountains.",
+          "The coast has milder winters than the mountains.",
+          "The ocean makes the sun rise earlier."],
+        ans: [0, 1, 3], why: ["", "", "Tornadoes come from strong thunderstorms. The ocean does not cause tornadoes in the mountains.", "", "Sunrise depends on Earth turning, not on the ocean."],
+        done: "Sea breezes, milder winters and hurricanes are all ocean effects." }
+    ]
+  }
+  ],
+  /* ---------------- Practice ---------------- */
+  practice: [
+    { t: "mc", q: "After a rain, the sun comes out. Later, the puddles are gone. Which process happened?", opts: ["Condensation", "Evaporation", "Precipitation", "Transpiration"],
+      ans: 1, fb: [
+        "Condensation is water vapor turning into drops. Here, liquid water disappeared into the air.",
+        "The sun heated the puddle water, and it turned into water vapor.",
+        "Precipitation is water falling from clouds. The puddles disappeared.",
+        "Transpiration is water vapor coming from plant leaves, not puddles."] },
+    { t: "mc", q: "Water drops form on the outside of a cold glass of lemonade. Which process made the drops?", opts: ["Evaporation", "Condensation", "Precipitation", "Melting"],
+      ans: 1, fb: [
+        "Evaporation turns liquid into gas. Here, gas became liquid drops.",
+        "Water vapor in the air cooled on the cold glass and turned into liquid drops.",
+        "Nothing fell from a cloud.",
+        "No ice melted onto the outside of the glass. The water came from the air."] },
+    { t: "table", caption: "Five-day forecast for Raleigh", head: ["Day", "High (°F)", "Chance of rain", "Wind"], rows: [
+      ["Monday", 72, "10%", "from the south, 5 mph"], ["Tuesday", 75, "20%", "from the south, 10 mph"], ["Wednesday", 70, "80%", "from the west, 20 mph"], ["Thursday", 58, "10%", "from the northwest, 15 mph"], ["Friday", 60, "0%", "from the north, 5 mph"]] },
+    { t: "mc", q: "On which day did a cold front MOST likely pass through Raleigh?", opts: ["Monday", "Tuesday", "Wednesday", "Friday"],
+      ans: 2, fb: [
+        "Monday is calm and dry with a south wind. No front yet.",
+        "Tuesday is still warm with a south wind.",
+        "Wednesday has a high chance of rain, strong wind that changes direction, and then it gets much cooler on Thursday.",
+        "By Friday the front has already passed. It is cool and clear."] },
+    { t: "chart", title: "Rain gauge readings for one week", labels: ["Mon", "Tue", "Wed", "Thu", "Fri"], values: [0, 0.2, 1.4, 0.1, 0], max: 1.6, step: 0.4, unit: "inches", ylabel: "inches of rain" },
+    { t: "num", q: "Use the rain gauge chart. How many inches of rain fell in all that week?", unit: "inches", ans: 1.7,
+      wrong: [[1.4, "That is only Wednesday. Add every day: 0 + 0.2 + 1.4 + 0.1 + 0."], [1.6, "Check your adding. Line up the decimal points: 0.2 + 1.4 + 0.1."]],
+      miss: "Add the rain from each day: 0 + 0.2 + 1.4 + 0.1 + 0.", why: "0.2 + 1.4 + 0.1 = 1.7 inches." },
+    { t: "multi", q: "Which tools give information about wind?", opts: ["Anemometer", "Rain gauge", "Wind vane", "Thermometer"],
+      ans: [0, 2], why: ["", "A rain gauge measures precipitation.", "", "A thermometer measures temperature."],
+      done: "An anemometer measures wind speed, and a wind vane shows wind direction." },
+    { t: "mc", q: "When are hurricanes MOST likely to hit North Carolina?", opts: ["January and February", "Late summer and fall", "Only in April", "Never"],
+      ans: 1, fb: [
+        "Ocean water is too cool in winter for most hurricanes.",
+        "Late summer and fall (August to October) is the peak, when ocean water is warmest.",
+        "Hurricane season starts in June and is busiest in late summer and fall.",
+        "North Carolina is hit by hurricanes fairly often because it sticks out into the Atlantic."] },
+    { t: "text", q: "Explain why the Smoky Mountains often look smoky. Use at least two water cycle words.", rows: 4, ph: "The mountains look smoky because…",
+      model: "The thick forests give off lots of water vapor through transpiration, and the sun makes water evaporate from streams. When the water vapor cools, it condenses into tiny drops that make fog, mist and clouds. The trees also give off natural gases that add a blue haze.",
+      check: "Did you use words like transpiration, evaporation, water vapor or condensation?" }
+  ]
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 1 Notebook: Fueling Athletes — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="notes.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="page-wrap" id="nb"><noscript><p>This notebook needs JavaScript turned on. Ask your teacher for a paper copy.</p></noscript></main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="notes.js"></script>
+<script>
+/* Unit 1 notebook. To change a lesson, edit the words below (keep the quotes and commas). */
+NB.render({
+  key: "unit1", unit: 1,
+  title: "Fueling Athletes",
+  lead: "How do the systems of the human body work together so an athlete can run, swim and flip?",
+  stds: [
+    ["LS.5.1.1", "Use models to recognize the organizational structure of humans as a multicellular organism (cell, tissue, organ, system, organism)."],
+    ["LS.5.1.2", "Use models to compare the major systems of the human body (digestive, respiratory, circulatory, muscular, skeletal, nervous) as it relates to their functions necessary for life."]
+  ],
+  anchor: "<p>Simone Biles flips and twists high above a balance beam. Katie Ledecky swims mile after mile without stopping. Noah Lyles runs 100 meters in under 10 seconds. What is happening inside their bodies that lets them do this?</p>",
+  lessons: [
+  /* ---------------- Lesson 1 ---------------- */
+  {
+    title: "Built from Cells",
+    warm: "<p>Noah Lyles crouches at the starting line. The starter gun goes off. In less than 10 seconds he runs 100 meters. His legs pump. His arms swing. He breathes hard. His heart pounds.</p><p>Think about what his body must be made of to do all of that.</p>",
+    goal: "find out what an athlete’s body is made of, from the smallest living part to the whole person.",
+    acts: [
+      { title: "What is the smallest living part?", blocks: [
+        { t: "text", q: "Predict: What is the smallest living part of Noah Lyles’s body?", ph: "I think the smallest living part is…", rows: 2 },
+        { t: "reveal", btn: "See what scientists found", a: "<p>The smallest living part of the body is a <b>cell</b>. Your body has trillions of cells. Most cells are too small to see without a microscope.</p><p>A human is made of many cells, so a human is <b>multicellular</b>. “Multi” means many.</p>" }
+      ]},
+      { title: "From cell to organism", blocks: [
+        { t: "p", html: "Cells that are alike team up. Teams make bigger teams. Read this model of how a runner’s body is built." },
+        { t: "table", caption: "Levels of organization in the human body", head: ["Level", "What it is", "Example in a runner"], rows: [
+          ["Cell", "the smallest living part", "one muscle cell"],
+          ["Tissue", "a group of the same kind of cells doing one job", "muscle tissue"],
+          ["Organ", "different tissues working together on a job", "the heart"],
+          ["Organ system", "organs working together on a big job", "circulatory system (heart, blood vessels, blood)"],
+          ["Organism", "a whole living thing", "Noah Lyles"]
+        ]},
+        { t: "order", q: "Put the levels in order from smallest to largest.", items: ["Cell", "Tissue", "Organ", "Organ system", "Organism"],
+          hint: "Start with the smallest living part. Each level is made of the level before it.",
+          done: "Cells make tissues. Tissues make organs. Organs make organ systems. Organ systems make an organism." }
+      ]},
+      { title: "Sort the examples", blocks: [
+        { t: "sort", q: "Which level is each example?", bins: ["Cell", "Tissue", "Organ", "Organ system", "Organism"], items: [
+          ["One red blood cell", 0, "It is just one cell, so it is the cell level."],
+          ["One nerve cell", 0, "It is just one cell, so it is the cell level."],
+          ["Muscle tissue in the leg", 1, "Muscle tissue is a group of muscle cells doing one job. That is a tissue."],
+          ["Bone tissue", 1, "Bone tissue is a group of bone cells. That is a tissue."],
+          ["Heart", 2, "The heart is made of different tissues that work together to pump blood. That makes it an organ."],
+          ["Stomach", 2, "The stomach is made of different tissues that work together to mix food. That makes it an organ."],
+          ["Digestive system", 3, "The digestive system is many organs (mouth, esophagus, stomach, intestines) working together. That is an organ system."],
+          ["Nervous system", 3, "The nervous system is the brain, spinal cord and nerves working together. That is an organ system."],
+          ["Katie Ledecky", 4, "Katie Ledecky is a whole living thing. That is an organism."],
+          ["A dog", 4, "A dog is a whole living thing. That is an organism."]
+        ], done: "You used the model to classify each part of the body." }
+      ]}
+    ],
+    synth: { idea: "<p>Living things are made of cells. In a multicellular organism like a person, cells form tissues, tissues form organs, organs form organ systems, and organ systems work together to make the whole organism.</p>",
+      vocab: [
+        ["cell", "the smallest living part of a living thing"],
+        ["tissue", "a group of the same kind of cells that do one job"],
+        ["organ", "a body part made of different tissues that work together, like the heart"],
+        ["organ system", "a group of organs that work together to do a big job"],
+        ["organism", "a whole living thing"],
+        ["multicellular", "made of many cells"],
+        ["function", "the job something does"]
+      ]},
+    cool: [
+      { t: "mc", q: "Which list goes from smallest to largest?", opts: [
+          "organ → tissue → cell → organism",
+          "cell → tissue → organ → organ system",
+          "tissue → cell → organ system → organ",
+          "organism → organ system → organ → tissue"],
+        ans: 1, fb: [
+          "This list starts with an organ. But organs are made of tissues, and tissues are made of cells. The cell is the smallest.",
+          "Cells make tissues, tissues make organs, and organs make organ systems.",
+          "Tissues are made of cells, so the cell must come first. Also, organs come before organ systems.",
+          "This list goes from largest to smallest. It is backwards."] },
+      { t: "mc", q: "The heart is made of muscle tissue, nerve tissue and other tissues. What level is the heart?", opts: ["Cell", "Tissue", "Organ", "Organism"],
+        ans: 2, fb: [
+          "A cell is just one tiny living part. The heart is made of millions of cells.",
+          "The heart is made of <i>different</i> tissues. A tissue is only one kind of cell.",
+          "Different tissues working together on one job make an organ.",
+          "An organism is a whole living thing. The heart is only one part of a person."] }
+    ]
+  },
+  /* ---------------- Lesson 2 ---------------- */
+  {
+    title: "Fuel In: The Digestive System",
+    warm: "<p>Katie Ledecky trains in the pool for hours every day. Swimmers who train this hard can use thousands of calories a day. Picture a swimmer’s breakfast: oatmeal, eggs, fruit and toast. Coaches like to say, “Food is fuel.”</p>",
+    goal: "trace how food becomes fuel that an athlete’s muscles can use.",
+    acts: [
+      { title: "Predict the path", blocks: [
+        { t: "text", q: "Where does a swimmer’s breakfast go after she swallows it? Write what you think.", ph: "First the food goes to… then…" },
+        { t: "order", q: "Now use the model. Put the parts of the digestive system in the order food travels.", items: ["Mouth", "Esophagus", "Stomach", "Small intestine", "Large intestine"],
+          hint: "After you swallow, food goes down a tube called the esophagus. The small intestine comes before the large intestine.",
+          done: "Food travels from the mouth, down the esophagus, to the stomach, then the small intestine, then the large intestine." }
+      ]},
+      { title: "What does each part do?", blocks: [
+        { t: "blanks", text: "The {mouth|This is where food enters and gets chewed.} chews food into small pieces. The {esophagus|It is the tube between the mouth and the stomach.} is a tube that moves food down to the stomach. The {stomach|This organ mixes food with strong juices.} churns and mixes food with juices. In the {small intestine|This long, folded tube is where nutrients go into the blood.}, nutrients pass into the blood. The {large intestine|This organ takes in water from what is left.} takes in water. Solid {waste|This is the leftover part the body cannot use.} leaves the body.",
+          extra: ["lungs", "heart"], done: "Each organ has a function, and together they make up the digestive system." }
+      ]},
+      { title: "Fuel delivery", blocks: [
+        { t: "mc", q: "Nutrients from breakfast are now in the swimmer’s blood. How do they get to her arm muscles?", opts: [
+            "Nerves carry them to the arm.",
+            "The circulatory system carries them in the blood.",
+            "Bones carry them down the arm.",
+            "They stay in the stomach."],
+          ans: 1, fb: [
+            "Nerves carry messages, not nutrients. That is the nervous system’s job.",
+            "The heart pumps blood through blood vessels to every cell, and the blood carries nutrients.",
+            "Bones hold the body up and protect organs. They do not carry nutrients.",
+            "Nutrients leave the digestive system in the small intestine. They have to travel to the muscles to be used."] },
+        { t: "reveal", q: "Why do muscle cells need nutrients?", btn: "Tap to see", a: "<p>Nutrients give cells <b>energy</b>. They also give cells the materials they need to grow and repair. Muscle cells that work hard need a lot of energy.</p>" }
+      ]}
+    ],
+    synth: { idea: "<p>The digestive system breaks food down into nutrients. Nutrients move into the blood in the small intestine. The circulatory system then carries them to every cell. Waste the body cannot use leaves the body.</p>",
+      vocab: [
+        ["esophagus", "the tube that moves food from the mouth to the stomach"],
+        ["stomach", "the organ that churns food and mixes it with juices"],
+        ["intestines", "long tubes after the stomach; the small intestine moves nutrients into the blood, and the large intestine takes in water"],
+        ["nutrients", "the useful parts of food that give the body energy and help it grow"],
+        ["waste", "what is left over that the body cannot use and gets rid of"]
+      ]},
+    cool: [
+      { t: "mc", q: "Where do most nutrients move from food into the blood?", opts: ["Esophagus", "Stomach", "Small intestine", "Large intestine"],
+        ans: 2, fb: [
+          "The esophagus only moves food down to the stomach.",
+          "The stomach mixes and breaks down food, but most nutrients go into the blood later.",
+          "The small intestine is long and folded, so nutrients can move into the blood there.",
+          "The large intestine mostly takes in water from what is left."] }
+    ]
+  },
+  /* ---------------- Lesson 3 ---------------- */
+  {
+    title: "Air In, Blood Around",
+    warm: "<p>Noah Lyles crosses the finish line. He bends over with his hands on his knees. He is breathing fast and deep. His chest moves up and down. If you felt his pulse, his heart would be beating very fast.</p>",
+    goal: "explain how the respiratory and circulatory systems work together to get oxygen to muscles.",
+    acts: [
+      { title: "Look at the data", blocks: [
+        { t: "table", caption: "Heart rate and breathing for a student athlete", head: ["Activity", "Heartbeats per minute", "Breaths per minute"], rows: [
+          ["Sitting", 75, 16], ["Walking", 100, 22], ["Sprinting", 180, 45]] },
+        { t: "chart", title: "Heartbeats per minute", labels: ["Sitting", "Walking", "Sprinting"], values: [75, 100, 180], max: 200, step: 50, unit: "beats per minute", ylabel: "beats per minute" },
+        { t: "mc", q: "What pattern do you see in the data?", opts: [
+            "Heart rate goes down as the activity gets harder.",
+            "Heart rate and breathing both go up as the activity gets harder.",
+            "Breathing stays the same for every activity.",
+            "Only heart rate changes."],
+          ans: 1, fb: [
+            "Look at the numbers again: 75, then 100, then 180. They get bigger, not smaller.",
+            "As the activity gets harder, both numbers get bigger.",
+            "Breathing changes from 16 to 22 to 45 breaths per minute.",
+            "Both columns change. Breathing goes from 16 to 45."] },
+        { t: "reveal", q: "Why does this happen?", btn: "Tap to see", a: "<p>Working muscles need more <b>oxygen</b> and nutrients. They also make more <b>carbon dioxide</b>, a waste gas. Breathing faster brings in more oxygen and gets rid of more carbon dioxide. The heart beats faster to move blood faster.</p>" }
+      ]},
+      { title: "Follow the oxygen", blocks: [
+        { t: "order", q: "Put the steps in order to show how oxygen gets to a runner’s leg muscles.", items: [
+            "Air comes in through the nose and mouth.",
+            "Air moves down the trachea (windpipe).",
+            "Oxygen moves from the lungs into the blood.",
+            "The heart pumps the blood.",
+            "Blood vessels carry oxygen to the leg muscles."],
+          hint: "Think: air in, down the windpipe, into the lungs, then the heart pumps the blood out to the body.",
+          done: "The respiratory system brings oxygen in. The circulatory system carries it to the muscles." },
+        { t: "blanks", text: "Muscle cells use {oxygen|We breathe in this gas. Cells need it.} and make {carbon dioxide|This is the waste gas we breathe out.}. The blood carries this waste gas back to the {lungs|This is where gases go in and out of the blood.}. Then we breathe it out.",
+          extra: ["stomach", "nutrients"] }
+      ]},
+      { title: "Two systems, one team", blocks: [
+        { t: "multi", q: "Which are jobs of the circulatory system?", opts: [
+            "Pump blood with the heart",
+            "Carry oxygen to cells",
+            "Chew food",
+            "Carry nutrients to cells",
+            "Take in air through the trachea",
+            "Carry carbon dioxide away from cells"],
+          ans: [0, 1, 3, 5], why: [
+            "", "",
+            "Chewing happens in the mouth. That is part of the digestive system.",
+            "",
+            "The trachea is part of the respiratory system. It carries air to the lungs.",
+            ""],
+          done: "The circulatory system is the body’s delivery system. The heart pumps blood through blood vessels." }
+      ]}
+    ],
+    synth: { idea: "<p>The respiratory system (trachea and lungs) takes in oxygen and gets rid of carbon dioxide. The circulatory system (heart, blood vessels and blood) carries oxygen and nutrients to every cell and carries waste away. When we exercise, both systems work faster.</p>",
+      vocab: [
+        ["lungs", "organs in the chest where oxygen goes into the blood and carbon dioxide comes out"],
+        ["trachea", "the windpipe; the tube that carries air to the lungs"],
+        ["oxygen", "a gas in air that our cells need to live"],
+        ["carbon dioxide", "a waste gas that cells make and we breathe out"],
+        ["heart", "the muscle organ that pumps blood around the body"],
+        ["blood vessels", "tubes that carry blood all through the body"]
+      ]},
+    cool: [
+      { t: "mc", q: "Why does an athlete breathe faster during a race?", opts: [
+          "To cool down the lungs",
+          "To get more oxygen to working muscles and get rid of carbon dioxide",
+          "Because the stomach needs more air",
+          "To make the heart beat slower"],
+        ans: 1, fb: [
+          "Breathing is not mostly for cooling the lungs. It is about trading gases.",
+          "Muscles working hard need more oxygen and make more carbon dioxide.",
+          "Air goes to the lungs, not the stomach. The stomach is part of the digestive system.",
+          "During a race, the heart beats faster, not slower."] }
+    ]
+  },
+  /* ---------------- Lesson 4 ---------------- */
+  {
+    title: "Move and Control",
+    warm: "<p>Simone Biles sprints down the runway. She springs off the vault. She flips and twists high in the air. About two seconds later, she lands with her feet together and throws her arms up. The crowd cheers.</p>",
+    goal: "figure out how bones, muscles and nerves work together so an athlete can move.",
+    acts: [
+      { title: "Bones and muscles", blocks: [
+        { t: "text", q: "Predict: Could a gymnast flip if she had muscles but no bones? Why or why not?", ph: "I think… because…", rows: 2 },
+        { t: "reveal", btn: "See the science", a: "<p>No. <b>Bones</b> hold the body up and give it shape. Bones also protect organs. The skull protects the brain. The ribs protect the heart and lungs.</p><p><b>Muscles</b> pull on bones to make them move. Muscles can only pull, not push, so they work in pairs.</p>" },
+        { t: "sort", q: "Some muscles you control. Some work on their own. Sort each action.", bins: ["Voluntary (I choose to move it)", "Involuntary (it works on its own)"], items: [
+          ["Leg muscles pushing off the vault", 0, "You choose when to jump, so leg muscles are voluntary."],
+          ["Heart muscle beating", 1, "You do not decide to make your heart beat. It beats all the time, even when you sleep."],
+          ["Arm muscles lifting your hand", 0, "You choose when to raise your hand. That is a voluntary muscle."],
+          ["Stomach muscles churning food", 1, "Your stomach mixes food without you thinking about it. That is involuntary."],
+          ["Smiling for a photo", 0, "You choose to smile. Face muscles you control are voluntary."],
+          ["Esophagus muscles pushing food down", 1, "After you swallow, the esophagus moves food down by itself. That is involuntary."]
+        ]}
+      ]},
+      { title: "Messages from the brain", blocks: [
+        { t: "order", q: "Put the steps in order to show how Simone’s body decides to jump.", items: [
+            "Her eyes see the vault coming.",
+            "Nerves send a message to the brain.",
+            "The brain decides: jump now!",
+            "The spinal cord carries the message down her back.",
+            "Nerves tell her leg muscles to move."],
+          hint: "The message goes from the eyes to the brain first. Then the brain sends a message down the spinal cord to the muscles.",
+          done: "The nervous system is the body’s control center. It sends messages very fast." }
+      ]},
+      { title: "Label the body", blocks: [
+        { t: "label", q: "Label the organs in this model of the body.", svg: '<svg viewBox="0 0 300 360" role="img" aria-label="Model of a human body with six organs to label"><rect x="48" y="128" width="30" height="170" rx="15" fill="#F3E6D8" stroke="#C9B8A6"/><rect x="222" y="128" width="30" height="170" rx="15" fill="#F3E6D8" stroke="#C9B8A6"/><rect x="80" y="118" width="140" height="230" rx="40" fill="#F3E6D8" stroke="#C9B8A6"/><rect x="135" y="96" width="30" height="26" fill="#F3E6D8" stroke="#C9B8A6"/><circle cx="150" cy="60" r="42" fill="#F3E6D8" stroke="#C9B8A6"/><ellipse cx="150" cy="50" rx="30" ry="22" fill="#F4B6C2" stroke="#C97C8C"/><rect x="145" y="100" width="10" height="50" rx="4" fill="#BFD0EA" stroke="#7F98C2"/><ellipse cx="117" cy="190" rx="29" ry="48" fill="#F7B2A8" stroke="#C9776B"/><ellipse cx="183" cy="190" rx="29" ry="48" fill="#F7B2A8" stroke="#C9776B"/><path d="M150 238 C112 214 120 182 150 198 C180 182 188 214 150 238 Z" fill="#C0392B" stroke="#8E2A20"/><ellipse cx="178" cy="258" rx="28" ry="16" transform="rotate(-18 178 258)" fill="#F2C46D" stroke="#C49A3F"/><rect x="110" y="282" width="80" height="52" rx="20" fill="#E8A87C" stroke="#B9784E"/><path d="M122 298 q10 -10 20 0 t20 0 t20 0 M122 316 q10 -10 20 0 t20 0 t20 0" fill="none" stroke="#B9784E" stroke-width="3"/></svg>',
+          spots: [
+            { x: 150, y: 46, ans: "brain", hint: "This organ is inside the skull. It controls the body." },
+            { x: 150, y: 120, ans: "trachea", hint: "This is the windpipe. It carries air down to the lungs." },
+            { x: 108, y: 176, ans: "lungs", hint: "These two organs fill most of the chest. They take in oxygen." },
+            { x: 150, y: 215, ans: "heart", hint: "This organ sits between the lungs and pumps blood." },
+            { x: 184, y: 256, ans: "stomach", hint: "This organ churns food. It is below the lungs, on the left side of the body." },
+            { x: 150, y: 309, ans: "intestines", hint: "These long, folded tubes are low in the belly." }
+          ], extra: ["bones", "esophagus"], caption: "A simple model. Real organs are packed closer together." }
+      ]}
+    ],
+    synth: { idea: "<p>The skeletal system supports the body and protects organs. The muscular system moves the body by pulling on bones. The nervous system (brain, spinal cord and nerves) sends messages that control the body. All six systems work together to keep an athlete alive and moving.</p>",
+      vocab: [
+        ["bones", "hard parts that support the body, give it shape and protect organs"],
+        ["muscles", "body parts that pull on bones to move the body; the heart is a muscle too"],
+        ["voluntary muscle", "a muscle you choose to move, like your leg muscles"],
+        ["involuntary muscle", "a muscle that works on its own, like your heart"],
+        ["brain", "the organ that controls the body and thinks"],
+        ["spinal cord", "a thick bundle of nerves in the backbone that carries messages to and from the brain"],
+        ["nerves", "thin threads that carry messages between the brain and the body"]
+      ]},
+    cool: [
+      { t: "mc", q: "Which system sends messages that tell muscles when to move?", opts: ["Digestive system", "Skeletal system", "Nervous system", "Respiratory system"],
+        ans: 2, fb: [
+          "The digestive system breaks down food. It does not send messages.",
+          "The skeletal system supports and protects. Muscles pull on bones, but bones do not send messages.",
+          "The brain, spinal cord and nerves send messages to muscles.",
+          "The respiratory system takes in oxygen. It does not send messages."] },
+      { t: "mc", q: "The skull is part of which system, and what is its job?", opts: [
+          "Skeletal system; it protects the brain",
+          "Muscular system; it moves the head",
+          "Nervous system; it sends messages",
+          "Digestive system; it breaks down food"],
+        ans: 0, fb: [
+          "The skull is bone, and it protects the brain.",
+          "Muscles move the head, but the skull is a bone, not a muscle.",
+          "The brain inside the skull is part of the nervous system, but the skull itself is a bone.",
+          "The skull is not part of the digestive system."] }
+    ]
+  }
+  ],
+  /* ---------------- Practice ---------------- */
+  practice: [
+    { t: "mc", q: "A student made this model: cells → tissues → ______ → organ systems → organism. What belongs in the blank?", opts: ["Organisms", "Organs", "Cells", "Nutrients"],
+      ans: 1, fb: [
+        "Organism is already at the end. It is the biggest level.",
+        "Tissues work together to form organs. Organs work together in organ systems.",
+        "Cells are the smallest level. They are already at the start.",
+        "Nutrients come from food. They are not a level of organization."] },
+    { t: "multi", q: "Katie Ledecky is swimming a race. Which TWO systems work together to bring oxygen to her muscles?", opts: ["Respiratory system", "Digestive system", "Circulatory system", "Skeletal system"],
+      ans: [0, 2], why: ["", "The digestive system brings in nutrients from food, not oxygen.", "", "The skeletal system supports the body. It does not move oxygen."],
+      done: "The lungs take in oxygen, and the blood carries it to the muscles." },
+    { t: "table", caption: "A swimmer’s breathing during practice", head: ["Minute", "What she is doing", "Breaths per minute"], rows: [
+      [0, "Resting", 14], [2, "Swimming fast", 40], [6, "Swimming fast", 44], [10, "Resting", 24], [15, "Resting", 18]] },
+    { t: "chart", type: "line", title: "Breaths per minute during practice", labels: ["0", "2", "6", "10", "15"], values: [14, 40, 44, 24, 18], max: 50, step: 10, unit: "breaths per minute", xlabel: "Minute", ylabel: "breaths per minute" },
+    { t: "mc", q: "Use the data. What BEST explains the change from minute 6 to minute 15?", opts: [
+        "She stopped swimming, so her muscles needed less oxygen and her breathing slowed.",
+        "She started swimming faster, so her breathing slowed.",
+        "Her lungs got tired and stopped working.",
+        "Her stomach was full, so she breathed less."],
+      ans: 0, fb: [
+        "Resting muscles need less oxygen, so breathing slows back down.",
+        "The table says she was resting at minute 10 and 15, not swimming faster.",
+        "Lungs keep working all the time. Her breathing slowed but did not stop: 18 breaths per minute.",
+        "The data is about swimming and resting, not eating. Breathing slowed because her muscles needed less oxygen."] },
+    { t: "mc", q: "Which organ connects the mouth to the stomach?", opts: ["Trachea", "Esophagus", "Small intestine", "Spinal cord"],
+      ans: 1, fb: [
+        "The trachea carries air to the lungs, not food to the stomach.",
+        "The esophagus is the food tube from the mouth to the stomach.",
+        "The small intestine comes after the stomach.",
+        "The spinal cord carries messages. It is part of the nervous system."] },
+    { t: "text", q: "Explain how the digestive system and the circulatory system work together to give a runner energy.", rows: 4, ph: "The digestive system… The circulatory system…",
+      model: "The digestive system breaks food down into nutrients. In the small intestine, the nutrients move into the blood. The heart pumps the blood through blood vessels, and the blood carries the nutrients to the runner’s muscle cells. The cells use the nutrients for energy.",
+      check: "Did you name what each system does? Did you say where they connect (nutrients going into the blood)?" },
+    { t: "mc", q: "Which is an example of an involuntary muscle at work?", opts: ["Kicking a soccer ball", "Waving to a friend", "The heart beating while you sleep", "Writing your name"],
+      ans: 2, fb: [
+        "You choose to kick, so that is a voluntary muscle.",
+        "You choose to wave, so that is a voluntary muscle.",
+        "The heart beats on its own. You do not have to think about it.",
+        "You choose to write, so that is a voluntary muscle."] },
+    { t: "mc", q: "The ribs are part of the skeletal system. Which organs do the ribs protect?", opts: ["Brain and spinal cord", "Heart and lungs", "Stomach and intestines", "Muscles and nerves"],
+      ans: 1, fb: [
+        "The skull protects the brain, and the backbone protects the spinal cord.",
+        "The ribs make a cage around the heart and lungs.",
+        "The ribs are higher up in the chest. The stomach and intestines are mostly below them.",
+        "Muscles and nerves are all over the body. The ribs protect the organs in the chest."] }
+  ]
+});
+</script>
+</body>
+</html>

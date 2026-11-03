@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2 Notebook: Paws, Patterns and Pedigrees — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="notes.css">
+<script src="../brand.js"></script>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="page-wrap" id="nb"><noscript><p>This notebook needs JavaScript turned on. Ask your teacher for a paper copy.</p></noscript></main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="notes.js"></script>
+<script>
+/* Unit 2 notebook. To change a lesson, edit the words below (keep the quotes and commas). */
+NB.render({
+  key: "unit2", unit: 2,
+  title: "Paws, Patterns and Pedigrees",
+  lead: "Why do offspring look like their parents, but not exactly? How do animals know what to do?",
+  stds: [
+    ["LS.5.3.1", "Ask questions to compare instincts and learned behaviors."],
+    ["LS.5.3.2", "Ask questions to compare inherited and acquired traits."]
+  ],
+  anchor: "<p>A yellow Labrador named Honey and a black Labrador named Bear have a litter of puppies. Some puppies are black. Some are yellow. All of them have floppy ears and webbed toes. Why do offspring look like their parents, but not exactly the same?</p>",
+  lessons: [
+  /* ---------------- Lesson 1 ---------------- */
+  {
+    title: "Born Knowing How",
+    warm: "<p>Honey’s puppies are one day old. Their eyes are still closed. Still, they wiggle across the blanket to find their mother and drink her milk.</p><p>Eight weeks later, one puppy sits when its new owner says “Sit!” and holds up a treat.</p>",
+    goal: "compare behaviors that animals are born with and behaviors that they learn.",
+    acts: [
+      { title: "Two kinds of behavior", blocks: [
+        { t: "text", q: "How do the newborn puppies know how to find milk? How did the older puppy know to sit?", ph: "I think the newborn puppies… The older puppy…" },
+        { t: "reveal", btn: "See the science", a: "<p>Finding milk is an <b>instinct</b>. An instinct is a behavior an animal is born knowing how to do. No one teaches it.</p><p>Sitting when someone says “Sit” is a <b>learned behavior</b>. The puppy learned it from practice and from people. It was not born knowing it.</p>" }
+      ]},
+      { title: "Sort the behaviors", blocks: [
+        { t: "sort", q: "Is each behavior an instinct or a learned behavior?", bins: ["Instinct (born knowing)", "Learned behavior"], items: [
+          ["A spider spins its first web", 0, "Spiders spin webs without being taught. Even a spider that never saw a web can spin one."],
+          ["Sea turtle hatchlings crawl to the ocean", 0, "Baby sea turtles never meet their parents. They are born knowing to head for the water."],
+          ["A baby cries when it is hungry", 0, "No one teaches a newborn to cry. Babies are born doing it."],
+          ["A dog sits when you say “Sit”", 1, "Dogs are not born knowing the word “sit.” They learn it from practice and treats."],
+          ["A child rides a bike", 1, "No one is born knowing how to ride a bike. You learn by practicing."],
+          ["A robin builds a nest", 0, "Robins build the same kind of nest without lessons. That is an instinct."],
+          ["A dog runs to the kitchen when it hears the treat bag", 1, "The dog learned that the sound means food. It had to learn that from experience."],
+          ["A chimpanzee uses a stick to catch termites", 1, "Young chimps learn this by watching older chimps and practicing."]
+        ]}
+      ]},
+      { title: "Ask questions to compare", blocks: [
+        { t: "p", html: "Scientists ask questions to compare things. Good science questions often start with <b>How</b>, <b>Why</b>, or <b>What would happen if…</b>" },
+        { t: "mc", q: "Which question would BEST help you find out if a behavior is an instinct?", opts: [
+            "What color is the animal?",
+            "Do all animals of this kind do it, even if no one teaches them?",
+            "How big is the animal?",
+            "Does the animal like doing it?"],
+          ans: 1, fb: [
+            "Color is a trait, not a behavior. It does not tell you if a behavior was learned.",
+            "If every animal of that kind does it without being taught, it is an instinct.",
+            "Size does not tell you whether a behavior was learned or not.",
+            "We cannot tell what an animal likes, and it does not tell us how it got the behavior."] },
+        { t: "text", q: "Write your own question that compares an instinct and a learned behavior.", ph: "Why… / How…", rows: 2,
+          model: "Why can a newborn puppy find milk without help, but it needs practice to learn to sit?",
+          check: "Does your question name one instinct and one learned behavior?" }
+      ]}
+    ],
+    synth: { idea: "<p>An <b>instinct</b> is a behavior an animal is born with. All animals of that kind do it without being taught. A <b>learned behavior</b> comes from practice, teaching or experience. Both kinds of behavior help animals survive.</p>",
+      vocab: [
+        ["instinct", "a behavior an animal is born knowing how to do"],
+        ["learned behavior", "a behavior an animal gets from practice, teaching or experience"],
+        ["offspring", "the young of a living thing; puppies are the offspring of dogs"],
+        ["parent", "a living thing that has offspring"]
+      ]},
+    cool: [
+      { t: "mc", q: "A parrot says “Hello!” after hearing its owner say it many times. What kind of behavior is this?", opts: [
+          "An instinct, because all parrots are born saying “Hello”",
+          "A learned behavior, because the parrot heard the word many times and copied it",
+          "An instinct, because birds make sounds",
+          "Neither one"],
+        ans: 1, fb: [
+          "Parrots are not born saying “Hello.” A wild parrot would never say it.",
+          "The parrot learned this from hearing people. That is learned.",
+          "Some bird sounds are instincts, but saying a human word had to be learned.",
+          "It is one of them. Ask: was the parrot born doing it, or did it learn it?"] }
+    ]
+  },
+  /* ---------------- Lesson 2 ---------------- */
+  {
+    title: "Passed Down: Inherited Traits",
+    warm: "<p>Look at Honey and Bear’s puppies. Three are black like their father, Bear. Two are yellow like their mother, Honey. All five have floppy ears, webbed toes and thick tails like both parents. One puppy is a little bigger than the others.</p>",
+    goal: "figure out which traits are passed from parents to offspring.",
+    acts: [
+      { title: "What do you notice?", blocks: [
+        { t: "text", q: "List two ways the puppies look like their parents.", ph: "1. … 2. …", rows: 2 },
+        { t: "reveal", btn: "See the science", a: "<p>Coat color, floppy ears, webbed toes and tail shape were passed down from the parents. A characteristic passed from parents to offspring is an <b>inherited trait</b>. The study of how traits are passed down is called <b>genetics</b>.</p><p>Offspring get traits from <i>both</i> parents. That is why they look like their parents but are not exactly the same.</p>" }
+      ]},
+      { title: "Inherited or acquired?", blocks: [
+        { t: "p", html: "An <b>acquired trait</b> is a characteristic a living thing gets during its life. It is not passed down from parents." },
+        { t: "sort", q: "Sort each trait. Think: was it passed down, or did it happen during the living thing’s life?", bins: ["Inherited trait", "Acquired trait"], items: [
+          ["A puppy’s black fur", 0, "Fur color is passed down from the parents."],
+          ["A scar on a dog’s leg from a fence", 1, "A scar comes from an injury during the dog’s life. It was not passed down."],
+          ["Brown eyes", 0, "Eye color is passed down from parents."],
+          ["Pierced ears", 1, "Someone pierced the ears during the person’s life. No one is born with pierced ears."],
+          ["The shape of a maple leaf", 0, "Leaf shape is passed down from the parent tree in its seeds."],
+          ["A tree branch bent by the wind", 1, "The wind bent the branch during the tree’s life. Its seeds will not grow bent trees."],
+          ["Strong muscles from swimming every day", 1, "Muscles get stronger from exercise during your life. Your children will not be born with your swim muscles."],
+          ["Webbed toes on a Labrador", 0, "Labradors are born with webbed toes. It is passed down from parents."],
+          ["Hair dyed purple", 1, "Dye was added during the person’s life. It is not passed down."]
+        ]}
+      ]},
+      { title: "Can acquired traits be passed on?", blocks: [
+        { t: "text", q: "Before the puppies were born, Bear lost the tip of his tail in an accident. Predict: will the puppies be born with short tails? Why?", ph: "I predict… because…", rows: 2 },
+        { t: "reveal", btn: "See the answer", a: "<p><b>No.</b> The short tail is an acquired trait. It happened during Bear’s life. Acquired traits are not passed down through genetics, so the puppies are born with full tails.</p>" }
+      ]}
+    ],
+    synth: { idea: "<p><b>Inherited traits</b> are passed from parents to offspring, like eye color or leaf shape. <b>Acquired traits</b> happen during a living thing’s life, like a scar or strong muscles. Acquired traits are not passed down through genetics.</p>",
+      vocab: [
+        ["characteristic", "a feature of a living thing, like color, shape or size"],
+        ["inherited trait", "a characteristic passed from parents to offspring"],
+        ["acquired trait", "a characteristic a living thing gets during its life; it is not passed down"],
+        ["genetics", "the study of how traits are passed from parents to offspring"],
+        ["offspring", "the young of a living thing"]
+      ]},
+    cool: [
+      { t: "multi", q: "Which are inherited traits?", opts: ["Eye color", "A broken arm", "The color of a flower’s petals", "Knowing how to read", "Ear shape"],
+        ans: [0, 2, 4], why: ["", "A broken arm happens during a person’s life. It is acquired.", "", "Reading is learned during your life. You are not born knowing how to read.", ""],
+        done: "These traits were passed down from parents." }
+    ]
+  },
+  /* ---------------- Lesson 3 ---------------- */
+  {
+    title: "Patterns in Pedigrees",
+    warm: "<p>A dog breeder keeps a family tree chart called a <b>pedigree</b>. It shows three generations of dogs: the grandparents, the parents and the puppies. Some dogs in the chart have yellow coats and some have black coats.</p>",
+    goal: "use a family tree to look for patterns in traits across generations.",
+    acts: [
+      { title: "Read a pedigree", blocks: [
+        { t: "label", q: "Label each row (generation) of the pedigree.", svg: '<svg viewBox="0 0 400 330" role="img" aria-label="Pedigree of three generations of Labrador dogs"><g stroke="#5B6475" stroke-width="2" fill="none"><path d="M125 55 H185 M155 55 V135 M170 150 H240 M205 150 V205 M100 205 H340 M100 205 V235 M180 205 V235 M260 205 V235 M340 205 V235"/></g><rect x="95" y="40" width="30" height="30" fill="#1E2D4F"/><circle cx="200" cy="55" r="15" fill="#F2C46D" stroke="#A9832F" stroke-width="2"/><rect x="140" y="135" width="30" height="30" fill="#1E2D4F"/><circle cx="255" cy="150" r="15" fill="#F2C46D" stroke="#A9832F" stroke-width="2"/><rect x="85" y="235" width="30" height="30" fill="#1E2D4F"/><circle cx="180" cy="250" r="15" fill="#F2C46D" stroke="#A9832F" stroke-width="2"/><circle cx="260" cy="250" r="15" fill="#1E2D4F"/><rect x="325" y="235" width="30" height="30" fill="#F2C46D" stroke="#A9832F" stroke-width="2"/><g font-family="Inter,system-ui,sans-serif" font-size="13" fill="#1B2333"><text x="133" y="185" text-anchor="middle">Bear</text><text x="255" y="185" text-anchor="middle">Honey</text></g><g font-family="Inter,system-ui,sans-serif" font-size="12" fill="#5B6475"><rect x="60" y="290" width="14" height="14" fill="#1E2D4F"/><text x="80" y="302">black coat</text><rect x="160" y="290" width="14" height="14" fill="#F2C46D" stroke="#A9832F"/><text x="180" y="302">yellow coat</text><text x="270" y="302">square = male</text><text x="270" y="318">circle = female</text></g></svg>',
+          spots: [
+            { x: 30, y: 55, ans: "grandparents", hint: "This is the oldest generation, at the top of the chart." },
+            { x: 30, y: 150, ans: "parents", hint: "Bear and Honey are in this row. They had the puppies." },
+            { x: 30, y: 250, ans: "offspring", hint: "The puppies are the young of Bear and Honey." }
+          ], extra: ["habitat", "instinct"], caption: "Lines down connect parents to their offspring." },
+        { t: "table", caption: "Puppies in Honey and Bear’s litters", head: ["Litter", "Black puppies", "Yellow puppies"], rows: [
+          ["First litter", 3, 2], ["Second litter", 4, 3], ["Third litter", 2, 4]] },
+        { t: "mc", q: "What pattern do you see in the litters?", opts: [
+            "Every puppy looks exactly like its mother.",
+            "Every litter has both black and yellow puppies, like the two parents.",
+            "All the puppies are yellow.",
+            "The puppies get no traits from their father."],
+          ans: 1, fb: [
+            "Many puppies are black, like Bear. They do not all look like Honey.",
+            "Each litter has some of each color. The puppies inherit traits from both parents.",
+            "The table shows black puppies in every litter.",
+            "Black puppies got their coat color from Bear, so the father passes traits too."] }
+      ]},
+      { title: "Why not exact copies?", blocks: [
+        { t: "blanks", text: "Offspring get traits from {both|Think: the mother AND the father.} parents. Traits are passed from one {generation|Grandparents, parents and puppies are each one of these.} to the next. The study of how traits are passed down is called {genetics|It is the science of inherited traits.}.",
+          extra: ["one", "habitat", "instinct"] },
+        { t: "reveal", q: "Why is one puppy bigger than its brothers and sisters?", btn: "Tap to see", a: "<p>Each puppy gets a different mix of traits from its two parents. That is why brothers and sisters look alike but not exactly the same. How much a puppy eats can also change its size during its life.</p>" }
+      ]}
+    ],
+    synth: { idea: "<p>A <b>pedigree</b> is a family tree that shows traits across generations. Patterns in a pedigree show that traits are passed from parents to offspring. Offspring get traits from both parents, so they look like their parents but are not exact copies.</p>",
+      vocab: [
+        ["generation", "all the family members born at about the same time; grandparents, parents and children are three generations"],
+        ["pedigree", "a family tree chart that shows traits over generations"],
+        ["parent", "a living thing that has offspring"],
+        ["offspring", "the young of a living thing"],
+        ["genetics", "the study of how traits are passed from parents to offspring"]
+      ]},
+    cool: [
+      { t: "mc", q: "In the pedigree, a black grandfather and a yellow grandmother had a black son (Bear). What does this show?", opts: [
+          "Bear inherited his coat color from a parent.",
+          "Bear chose his own coat color.",
+          "Bear’s coat color is an acquired trait.",
+          "Coat color is a learned behavior."],
+        ans: 0, fb: [
+          "Bear’s black coat came from his parents, just like his father.",
+          "Animals cannot choose inherited traits like coat color.",
+          "Coat color does not happen during life. Bear was born with it.",
+          "Coat color is a trait, not a behavior."] }
+    ]
+  },
+  /* ---------------- Lesson 4 ---------------- */
+  {
+    title: "Plants, People and Good Questions",
+    warm: "<p>Two bean seeds come from the same parent plant. One grows on a sunny windowsill. It is tall and green. The other grows in a dark closet. It is pale, thin and floppy.</p>",
+    goal: "ask questions to compare inherited traits and acquired traits in plants and people.",
+    acts: [
+      { title: "Same seeds, different plants", blocks: [
+        { t: "text", q: "Why do you think the two bean plants look so different?", ph: "I think…", rows: 2 },
+        { t: "reveal", btn: "See the science", a: "<p>Both plants inherited the same kinds of traits from their parent plant, like leaf shape. But the <b>environment</b> matters too. The plant in the dark could not get the sunlight it needs to make food. Its pale, weak look came from its life in the dark, so it is <b>acquired</b>. Its seeds would not grow pale plants in the sun.</p>" },
+        { t: "mc", q: "Flamingos hatch with gray feathers. They turn pink from the shrimp and algae they eat. Is a flamingo’s pink color inherited or acquired?", opts: ["Inherited, because all flamingos are born pink", "Acquired, because it comes from what the flamingo eats during its life", "A learned behavior", "An instinct"],
+          ans: 1, fb: [
+            "Flamingos are not born pink. They hatch gray.",
+            "The pink comes from food the flamingo eats during its life.",
+            "Color is a trait, not a behavior.",
+            "An instinct is a behavior. Feather color is a trait."] }
+      ]},
+      { title: "Traits in people", blocks: [
+        { t: "sort", q: "Sort these human traits.", bins: ["Inherited trait", "Acquired trait"], items: [
+          ["Natural hair color", 0, "Natural hair color is passed down from parents."],
+          ["Dimples", 0, "Dimples are passed down in families."],
+          ["The shape of your nose", 0, "Nose shape is passed down from parents."],
+          ["A sunburn", 1, "A sunburn happens from too much sun during your life."],
+          ["A scar on a knee", 1, "A scar comes from an injury during your life."],
+          ["A short haircut", 1, "Someone cut the hair during your life. Your children will not be born with short haircuts."],
+          ["A missing tooth from a fall", 1, "The tooth was lost during life. It is not passed down."]
+        ]}
+      ]},
+      { title: "Ask questions to compare traits", blocks: [
+        { t: "multi", q: "Which questions could help you decide if a trait is inherited or acquired?", opts: [
+            "Did the parents have this trait too?",
+            "Did this trait come from something that happened during the living thing’s life?",
+            "What is the living thing’s name?",
+            "Do other offspring of the same parents have this trait?",
+            "Is it sunny today?"],
+          ans: [0, 1, 3], why: ["", "", "A name does not tell you where a trait came from.", "", "Today’s weather does not tell you where a trait came from."],
+          done: "Questions about the parents and about the living thing’s life help you compare." },
+        { t: "text", q: "Ask your own question that compares an inherited trait and an acquired trait.", ph: "Why… / How…", rows: 2,
+          model: "Why are a puppy’s webbed toes passed down from its parents, but a scar on its leg is not?",
+          check: "Does your question name one inherited trait and one acquired trait?" }
+      ]}
+    ],
+    synth: { idea: "<p>Living things inherit traits from their parents. The environment and life events can add acquired traits. Questions like “Did the parents have it?” and “Did it happen during its life?” help us compare inherited and acquired traits.</p>",
+      vocab: [
+        ["inherited trait", "a characteristic passed from parents to offspring"],
+        ["acquired trait", "a characteristic a living thing gets during its life"],
+        ["characteristic", "a feature of a living thing"],
+        ["environment", "everything around a living thing, like sunlight, water, food and weather"]
+      ]},
+    cool: [
+      { t: "mc", q: "Ana’s mother and grandmother have curly hair. Ana has curly hair too. Ana also has a scar on her knee. Which statement is correct?", opts: [
+          "Curly hair is acquired, and the scar is inherited.",
+          "Curly hair is inherited, and the scar is acquired.",
+          "Both are inherited.",
+          "Both are acquired."],
+        ans: 1, fb: [
+          "This is backwards. Curly hair runs in Ana’s family. The scar came from an injury.",
+          "Curly hair was passed down through three generations. The scar happened during Ana’s life.",
+          "The scar was not passed down. It came from an injury.",
+          "Curly hair shows up in three generations, so it was passed down."] }
+    ]
+  }
+  ],
+  /* ---------------- Practice ---------------- */
+  practice: [
+    { t: "mc", q: "Which is an example of an instinct?", opts: [
+        "A dog fetches a ball when its owner says “Fetch.”",
+        "A newborn kangaroo crawls into its mother’s pouch.",
+        "A student solves a math problem.",
+        "A horse learns to jump over fences."],
+      ans: 1, fb: [
+        "The dog learned the word “fetch” from its owner.",
+        "A newborn kangaroo is born knowing how to do this. No one teaches it.",
+        "Solving math problems is learned in school.",
+        "The horse learned this with practice."] },
+    { t: "multi", q: "Which are acquired traits?", opts: ["A scar from a bike crash", "Eye color", "A dog’s fur trimmed short by a groomer", "The shape of an oak leaf", "Strong arms from lifting weights"],
+      ans: [0, 2, 4], why: ["", "Eye color is passed down from parents.", "", "Leaf shape is passed down from the parent tree.", ""],
+      done: "Each of these happened during a living thing’s life." },
+    { t: "table", caption: "Pea plant experiment: both parent plants had purple flowers", head: ["Flower color of offspring", "Number of plants"], rows: [["Purple", 75], ["White", 25]] },
+    { t: "chart", title: "Offspring flower color", labels: ["Purple", "White"], values: [75, 25], max: 80, step: 20, unit: "plants", ylabel: "number of plants" },
+    { t: "mc", q: "Use the data. Which statement is BEST supported?", opts: [
+        "All offspring look exactly like their parents.",
+        "Most offspring had purple flowers like their parents, but some looked different.",
+        "Flower color is an acquired trait.",
+        "The offspring had no flowers."],
+      ans: 1, fb: [
+        "25 plants had white flowers, so not all of them look like their parents.",
+        "75 purple and 25 white. Most look like the parents, but offspring are not always exact copies.",
+        "Flower color is passed down in seeds. It is inherited.",
+        "The table counts 100 plants with flowers."] },
+    { t: "mc", q: "A scientist wants to know if a songbird’s song is learned. Which question is BEST to investigate?", opts: [
+        "What color are the bird’s feathers?",
+        "Can a bird raised alone, without hearing adult birds, sing the song?",
+        "How many eggs does the bird lay?",
+        "Does the bird live in a forest?"],
+      ans: 1, fb: [
+        "Feather color is a trait. It will not tell you how the bird got its song.",
+        "If the bird cannot sing it without hearing adults, the song is learned.",
+        "Number of eggs does not tell you about the song.",
+        "Where the bird lives does not tell you if the song is learned."] },
+    { t: "text", q: "A dog learned to roll over and shake hands. Explain why her puppies will not be born knowing these tricks.", rows: 3, ph: "The puppies will not… because…",
+      model: "Rolling over and shaking hands are learned behaviors. The dog learned them from practice during her life. Learned behaviors and acquired traits are not passed down through genetics, so her puppies would have to learn the tricks themselves.",
+      check: "Did you use the words “learned” and “passed down”?" },
+    { t: "mc", q: "Sea turtle hatchlings crawl to the ocean right after they hatch. Why is this an instinct?", opts: [
+        "Their mother shows them the way.",
+        "They do it without being taught.",
+        "They practice for many weeks first.",
+        "They copy other animals on the beach."],
+      ans: 1, fb: [
+        "Sea turtle mothers leave before the eggs hatch. The babies never meet her.",
+        "They are born knowing to do it. That is an instinct.",
+        "They do it right away, with no practice.",
+        "Copying others would be learning. Hatchlings do this on their own."] }
+  ]
+});
+</script>
+</body>
+</html>
