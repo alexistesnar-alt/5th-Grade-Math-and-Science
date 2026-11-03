@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mixing and Mass Lab — Virtual Science Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="lab.css">
+<script src="../brand.js"></script>
+<style>
+#scene text{font-family:Inter,system-ui,sans-serif}
+#scene .lcd{font:600 40px "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;fill:#B9F6CA}
+#c-exp button{flex:1 1 180px;text-align:left}
+.ask{display:grid;gap:14px}
+.ask .seg button{min-width:90px}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← Science Lab</a>
+<div class="page-hdr">
+  <span class="eyebrow">Unit 5 · The Green Lady</span>
+  <h1>Mixing and Mass Lab</h1>
+  <p>Mix two things on a digital scale. Watch what happens to the mass.</p>
+  <p class="stds">PS.5.1.1 · PS.5.1.2</p>
+</div>
+
+<div class="lab-q"><span class="lbl">Question to investigate</span>
+  <p>When we mix substances, is something new made? Does the total mass stay the same?</p></div>
+
+<div class="lab-grid">
+  <div class="panel stage">
+    <svg id="scene" viewBox="0 0 600 390" role="img" aria-label="Two containers sitting on a digital scale">
+      <rect width="600" height="390" fill="#FBFBF8"/>
+      <text id="caption" x="300" y="34" text-anchor="middle" font-size="22" font-weight="600" fill="#1E2D4F"></text>
+      <!-- scale -->
+      <rect x="60" y="296" width="480" height="14" rx="5" fill="#C9CED8"/>
+      <rect x="90" y="310" width="420" height="70" rx="10" fill="#1E2D4F"/>
+      <rect x="200" y="320" width="200" height="50" rx="6" fill="#0E1A30"/>
+      <text id="lcd" class="lcd" x="388" y="358" text-anchor="end">0.0</text>
+      <text x="470" y="358" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">g</text>
+      <g id="main"></g>
+      <g id="dishG"></g>
+      <g id="fx"></g>
+    </svg>
+    <div class="readouts">
+      <div class="readout"><span class="k">Mass before</span><span class="v" id="r-before">—</span></div>
+      <div class="readout"><span class="k">Mass after</span><span class="v" id="r-after">—</span></div>
+    </div>
+    <p class="ctl-note">Everything stays on the scale the whole time, even the empty dish.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Pick a mix</h2>
+    <p class="sub">Pick one. Then tap Mix.</p>
+    <div class="ctl"><div id="c-exp"></div></div>
+    <button class="btn wide" id="mix" type="button">Mix</button>
+  </div>
+</div>
+
+<section class="section" id="askBox" hidden>
+  <h2>Your turn: what happened?</h2>
+  <p class="sub" id="askObs"></p>
+  <div class="ask">
+    <div><span class="ctl-lbl">Was a new substance made?</span><div id="a-type"></div><div class="fb" id="typeFb" hidden aria-live="polite"></div></div>
+    <div><span class="ctl-lbl">What happened to the total mass?</span><div id="a-mass"></div><div class="fb" id="massFb" hidden aria-live="polite"></div></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Data table</h2>
+  <p class="sub">Change = after − before. Your label shows up after you answer.</p>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>Mix</th><th>Before</th><th>After</th><th>Change</th><th>Your label</th></tr></thead>
+    <tbody id="tbody"></tbody></table></div>
+</section>
+
+<section class="section">
+  <h2>What did you find?</h2>
+  <div id="check"></div>
+</section>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+
+<script src="lab.js"></script>
+<script>
+(function () {
+  var WATER = '#BFE3F7', VINEGAR = '#F3EBC2', SALTY = '#D9EAF2';
+  var EXP = {
+    salt:  { label: 'Salt + water', box: 'cup', liquid: WATER, solid: '#FFFFFF', before: 285.0, after: 285.0, type: 'physical', how: 'dissolve',
+      obs: 'The salt seemed to disappear into the water.',
+      typeOk: 'The salt dissolved. It is still there (you could taste it), and if the water evaporates the salt is left behind. No new substance, so it is a physical change.',
+      typeNo: 'The salt seems to vanish, but it only dissolved. It is still in the water. Nothing new was made, so this is a physical change.' },
+    sugar: { label: 'Sugar + water', box: 'cup', liquid: WATER, solid: '#FFFDF5', before: 295.0, after: 295.0, type: 'physical', how: 'dissolve',
+      obs: 'The sugar seemed to disappear into the water.',
+      typeOk: 'The sugar dissolved and spread out in the water. It is still sugar, so it is a physical change.',
+      typeNo: 'Dissolving is not making something new. The sugar is still there (the water tastes sweet). This is a physical change.' },
+    sand:  { label: 'Sand + water', box: 'cup', liquid: WATER, solid: '#D9B779', before: 310.0, after: 310.0, type: 'physical', how: 'settle',
+      obs: 'The sand sank to the bottom. It did not dissolve.',
+      typeOk: 'Sand and water make a mixture. You could pour off the water and dry the sand. Nothing new was made.',
+      typeNo: 'The sand just sank. You could separate it again with a filter. No new substance was made, so it is a physical change.' },
+    bag:   { label: 'Baking soda + vinegar (sealed bag)', box: 'bag', liquid: VINEGAR, solid: '#FFFFFF', before: 135.0, after: 135.0, type: 'chemical', how: 'fizzBag',
+      obs: 'It fizzed and the bag puffed up with gas.',
+      typeOk: 'The bubbles are a new gas called carbon dioxide. Making a new substance is a chemical change.',
+      typeNo: 'The bubbles are a brand-new gas (carbon dioxide). When a new substance forms, it is a chemical change.' },
+    cup:   { label: 'Baking soda + vinegar (open cup)', box: 'cup', liquid: VINEGAR, solid: '#FFFFFF', before: 175.0, after: 172.6, type: 'chemical', how: 'fizzCup',
+      obs: 'It fizzed, and the bubbles popped into the air.',
+      typeOk: 'The bubbles are a new gas, carbon dioxide. That makes it a chemical change.',
+      typeNo: 'The fizzing means a new gas (carbon dioxide) was made. That is a chemical change.' },
+    rust:  { label: 'Steel wool + water (sealed jar)', box: 'jar', liquid: WATER, solid: '#9AA3AE', item: 'wool', before: 218.0, after: 218.0, type: 'chemical', how: 'slow', newColor: '#B5531E', days: '3 days later',
+      obs: 'After 3 days, the gray steel wool turned orange-brown and crumbly.',
+      typeOk: 'Rust is a new substance. Iron in the steel wool joined with oxygen from the air in the jar.',
+      typeNo: 'Rust is not steel wool anymore. It has a new color and breaks apart. A new substance means a chemical change.' },
+    copper:{ label: 'Copper + vinegar and salt (sealed jar)', box: 'jar', liquid: VINEGAR, solid: '#C8763A', item: 'penny', before: 272.0, after: 272.0, type: 'chemical', how: 'slow', newColor: '#4FB39A', days: '2 days later',
+      obs: 'After 2 days, the shiny copper had a blue-green coating.',
+      typeOk: 'The green coating is a new substance. The same kind of change turned the copper Statue of Liberty green.',
+      typeNo: 'The blue-green coating is a new substance, like on the Statue of Liberty. That is a chemical change.' }
+  };
+  var keys = Object.keys(EXP), cur = 'salt', state = 'ready', rowFor = {}, labeled = {};
+  var expSeg = Lab.seg(Lab.$('#c-exp'), keys.map(function (k) { return { v: k, label: EXP[k].label }; }), cur, function (v) { cur = v; setup(); });
+  var table = Lab.table(Lab.$('#tbody'), 5, 'Mix something to fill in the table.');
+  var main = Lab.$('#main'), dishG = Lab.$('#dishG'), fx = Lab.$('#fx'), lcd = Lab.$('#lcd');
+  var CX = 220, CY = 296;   // container bottom-center
+  var parts = {};
+
+  function S(tag, a, p) { return Lab.svg(tag, a, p); }
+
+  function drawContainer(e) {
+    main.innerHTML = ''; parts = {};
+    if (e.box === 'cup') {
+      S('path', { d: 'M150 150 L162 296 L278 296 L290 150', fill: '#EEF6FB', stroke: '#8EA3BC', 'stroke-width': 4, 'stroke-linejoin': 'round' }, main);
+      parts.liquid = S('path', { d: 'M157 200 L162 292 L278 292 L284 200 Z', fill: e.liquid, opacity: .9 }, main);
+      parts.layer = S('rect', { x: 164, y: 292, width: 112, height: 0, fill: e.solid }, main);
+    } else if (e.box === 'bag') {
+      parts.bag = S('g', {}, main);
+      S('path', { d: 'M140 150 L300 150 L300 288 Q300 296 292 296 L148 296 Q140 296 140 288 Z', fill: 'rgba(225,238,248,.7)', stroke: '#8EA3BC', 'stroke-width': 3 }, parts.bag);
+      S('rect', { x: 138, y: 146, width: 164, height: 10, rx: 3, fill: '#4A78C2' }, parts.bag);
+      parts.liquid = S('rect', { x: 144, y: 250, width: 152, height: 43, rx: 6, fill: e.liquid, opacity: .9 }, parts.bag);
+    } else {
+      S('rect', { x: 150, y: 140, width: 140, height: 156, rx: 14, fill: 'rgba(225,238,248,.7)', stroke: '#8EA3BC', 'stroke-width': 4 }, main);
+      parts.lid = S('rect', { x: 144, y: 126, width: 152, height: 18, rx: 4, fill: '#5B6475' }, main);
+      parts.liquid = S('rect', { x: 154, y: 262, width: 132, height: 30, rx: 8, fill: e.liquid, opacity: .9 }, main);
+    }
+  }
+  function drawDish(e, full) {
+    dishG.innerHTML = '';
+    var g = S('g', { id: 'dish' }, dishG);
+    S('path', { d: 'M-50 -18 Q0 22 50 -18 Z', fill: '#FFFFFF', stroke: '#8EA3BC', 'stroke-width': 3 }, g);
+    if (full) {
+      if (e.item === 'wool') { for (var i = 0; i < 9; i++) S('ellipse', { cx: -18 + (i % 3) * 18, cy: -24 - Math.floor(i / 3) * 8, rx: 13, ry: 6, fill: 'none', stroke: e.solid, 'stroke-width': 3 }, g); }
+      else if (e.item === 'penny') { S('ellipse', { cx: 0, cy: -22, rx: 22, ry: 7, fill: e.solid, stroke: '#9A5527', 'stroke-width': 2 }, g); }
+      else S('path', { d: 'M-34 -18 Q0 -46 34 -18 Z', fill: e.solid, stroke: '#C9CED8', 'stroke-width': 1.5 }, g);
+    }
+    g.setAttribute('transform', 'translate(430,296)');
+    return g;
+  }
+  function setLcd(v) { lcd.textContent = v.toFixed(1); }
+
+  function setup() {
+    var e = EXP[cur];
+    state = 'ready';
+    fx.innerHTML = '';
+    drawContainer(e); drawDish(e, true);
+    Lab.$('#caption').textContent = 'Before mixing';
+    setLcd(e.before);
+    Lab.$('#r-before').textContent = e.before.toFixed(1) + ' g';
+    Lab.$('#r-after').textContent = '—';
+    Lab.$('#mix').disabled = false; Lab.$('#mix').textContent = 'Mix';
+  }
+
+  Lab.$('#mix').addEventListener('click', function () {
+    if (state !== 'ready') { setup(); return; }
+    state = 'mixing';
+    var e = EXP[cur];
+    Lab.$('#mix').disabled = true; expSeg.disable(true);
+    Lab.$('#caption').textContent = 'Mixing…';
+    var dish = Lab.$('#dish'), drops = [], poured = false, bubbles = [], lost = 0;
+    var REACT = e.how === 'slow' ? 3.2 : 3.4;
+    Lab.loop(function (dt, t) {
+      // 1) dish lifts and tips over the container (0–1.6 s), then goes back (1.6–2.2 s)
+      if (t < 2.2) {
+        var k = t < 0.8 ? t / 0.8 : t < 1.6 ? 1 : 1 - (t - 1.6) / 0.6;
+        var x = 430 + (CX + 75 - 430) * k, y = 296 + (120 - 296) * k, rot = -70 * (t < 0.8 ? k : t < 1.6 ? 1 : k);
+        dish.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ') rotate(' + rot.toFixed(1) + ')');
+        if (t > 0.8 && !poured) {
+          poured = true; drawDish(e, false).setAttribute('transform', dish.getAttribute('transform')); dish = Lab.$('#dish');
+          if (e.item) addItem(e);
+          else for (var i = 0; i < 26; i++) drops.push({ el: S('circle', { cx: CX + Lab.rand(-14, 14), cy: 140 - Lab.rand(0, 40), r: Lab.rand(2.5, 4.5), fill: e.solid, stroke: '#A0A7B4', 'stroke-width': .8 }, fx), vy: Lab.rand(60, 140) });
+        }
+      }
+      drops.forEach(function (d) {
+        var cy = +d.el.getAttribute('cy') + d.vy * dt; d.vy += 300 * dt;
+        var floorY = e.box === 'bag' ? 288 : 288;
+        if (cy > floorY) cy = floorY;
+        d.el.setAttribute('cy', cy.toFixed(1));
+      });
+      // 2) what happens next
+      var r = t - 2.2;
+      if (r > 0) {
+        if (e.how === 'dissolve') drops.forEach(function (d) { d.el.setAttribute('opacity', Math.max(0, 1 - r / 1.6).toFixed(2)); });
+        if (e.how === 'settle') { drops.forEach(function (d) { d.el.setAttribute('opacity', Math.max(0, 1 - r / 1.2).toFixed(2)); }); var hh = Math.min(16, r * 14); parts.layer.setAttribute('y', 292 - hh); parts.layer.setAttribute('height', hh); }
+        if (e.how === 'fizzBag' || e.how === 'fizzCup') {
+          drops.forEach(function (d) { d.el.setAttribute('opacity', Math.max(0, 1 - r / 1).toFixed(2)); });
+          if (r < 2.6 && Math.random() < 0.6) bubbles.push({ el: S('circle', { cx: CX + Lab.rand(-50, 50), cy: 286, r: Lab.rand(3, 7), fill: 'none', stroke: '#6B8CB8', 'stroke-width': 2 }, fx), vy: Lab.rand(50, 110) });
+          bubbles.forEach(function (b) {
+            var cy = +b.el.getAttribute('cy') - b.vy * dt;
+            var top = e.how === 'fizzBag' ? 175 : -20;
+            if (cy < top) cy = e.how === 'fizzBag' ? 250 + Math.random() * 30 : top;
+            b.el.setAttribute('cy', cy.toFixed(1));
+          });
+          if (e.how === 'fizzBag') { var p = Math.min(1, r / 2.4); parts.bag.setAttribute('transform', 'translate(' + CX + ',296) scale(' + (1 + .12 * p).toFixed(3) + ',' + (1 + .18 * p).toFixed(3) + ') translate(' + (-CX) + ',-296)'); }
+          if (e.how === 'fizzCup') { lost = Math.min(1, r / REACT); setLcd(e.before - (e.before - e.after) * lost); }
+        }
+        if (e.how === 'slow') {
+          var q = Math.min(1, r / 2.4);
+          Lab.$('#caption').textContent = r < 0.6 ? 'Waiting…' : e.days;
+          if (parts.item) parts.item.forEach(function (el) { el.setAttribute(el.tagName === 'ellipse' && e.item === 'penny' ? 'fill' : 'stroke', mixColor(e.solid, e.newColor, q)); });
+        }
+      }
+      if (r > REACT) { done(e); return false; }
+      return true;
+    });
+  });
+
+  function addItem(e) {
+    parts.item = [];
+    if (e.item === 'wool') for (var i = 0; i < 9; i++) parts.item.push(S('ellipse', { cx: CX - 22 + (i % 3) * 22, cy: 278 - Math.floor(i / 3) * 10, rx: 16, ry: 7, fill: 'none', stroke: e.solid, 'stroke-width': 3.5 }, fx));
+    else parts.item.push(S('ellipse', { cx: CX, cy: 282, rx: 26, ry: 8, fill: e.solid, stroke: '#9A5527', 'stroke-width': 2 }, fx));
+  }
+  function mixColor(a, b, t) {
+    var pa = [1, 3, 5].map(function (i) { return parseInt(a.substr(i, 2), 16); }), pb = [1, 3, 5].map(function (i) { return parseInt(b.substr(i, 2), 16); });
+    return 'rgb(' + pa.map(function (v, i) { return Math.round(v + (pb[i] - v) * t); }).join(',') + ')';
+  }
+
+  function done(e) {
+    state = 'done';
+    setLcd(e.after);
+    Lab.$('#caption').textContent = 'After mixing';
+    Lab.$('#r-after').textContent = e.after.toFixed(1) + ' g';
+    Lab.$('#mix').disabled = false; Lab.$('#mix').textContent = 'Reset and mix again';
+    expSeg.disable(false);
+    var ch = Math.round((e.after - e.before) * 10) / 10;
+    var lbl = Lab.el('span', null, labeled[cur] || '?  Answer above');
+    var tr = table.add([e.label, { cls: 'num', text: e.before.toFixed(1) + ' g' }, { cls: 'num', text: e.after.toFixed(1) + ' g' },
+      { cls: 'num', text: (ch > 0 ? '+' : ch < 0 ? '−' : '') + Math.abs(ch).toFixed(1) + ' g' }, lbl]);
+    rowFor[cur] = rowFor[cur] || []; rowFor[cur].push(lbl);
+    ask(e);
+  }
+
+  // student labels the change
+  var askState = {};
+  function ask(e) {
+    var box = Lab.$('#askBox'); box.hidden = false;
+    Lab.$('#askObs').textContent = 'You saw: ' + e.obs;
+    Lab.$('#a-type').innerHTML = ''; Lab.$('#a-mass').innerHTML = '';
+    Lab.$('#typeFb').hidden = true; Lab.$('#massFb').hidden = true;
+    askState = { exp: cur, type: null, mass: null };
+    var correctMass = e.after === e.before ? 'same' : e.after < e.before ? 'less' : 'more';
+    Lab.seg(Lab.$('#a-type'), [{ v: 'physical', label: 'No: physical change' }, { v: 'chemical', label: 'Yes: chemical change' }], null, function (v) {
+      var ok = v === e.type;
+      say('#typeFb', ok, ok ? e.typeOk : e.typeNo); if (ok) { askState.type = v; finishLabel(e); }
+    });
+    Lab.seg(Lab.$('#a-mass'), [{ v: 'same', label: 'Stayed the same' }, { v: 'less', label: 'Less' }, { v: 'more', label: 'More' }], null, function (v) {
+      var ok = v === correctMass, msg;
+      if (ok) msg = correctMass === 'less' ? 'The open cup lost 2.4 g. Carbon dioxide gas escaped into the air, so the scale could not weigh it anymore. The matter was not destroyed. It left the cup.'
+        : e.box === 'cup' ? 'Before and after were the same. All the matter was still there, just mixed together.'
+        : 'Before and after were the same. The ' + (e.box === 'bag' ? 'bag' : 'jar') + ' was sealed, so nothing could get in or out.' + (e.box === 'bag' ? ' The gas was trapped and still counted.' : '');
+      else msg = correctMass === 'less' ? 'Look at the scale again: after is 2.4 g less than before. Where could gas bubbles go in an open cup?'
+        : 'Look at the scale again: before and after are both ' + e.before.toFixed(1) + ' g. The mass stayed the same.';
+      say('#massFb', ok, msg); if (ok) { askState.mass = v; finishLabel(e); }
+    });
+    function say(id, ok, msg) { var fb = Lab.$(id); fb.hidden = false; fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.textContent = (ok ? 'Yes! ' : 'Not quite. ') + msg; }
+  }
+  function finishLabel(e) {
+    if (!askState.type || !askState.mass) return;
+    var txt = (askState.type === 'chemical' ? 'Chemical' : 'Physical') + ', mass ' + (askState.mass === 'same' ? 'same' : askState.mass) + ' ✓';
+    labeled[askState.exp] = txt;
+    (rowFor[askState.exp] || []).forEach(function (s) { s.textContent = txt; });
+  }
+
+  Lab.check(Lab.$('#check'), [
+    { q: 'The open cup lost 2.4 g. Where did that mass go?', opts: ['It was destroyed.', 'Carbon dioxide gas escaped into the air.', 'The scale stopped working.', 'The vinegar turned into nothing.'], a: 1,
+      why: 'The gas left the open cup. In the sealed bag the gas was trapped, so the mass stayed the same. Matter is never destroyed.',
+      miss: { 0: 'Not quite. Matter is not destroyed in a change. Compare the open cup with the sealed bag.', 2: 'Not quite. The scale worked fine. In the sealed bag the mass stayed the same. What was different about the cup?', 3: 'Not quite. Matter does not turn into nothing. Think about where the bubbles went.' } },
+    { q: 'Salt dissolved in water and seemed to disappear. Is the salt still there?', opts: ['Yes. The mass stayed the same, and the salt is left behind if the water evaporates.', 'No. Dissolving destroys the salt.'], a: 0,
+      why: 'Dissolving is a physical change. The salt spreads out in tiny pieces, but it is still salt.',
+      miss: { 1: 'Not quite. Check your data: the mass did not change. The salt is still in the water, just in pieces too small to see.' } },
+    { q: 'Which clue tells you a chemical change happened?', opts: ['Sugar dissolves in water.', 'Sand sinks to the bottom.', 'Bubbles of a new gas form.', 'Water takes the shape of a new cup.'], a: 2, two: true,
+      why: 'A new gas, a new color, or a new solid are clues that a new substance was made.',
+      miss: { 0: 'Not quite. Dissolving does not make a new substance. The sugar is still sugar.', 1: 'Not quite. Sinking sand is still sand. Nothing new was made.', 3: 'Not quite. Changing shape is a physical change. It is still water.' } }
+  ]);
+
+  setup();
+})();
+</script>
+</body>
+</html>

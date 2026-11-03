@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coordinate Quest — Math Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<script src="../brand.js"></script>
+<style>
+  .cq-q{font:600 20px/1.35 var(--sans);text-align:center;margin:0 0 6px}
+  .cq-q .pt{font:700 22px/1 var(--mono);color:#FFC107;white-space:nowrap}
+  .cq-rules{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:4px 0 8px}
+  .cq-rule{background:rgba(255,255,255,.08);border-radius:10px;padding:7px 12px;font:600 15px/1.3 var(--mono)}
+  .cq-rule b{color:#FFC107}
+  .cq-body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;justify-items:center}
+  .cq-grid{width:100%;max-width:440px;touch-action:manipulation;user-select:none;-webkit-user-select:none;cursor:pointer;border-radius:12px}
+  .cq-grid svg{display:block;width:100%;height:auto}
+  .cq-side{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:440px}
+  .cq-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}
+  .cq-choice{position:relative;min-height:60px;border-radius:12px;border:3px solid rgba(255,255,255,.18);background:#fff;color:#16213B;font:700 24px/1 var(--mono);cursor:pointer;touch-action:manipulation}
+  .cq-choice:hover{border-color:#FFC107}
+  .cq-choice .k{position:absolute;top:6px;left:8px;font:600 11px/1 var(--mono);color:#687082}
+  .cq-choice.good{border-color:#22C55E;background:#DCFCE7}.cq-choice.bad{border-color:#F97316;background:#FFEDD5}
+  .cq-help{font-size:14px;color:#AEB7C8;text-align:center;margin:0}
+  @media (min-width:860px){
+    .cq-body.two{grid-template-columns:minmax(0,1fr) 280px;align-items:center}
+  }
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="a-wrap">
+  <a class="a-back" href="index.html">&larr; Arcade</a>
+  <div class="a-card" id="game">
+    <div id="play">
+      <p class="cq-q" id="q"></p>
+      <div class="cq-rules" id="rules"></div>
+      <div class="cq-body" id="body">
+        <div class="cq-grid" id="grid"></div>
+        <div class="cq-side">
+          <div class="cq-choices" id="choices" hidden></div>
+          <button type="button" class="a-btn" id="plant" hidden>Plant the flag</button>
+          <p class="cq-help" id="help"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="a-stds">Standards: NC.5.G.1 · NC.5.OA.3</p>
+</main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="arcade.js"></script>
+<script>
+(function () {
+  "use strict";
+  var R = Arcade.rand, S = Arcade.shuffle;
+  var qEl = document.getElementById("q"), rulesEl = document.getElementById("rules"), body = document.getElementById("body");
+  var grid = document.getElementById("grid"), choicesEl = document.getElementById("choices"), plantBtn = document.getElementById("plant"), help = document.getElementById("help");
+  var cur = null, sel = null;   // sel = the point picked so far {x, y}
+
+  // grid: points 0–10, 29 units apart
+  var L = 34, T = 12, STEP = 29, N = 10, W = L + STEP * N + 16, H = T + STEP * N + 34;
+  function px(x) { return L + STEP * x; }
+  function py(y) { return T + STEP * (N - y); }
+  var MONO = 'font-family="JetBrains Mono, ui-monospace, monospace"';
+
+  function gridSVG() {
+    var s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Coordinate grid from 0 to 10">';
+    s += '<rect x="' + (L - 14) + '" y="0" width="' + (STEP * N + 28) + '" height="' + (STEP * N + 26) + '" rx="10" fill="rgba(255,255,255,.04)"/>';
+    for (var i = 0; i <= N; i++) {
+      s += '<line x1="' + px(i) + '" y1="' + py(0) + '" x2="' + px(i) + '" y2="' + py(N) + '" stroke="rgba(255,255,255,' + (i ? ".16" : ".9") + ')" stroke-width="' + (i ? 1 : 2.5) + '"/>';
+      s += '<line x1="' + px(0) + '" y1="' + py(i) + '" x2="' + px(N) + '" y2="' + py(i) + '" stroke="rgba(255,255,255,' + (i ? ".16" : ".9") + ')" stroke-width="' + (i ? 1 : 2.5) + '"/>';
+      s += '<text x="' + px(i) + '" y="' + (py(0) + 20) + '" fill="#D9DEE8" font-size="13" font-weight="600" text-anchor="middle" ' + MONO + ">" + i + "</text>";
+      if (i) s += '<text x="' + (px(0) - 9) + '" y="' + (py(i) + 4.5) + '" fill="#D9DEE8" font-size="13" font-weight="600" text-anchor="end" ' + MONO + ">" + i + "</text>";
+    }
+    s += '<text x="' + (px(N) + 4) + '" y="' + (py(0) - 6) + '" fill="#FFC107" font-size="14" font-weight="700" ' + MONO + ">x</text>";
+    s += '<text x="' + (px(0) + 6) + '" y="' + (py(N) + 4) + '" fill="#FFC107" font-size="14" font-weight="700" ' + MONO + ">y</text>";
+    for (var x = 0; x <= N; x++) for (var y = 0; y <= N; y++) s += '<circle cx="' + px(x) + '" cy="' + py(y) + '" r="1.8" fill="rgba(255,255,255,.35)"/>';
+    s += '<g id="marks"></g></svg>';
+    return s;
+  }
+  grid.innerHTML = gridSVG();
+  var svg = grid.querySelector("svg"), marks = svg.querySelector("#marks");
+
+  function flag(x, y, ghost) {
+    var X = px(x), Y = py(y), o = ghost ? ' opacity=".55"' : "";
+    return '<g' + o + '><line x1="' + X + '" y1="' + Y + '" x2="' + X + '" y2="' + (Y - 30) + '" stroke="#fff" stroke-width="2.5"/>' +
+      '<path d="M' + X + " " + (Y - 30) + " l18 6 l-18 7 z" + '" fill="#FFC107"/><circle cx="' + X + '" cy="' + Y + '" r="4.5" fill="#FFC107"/></g>';
+  }
+  function ring(x, y, color, dash) {
+    return '<circle cx="' + px(x) + '" cy="' + py(y) + '" r="10" fill="none" stroke="' + color + '" stroke-width="3"' + (dash ? ' stroke-dasharray="4 3"' : "") + "/>";
+  }
+  function dot(x, y, color, r) { return '<circle cx="' + px(x) + '" cy="' + py(y) + '" r="' + (r || 6) + '" fill="' + color + '" stroke="#16213B" stroke-width="1.5"/>'; }
+  function gem(x, y) {
+    var X = px(x), Y = py(y);
+    return '<path d="M' + X + " " + (Y - 11) + " L" + (X + 10) + " " + Y + " L" + X + " " + (Y + 11) + " L" + (X - 10) + " " + Y + ' Z" fill="#60A5FA" stroke="#fff" stroke-width="2"/>';
+  }
+  function pair(x, y) { return "(" + x + ", " + y + ")"; }
+
+  function make(level) {
+    var p = { level: level };
+    if (level === 1) {
+      do { p.x = R(0, N); p.y = R(0, N); } while (p.x === p.y || ((p.x === 0 || p.y === 0) && Math.random() < 0.7));
+    } else if (level === 2) {
+      do { p.x = R(1, N); p.y = R(0, N); } while (p.x === p.y);
+      var opts = [pair(p.x, p.y), pair(p.y, p.x)], extra = [[p.x + 1, p.y], [p.x - 1, p.y], [p.x, p.y + 1], [p.x, p.y - 1], [p.y + 1, p.x], [p.y, p.x - 1]];
+      S(extra).forEach(function (e) {
+        var t = pair(e[0], e[1]);
+        if (opts.length < 4 && e[0] >= 0 && e[1] >= 0 && e[0] <= N && e[1] <= N && opts.indexOf(t) < 0) opts.push(t);
+      });
+      p.choices = S(opts); p.answer = pair(p.x, p.y);
+    } else {
+      // two patterns: x adds a, y adds b. Show 3 points, find the 4th.
+      do { p.a = R(1, 3); p.b = R(1, 3); p.x0 = R(0, 2); p.y0 = R(0, 2); }
+      while (p.a === p.b || p.x0 + 3 * p.a > N || p.y0 + 3 * p.b > N);
+      p.xs = [0, 1, 2, 3].map(function (i) { return p.x0 + i * p.a; });
+      p.ys = [0, 1, 2, 3].map(function (i) { return p.y0 + i * p.b; });
+      p.x = p.xs[3]; p.y = p.ys[3];
+    }
+    return p;
+  }
+
+  function drawMarks(extra) {
+    var s = "";
+    if (cur.level === 2) s += gem(cur.x, cur.y);
+    if (cur.level === 3) for (var i = 0; i < 3; i++) s += dot(cur.xs[i], cur.ys[i], "#60A5FA");
+    if (sel) s += flag(sel.x, sel.y, true) + ring(sel.x, sel.y, "#FFC107", true);
+    marks.innerHTML = s + (extra || "");
+  }
+
+  function show() {
+    cur = make(game.level); sel = null;
+    rulesEl.innerHTML = ""; choicesEl.hidden = true; plantBtn.hidden = true;
+    body.classList.toggle("two", cur.level === 2);
+    if (cur.level === 1) {
+      qEl.innerHTML = 'Plant the flag at <span class="pt">' + pair(cur.x, cur.y) + "</span>";
+      plantBtn.hidden = false; plantBtn.disabled = true;
+      help.textContent = "Tap a point, then plant. Keys: arrows, then Enter.";
+    } else if (cur.level === 2) {
+      qEl.textContent = "What is the ordered pair for the blue gem?";
+      choicesEl.hidden = false;
+      choicesEl.innerHTML = cur.choices.map(function (c, i) { return '<button type="button" class="cq-choice" data-c="' + c + '"><span class="k">' + (i + 1) + "</span>" + c + "</button>"; }).join("");
+      help.textContent = "Across first (x), then up (y).";
+    } else {
+      qEl.textContent = "Plant the flag at the next point.";
+      rulesEl.innerHTML =
+        '<span class="cq-rule">x: start ' + cur.x0 + ", <b>add " + cur.a + "</b> &rarr; " + cur.xs.slice(0, 3).join(", ") + ", ?</span>" +
+        '<span class="cq-rule">y: start ' + cur.y0 + ", <b>add " + cur.b + "</b> &rarr; " + cur.ys.slice(0, 3).join(", ") + ", ?</span>";
+      plantBtn.hidden = false; plantBtn.disabled = true;
+      help.textContent = "Tap a point, then plant. Keys: arrows, then Enter.";
+    }
+    drawMarks();
+  }
+
+  function selectPoint(x, y) {
+    if (game.locked() || !cur || cur.level === 2) return;
+    sel = { x: Math.max(0, Math.min(N, x)), y: Math.max(0, Math.min(N, y)) };
+    plantBtn.disabled = false;
+    drawMarks();
+  }
+
+  function check() {
+    if (game.locked() || !cur || !sel || cur.level === 2) return;
+    var x = sel.x, y = sel.y, ok = x === cur.x && y === cur.y, html;
+    if (ok) {
+      drawMarks(ring(x, y, "#4ADE80"));
+      game.right("<b>Yes!</b> " + pair(x, y) + ": over " + x + ", up " + y + ".", show, { delay: 900 });
+      return;
+    }
+    sel = null;
+    drawMarks(flag(x, y, true) + '<path d="M' + (px(x) - 7) + " " + (py(y) - 7) + " l14 14 m0 -14 l-14 14" + '" stroke="#FDBA74" stroke-width="3"/>' + flag(cur.x, cur.y) + ring(cur.x, cur.y, "#4ADE80"));
+    if (cur.level === 3) {
+      html = (x === cur.y && y === cur.x ? "<b>You switched x and y.</b> " : "<b>Not quite.</b> ") + "Use each rule one more time." +
+        '<span class="steps">x: ' + cur.xs[2] + " + " + cur.a + " = " + cur.x + " &nbsp; y: " + cur.ys[2] + " + " + cur.b + " = " + cur.y + " &rarr; " + pair(cur.x, cur.y) + "</span>";
+    } else if (x === cur.y && y === cur.x) {
+      html = "<b>You switched x and y.</b> Go across " + cur.x + " first, then up " + cur.y + ".";
+    } else if (x === cur.x) {
+      html = "<b>Across " + x + " is right.</b> Now go up " + cur.y + ", not " + y + ".";
+    } else if (y === cur.y) {
+      html = "<b>Up " + y + " is right.</b> Go across " + cur.x + ", not " + x + ".";
+    } else {
+      html = "<b>Not quite.</b> Start at 0. Go across " + cur.x + ", then up " + cur.y + ".";
+    }
+    game.wrong(html, show);
+  }
+
+  function chooseOpt(btn) {
+    if (game.locked() || !cur || cur.level !== 2 || !btn) return;
+    var c = btn.getAttribute("data-c");
+    if (c === cur.answer) {
+      btn.classList.add("good");
+      game.right("<b>Yes!</b> Over " + cur.x + ", up " + cur.y + ": " + cur.answer + ".", show, { delay: 900 });
+      return;
+    }
+    btn.classList.add("bad");
+    choicesEl.querySelector('[data-c="' + cur.answer + '"]').classList.add("good");
+    var html = c === pair(cur.y, cur.x)
+      ? "<b>That is backwards.</b> x (across) comes first: " + cur.answer + "."
+      : "<b>Not quite.</b> The gem is over " + cur.x + " and up " + cur.y + ": " + cur.answer + ".";
+    drawMarks('<line x1="' + px(0) + '" y1="' + py(0) + '" x2="' + px(cur.x) + '" y2="' + py(0) + '" stroke="#FFC107" stroke-width="4"/>' +
+      '<line x1="' + px(cur.x) + '" y1="' + py(0) + '" x2="' + px(cur.x) + '" y2="' + py(cur.y) + '" stroke="#4ADE80" stroke-width="4"/>' + gem(cur.x, cur.y));
+    game.wrong(html, show);
+  }
+
+  // tap a point: snap to the nearest grid point
+  grid.addEventListener("pointerdown", function (e) {
+    if (!cur || cur.level === 2 || game.locked()) return;
+    var m = svg.getScreenCTM(); if (!m) return;
+    var pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    var p = pt.matrixTransform(m.inverse());
+    var gx = Math.round((p.x - L) / STEP), gy = Math.round((T + STEP * N - p.y) / STEP);
+    if (gx < -0.5 || gy < -0.5 || gx > N + 0.5 || gy > N + 0.5) return;
+    e.preventDefault();
+    if (sel && sel.x === gx && sel.y === gy) { check(); return; }   // tap the same point again = plant
+    selectPoint(gx, gy);
+  });
+  plantBtn.addEventListener("click", check);
+  choicesEl.addEventListener("click", function (e) { chooseOpt(e.target.closest(".cq-choice")); });
+  document.addEventListener("keydown", function (e) {
+    if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || !cur || game.locked()) return;
+    if (cur.level === 2) {
+      if (/^[1-4]$/.test(e.key)) { e.preventDefault(); chooseOpt(choicesEl.querySelectorAll(".cq-choice")[+e.key - 1]); }
+      return;
+    }
+    var d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[e.key];
+    if (d) { e.preventDefault(); var s = sel || { x: 0, y: 0 }; selectPoint(s.x + (sel ? d[0] : 0), s.y + (sel ? d[1] : 0)); }
+    else if (e.key === "Enter" && sel && (e.target === document.body || e.target === plantBtn)) {
+      if (e.target === plantBtn) return;          // the button's own click handles it
+      e.preventDefault(); check();
+    }
+  });
+
+  var game = Arcade.init({
+    id: "coordinate-quest",
+    title: "Coordinate Quest",
+    howTo: "Go across first (x), then up (y).",
+    mode: "lives",
+    levels: [
+      { name: "Plant the flag", desc: "Find a point on the grid." },
+      { name: "Name the point", desc: "Pick the right ordered pair." },
+      { name: "Pattern path", desc: "Use two rules to find the next point." }
+    ],
+    onStart: show,
+    onStop: function () { cur = null; sel = null; marks.innerHTML = ""; }
+  });
+  if (/[?&]test=1/.test(location.search)) window.__arcadePeek = function () { return cur && { x: cur.x, y: cur.y, answer: cur.answer, level: cur.level }; };
+})();
+</script>
+</body>
+</html>

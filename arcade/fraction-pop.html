@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fraction Pop — Math Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<script src="../brand.js"></script>
+<style>
+  .fp-target{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:0 0 10px;font:600 19px/1.3 var(--sans)}
+  .fp-tval{display:inline-flex;align-items:center;justify-content:center;min-width:70px;min-height:70px;padding:6px 12px;border-radius:14px;background:#FFC107;color:#16213B;font:700 30px/1 var(--mono)}
+  .fp-found{font:600 15px/1 var(--mono);color:#AEB7C8}
+  .fp-area{position:relative;height:400px;border-radius:14px;overflow:hidden;touch-action:manipulation;
+    background:radial-gradient(120% 80% at 50% 110%,rgba(96,165,250,.22),transparent 60%),rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+  .fp-b{position:absolute;left:0;top:0;display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;padding:8px;border-radius:50%;cursor:pointer;
+    border:2px solid rgba(255,255,255,.55);color:#fff;font:700 18px/1 var(--mono);will-change:transform;
+    background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.55),rgba(255,255,255,.08) 38%,rgba(96,165,250,.28) 100%);box-shadow:inset 0 -6px 14px rgba(30,64,175,.35)}
+  .fp-b:hover{border-color:#FFC107}
+  .fp-b .k{position:absolute;top:2px;left:50%;transform:translateX(-50%);font:600 11px/1 var(--mono);color:#D9DEE8;opacity:.8}
+  .fp-b.pop{animation:fpPop .25s ease-out forwards;pointer-events:none}
+  .fp-b.bad{border-color:#FDBA74;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.45),rgba(253,186,116,.35))}
+  @keyframes fpPop{to{opacity:0;scale:1.5}}
+  .fr{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05;vertical-align:middle}
+  .fr span:first-child{border-bottom:2px solid currentColor;padding:0 2px 1px}
+  .fr span:last-child{padding-top:1px}
+  .fp-tval .fr span:first-child{border-bottom-width:3px}
+  .op{font-weight:600}
+  @media (max-width:640px){.fp-area{height:380px}.fp-b{font-size:17px}}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="a-wrap">
+  <a class="a-back" href="index.html">&larr; Arcade</a>
+  <div class="a-card" id="game">
+    <div id="play">
+      <div class="fp-target"><span>Pop bubbles equal to</span><span class="fp-tval" id="tval"></span><span class="fp-found" id="found"></span></div>
+      <div class="fp-area" id="area" aria-label="Bubbles. Press the number on a bubble to pop it."></div>
+    </div>
+  </div>
+  <p class="a-stds">Standards: NC.5.NF.1 · NC.5.NF.4</p>
+</main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="arcade.js"></script>
+<script>
+(function () {
+  "use strict";
+  var R = Arcade.rand, P = Arcade.pick, G = Arcade.gcd;
+  var area = document.getElementById("area"), tval = document.getElementById("tval"), foundEl = document.getElementById("found");
+
+  /* ---------- exact fractions: [numerator, denominator], always simplified ---------- */
+  function F(n, d) { var g = G(n, d) || 1; return [n / g, d / g]; }
+  function add(a, b) { return F(a[0] * b[1] + b[0] * a[1], a[1] * b[1]); }
+  function sub(a, b) { return F(a[0] * b[1] - b[0] * a[1], a[1] * b[1]); }
+  function mul(a, b) { return F(a[0] * b[0], a[1] * b[1]); }
+  function key(f) { return f[0] + "/" + f[1]; }
+  function txt(f) { return f[1] === 1 ? String(f[0]) : f[0] + "/" + f[1]; }
+  function lcm(a, b) { return a / G(a, b) * b; }
+
+  function frHTML(n, d) { return '<span class="fr"><span>' + n + "</span><span>" + d + "</span></span>"; }
+  function valHTML(f) { return f[1] === 1 ? String(f[0]) : frHTML(f[0], f[1]); }
+  function op(s) { return '<span class="op">' + s + "</span>"; }
+
+  /* ---------- every bubble a level can show, grouped by value ---------- */
+  var DEN = [2, 3, 4, 5, 6, 8, 10, 12];
+  function addExpr(a, b, minus) {   // a, b are [n, d] as written
+    var v = minus ? sub(F(a[0], a[1]), F(b[0], b[1])) : add(F(a[0], a[1]), F(b[0], b[1]));
+    var s = minus ? " − " : " + ", L = lcm(a[1], b[1]), how = a[0] + "/" + a[1] + s + b[0] + "/" + b[1];
+    if (a[1] !== b[1]) how += " = " + (a[0] * L / a[1]) + "/" + L + s + (b[0] * L / b[1]) + "/" + L;
+    var raw = minus ? (a[0] * L / a[1] - b[0] * L / b[1]) : (a[0] * L / a[1] + b[0] * L / b[1]);
+    how += " = " + raw + "/" + L;
+    if (txt(v) !== raw + "/" + L) how += " = " + txt(v);
+    var mis = null, misMsg = "";
+    if (a[1] !== b[1] || !minus) {
+      if (!minus) { mis = F(a[0] + b[0], a[1] + b[1]); misMsg = a[1] === b[1] ? "Keep the bottom number the same." : "Do not add the bottom numbers."; }
+      else if (a[1] > b[1] && a[0] > b[0]) { mis = F(a[0] - b[0], a[1] - b[1]); misMsg = "Do not subtract the bottom numbers."; }
+    }
+    return { html: frHTML(a[0], a[1]) + op(minus ? "−" : "+") + frHTML(b[0], b[1]), text: a[0] + "/" + a[1] + s + b[0] + "/" + b[1], val: v, how: how, mis: mis, misMsg: misMsg };
+  }
+  function buildPool(level) {
+    var out = [], d, n, a, b, k;
+    if (level === 1) {
+      DEN.forEach(function (d) {
+        for (var n = 1; n < d; n++) if (G(n, d) === 1) for (var k = 2; k * d <= 12; k++)
+          out.push({ html: frHTML(k * n, k * d), text: (k * n) + "/" + (k * d), val: [n, d], how: (k * n) + "/" + (k * d) + " = " + n + "/" + d + "  (÷ " + k + ")", mis: null });
+      });
+      [3, 4, 5, 6, 8, 10, 12].forEach(function (d) {
+        for (var a = 1; a < d; a++) for (var b = 1; a + b <= d; b++) out.push(addExpr([a, d], [b, d]));
+      });
+      [[2, 4], [2, 8], [4, 8], [3, 6], [2, 6], [5, 10], [2, 10], [3, 12], [4, 12], [6, 12]].forEach(function (p) {
+        for (var a = 1; a < p[0]; a++) if (G(a, p[0]) === 1) for (var b = 1; b < p[1]; b++) if (a * p[1] + b * p[0] <= p[0] * p[1]) {
+          out.push(addExpr([a, p[0]], [b, p[1]]));
+        }
+      });
+    } else if (level === 2) {
+      DEN.forEach(function (b) { DEN.forEach(function (d) {
+        if (b === d || lcm(b, d) > 24) return;
+        for (var a = 1; a < b; a++) if (G(a, b) === 1) for (var c = 1; c < d; c++) if (G(c, d) === 1) {
+          var A = [a, b], C = [c, d];
+          if (a * d + c * b <= b * d) out.push(addExpr(A, C));
+          if (a * d > c * b) out.push(addExpr(A, C, true));
+        }
+      }); });
+    } else {
+      [2, 3, 4, 5, 6, 8].forEach(function (b) {
+        for (var a = 1; a < b; a++) if (G(a, b) === 1) for (var n = 2; n <= 6; n++) {
+          var v = F(n * a, b);
+          if (v[0] > 4 * v[1]) continue;
+          out.push({ html: n + op("×") + frHTML(a, b), text: n + " × " + a + "/" + b, val: v, how: n + " × " + a + "/" + b + " = " + (n * a) + "/" + b + (txt(v) !== (n * a) + "/" + b ? " = " + txt(v) : ""), mis: [a, b], misMsg: "Multiply only the top number." });
+          out.push({ html: frHTML(a, b) + op("×") + n, text: a + "/" + b + " × " + n, val: v, how: a + "/" + b + " × " + n + " = " + (n * a) + "/" + b + (txt(v) !== (n * a) + "/" + b ? " = " + txt(v) : ""), mis: [a, b], misMsg: "Multiply only the top number." });
+        }
+      });
+      [2, 3, 4, 5, 6].forEach(function (b) {
+        for (var a = 1; a < b; a++) if (G(a, b) === 1) for (var m = 1; m * b <= 12; m++) {
+          var n = m * b, v = F(a * n, b);
+          out.push({ html: frHTML(a, b) + op("of") + n, text: a + "/" + b + " of " + n, val: v, how: a + "/" + b + " of " + n + ": " + n + " ÷ " + b + " = " + m + ", " + m + " × " + a + " = " + txt(v), mis: a > 1 ? [m, 1] : null, misMsg: "That is 1/" + b + " of " + n + ". Now take " + a + " of those parts." });
+        }
+      });
+      [[1, 2], [1, 3], [2, 3], [1, 4], [3, 4], [1, 5], [2, 5]].forEach(function (x) {
+        [[1, 2], [1, 3], [2, 3], [3, 2], [4, 3], [3, 4], [5, 2]].forEach(function (y) {
+          var v = mul(x, y);
+          out.push({ html: frHTML(x[0], x[1]) + op("×") + frHTML(y[0], y[1]), text: x[0] + "/" + x[1] + " × " + y[0] + "/" + y[1], val: v, how: x[0] + "/" + x[1] + " × " + y[0] + "/" + y[1] + " = " + (x[0] * y[0]) + "/" + (x[1] * y[1]) + (txt(v) !== (x[0] * y[0]) + "/" + (x[1] * y[1]) ? " = " + txt(v) : ""), mis: null });
+        });
+      });
+    }
+    var groups = {};
+    out.forEach(function (e) { (groups[key(e.val)] = groups[key(e.val)] || []).push(e); });
+    var targets = Object.keys(groups).filter(function (k) {
+      var v = k.split("/").map(Number);
+      return groups[k].length >= 4 && v[0] > 0 && v[1] <= 12 && (level === 3 || v[0] <= v[1]);
+    });
+    return { all: out, groups: groups, targets: targets };
+  }
+  var pools = {};
+
+  /* ---------- game state ---------- */
+  var st = null, raf = 0, NEED = 3;
+
+  function newTarget() {
+    var pool = st.pool, k;
+    do { k = P(pool.targets); } while (k === st.tk && pool.targets.length > 1);
+    st.tk = k; st.target = k.split("/").map(Number); st.found = 0;
+    st.right = pool.groups[k].filter(function (e) { return e.text !== txt(st.target); });
+    st.wrongAll = pool.all.filter(function (e) { return key(e.val) !== k; });
+    st.traps = st.wrongAll.filter(function (e) { return e.mis && key(e.mis) === k; });
+    tval.innerHTML = valHTML(st.target);
+    drawFound();
+    st.lanes.forEach(function (ln, i) { if (ln.b) removeBubble(ln); ln.wait = 0.25 + i * 0.55 + Math.random() * 0.4; });
+  }
+  function drawFound() { foundEl.textContent = st.found + " of " + NEED + " found"; }
+
+  function layout() {
+    var w = area.clientWidth, h = area.clientHeight;
+    var n = Math.max(3, Math.min(5, Math.floor(w / 112)));
+    st.W = w; st.H = h; st.laneW = w / n; st.D = Math.min(106, st.laneW - 14);
+    if (!st.lanes || st.lanes.length !== n) {
+      if (st.lanes) st.lanes.forEach(function (ln) { if (ln.b) removeBubble(ln); });
+      st.lanes = [];
+      for (var i = 0; i < n; i++) st.lanes.push({ b: null, wait: 0.2 + i * 0.5 });
+    }
+  }
+
+  function spawn(i) {
+    var ln = st.lanes[i];
+    var nCorrect = st.lanes.filter(function (l) { return l.b && l.b.ok; }).length;
+    var ok = Math.random() < (nCorrect ? 0.3 : 0.65), e;
+    var onScreen = st.lanes.map(function (l) { return l.b && l.b.e.text; });
+    for (var tries = 0; tries < 8; tries++) {   // no two bubbles the same
+      if (ok) e = P(st.right);
+      else e = st.traps.length && Math.random() < 0.35 ? P(st.traps) : P(st.wrongAll);
+      if (onScreen.indexOf(e.text) < 0) break;
+    }
+    var el = document.createElement("button");
+    el.type = "button"; el.className = "fp-b";
+    el.style.width = el.style.height = st.D + "px";
+    el.setAttribute("aria-label", "Bubble " + (i + 1) + ": " + e.text);
+    el.innerHTML = '<span class="k">' + (i + 1) + "</span>" + e.html;
+    el.setAttribute("data-lane", i);
+    var b = { el: el, e: e, ok: ok, y: -st.D, ph: Math.random() * 6.28, lane: i };
+    ln.b = b; place(b);
+    area.appendChild(el);
+  }
+  function place(b) {
+    var x = b.lane * st.laneW + (st.laneW - st.D) / 2 + Math.sin(b.ph) * 3;
+    b.el.style.transform = "translate(" + x.toFixed(1) + "px," + (st.H - b.y - st.D).toFixed(1) + "px)";
+  }
+  function removeBubble(ln) { if (ln.b && ln.b.el.parentNode) ln.b.el.parentNode.removeChild(ln.b.el); ln.b = null; }
+
+  var last = 0;
+  function frame(t) {
+    raf = requestAnimationFrame(frame);
+    var dt = Math.min(0.05, (t - last) / 1000 || 0); last = t;
+    if (!st || game.locked()) return;
+    var speed = st.H / (game.level === 1 ? 8 : 7);
+    st.lanes.forEach(function (ln, i) {
+      if (ln.b) {
+        ln.b.y += speed * dt; ln.b.ph += dt * 2.2; place(ln.b);
+        if (ln.b.y > st.H + 4) { removeBubble(ln); ln.wait = 0.2 + Math.random() * 0.8; }
+      } else if ((ln.wait -= dt) <= 0) spawn(i);
+    });
+  }
+
+  function popLane(i) {
+    if (!st || game.locked()) return;
+    var ln = st.lanes[i]; if (!ln || !ln.b) return;
+    var b = ln.b, e = b.e, T = txt(st.target);
+    if (b.ok) {
+      b.el.classList.add("pop");
+      var el = b.el; setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 260);
+      ln.b = null; ln.wait = 0.4 + Math.random() * 0.6;
+      st.found++; drawFound();
+      game.right("<b>Pop!</b> " + e.text + " = " + T + ".", function () { if (st.found >= NEED) newTarget(); }, { lock: false });
+      return;
+    }
+    b.el.classList.add("bad");
+    var html = (e.mis && key(e.mis) === st.tk ? "<b>" + e.misMsg + "</b> " : "<b>Not this one.</b> ") +
+      e.text + " equals " + txt(e.val) + ", not " + T + '.<span class="steps">' + e.how + "</span>";
+    game.wrong(html, function () { removeBubble(ln); ln.wait = 0.3; });
+  }
+
+  area.addEventListener("pointerdown", function (ev) {
+    var b = ev.target.closest(".fp-b"); if (!b) return;
+    ev.preventDefault(); popLane(+b.getAttribute("data-lane"));
+  });
+  area.addEventListener("click", function (ev) {   // keyboard (Enter / Space on a focused bubble)
+    if (ev.detail !== 0) return;
+    var b = ev.target.closest(".fp-b"); if (b) popLane(+b.getAttribute("data-lane"));
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.defaultPrevented || ev.ctrlKey || ev.metaKey || ev.altKey || !st) return;
+    if (/^[1-5]$/.test(ev.key)) { ev.preventDefault(); popLane(+ev.key - 1); }
+  });
+  window.addEventListener("resize", function () { if (st) layout(); });
+
+  var game = Arcade.init({
+    id: "fraction-pop",
+    title: "Fraction Pop",
+    howTo: "Pop every bubble that equals the gold number.",
+    mode: "timer", seconds: 60,
+    levels: [
+      { name: "Same value", desc: "Equal fractions and easy sums." },
+      { name: "Add and subtract", desc: "Unlike denominators." },
+      { name: "Multiply", desc: "Times and “of” with fractions." }
+    ],
+    onStart: function (level) {
+      pools[level] = pools[level] || buildPool(level);
+      area.innerHTML = "";
+      st = { pool: pools[level], lanes: null, tk: null };
+      layout(); newTarget();
+      cancelAnimationFrame(raf); last = performance.now(); raf = requestAnimationFrame(frame);
+    },
+    onStop: function () { cancelAnimationFrame(raf); st = null; area.innerHTML = ""; }
+  });
+  if (/[?&]test=1/.test(location.search)) window.__arcadePeek = function () {
+    if (!st) return null;
+    var r = { ok: [], bad: [] };
+    st.lanes.forEach(function (ln, i) { if (ln.b && ln.b.y > 0) (ln.b.ok ? r.ok : r.bad).push(i); });
+    return r;
+  };
+  window.__arcadeTest = { buildPool: buildPool, key: key };
+})();
+</script>
+</body>
+</html>

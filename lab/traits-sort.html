@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traits and Behaviors Sort — Virtual Science Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="lab.css">
+<script src="../brand.js"></script>
+<style>
+.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:0 0 14px}
+.def{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#FBFBF8;font-size:15px}
+.def b{color:var(--navy)}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← Science Lab</a>
+<div class="page-hdr">
+  <span class="eyebrow">Unit 2 · Paws, Patterns and Pedigrees</span>
+  <h1>Traits and Behaviors Sort</h1>
+  <p>Some things come from parents. Others are learned or happen during an animal's life.</p>
+  <p class="stds">LS.5.3.1 · LS.5.3.2</p>
+</div>
+
+<div class="lab-q"><span class="lbl">Question to investigate</span>
+  <p>Which traits and behaviors are passed from parents, and which come from an animal's life and experiences?</p></div>
+
+<section class="section">
+  <h2>Pick a sort</h2>
+  <div class="ctl"><div id="round"></div></div>
+  <div class="defs" id="defs"></div>
+  <div class="sort-bank" id="bank"></div>
+  <div class="bins" id="bins"></div>
+  <div class="fb" id="sortFb" hidden aria-live="polite"></div>
+  <div class="btn-row" style="margin-top:12px"><button class="btn ghost small" id="again" type="button">Start this sort over</button></div>
+</section>
+
+<section class="section">
+  <h2>Data table</h2>
+  <p class="sub">A row is added each time you finish a sort.</p>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>#</th><th>Sort</th><th>Cards</th><th>Right on first try</th></tr></thead>
+    <tbody id="tbody"></tbody></table></div>
+</section>
+
+<section class="section">
+  <h2>What did you find?</h2>
+  <div id="check"></div>
+</section>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+
+<script src="lab.js"></script>
+<script>
+(function () {
+  var ROUNDS = {
+    traits: {
+      label: 'Inherited or acquired trait?',
+      bins: [{ id: 'inh', label: 'Inherited trait', hint: 'Passed from parents to offspring' }, { id: 'acq', label: 'Acquired trait', hint: 'Develops during the living thing\'s life' }],
+      defs: [['Inherited trait', 'A feature passed from parents to their offspring, like eye color.'], ['Acquired trait', 'A feature that develops during a living thing\'s life. It is not passed to offspring.']],
+      items: [
+        { id: 'eye', label: 'Eye color', bin: 'inh', ok: 'Eye color comes from your parents.', no: 'You were born with your eye color. It came from your parents.' },
+        { id: 'fox', label: 'A red fox\'s red fur', bin: 'inh', ok: 'Fox kits get red fur from their parents.', no: 'A fox is born with the color of its fur. It comes from its parents.' },
+        { id: 'ears', label: 'A beagle\'s floppy ears', bin: 'inh', ok: 'Floppy ears are passed from beagle parents to puppies.', no: 'Beagle puppies are born with floppy ears like their parents.' },
+        { id: 'cardinal', label: 'A cardinal\'s red feathers', bin: 'inh', ok: 'Male cardinals get their red color from their parents.', no: 'Feather color is passed from parent birds to their chicks.' },
+        { id: 'dimples', label: 'Dimples', bin: 'inh', ok: 'Dimples are often passed down in families.', no: 'Dimples are not caused by anything you do. They are passed down from parents.' },
+        { id: 'scar', label: 'A scar from a bike fall', bin: 'acq', ok: 'A scar comes from an injury. It is not passed to children.', no: 'A scar comes from something that happened, not from parents. A baby is not born with its parent\'s scar.' },
+        { id: 'dyed', label: 'Hair dyed purple', bin: 'acq', ok: 'Dyed hair is a change made during life.', no: 'Nobody is born with dyed hair. It was changed during life.' },
+        { id: 'muscles', label: 'Strong legs from soccer practice', bin: 'acq', ok: 'Practice made the legs stronger. That is acquired.', no: 'The legs got stronger from practice, not from parents.' },
+        { id: 'clip', label: 'A poodle\'s clipped fur', bin: 'acq', ok: 'A groomer clipped the fur. Puppies are not born with the haircut.', no: 'The fur was cut by a groomer. That is not passed to puppies.' },
+        { id: 'bearEar', label: 'A bear\'s torn ear from a fight', bin: 'acq', ok: 'The torn ear came from a fight during the bear\'s life.', no: 'A cub would not be born with a torn ear. It happened during the bear\'s life.' }
+      ]
+    },
+    behaviors: {
+      label: 'Instinct or learned behavior?',
+      bins: [{ id: 'ins', label: 'Instinct', hint: 'Born knowing how. No one teaches it.' }, { id: 'lrn', label: 'Learned behavior', hint: 'Learned by practice, teaching or watching' }],
+      defs: [['Instinct', 'A behavior an animal is born knowing how to do.'], ['Learned behavior', 'A behavior an animal learns from experience, practice, or other animals.']],
+      items: [
+        { id: 'spider', label: 'A spider spins a web', bin: 'ins', ok: 'Spiders spin webs without ever being taught.', no: 'Baby spiders spin webs without anyone showing them. They are born knowing how.' },
+        { id: 'turtle', label: 'Baby sea turtles crawl to the ocean', bin: 'ins', ok: 'Hatchlings head for the ocean right away. No one teaches them.', no: 'The baby turtles never meet their parents. They are born knowing to go to the sea.' },
+        { id: 'chick', label: 'A baby bird opens its mouth for food', bin: 'ins', ok: 'Baby birds do this as soon as they hatch.', no: 'A just-hatched bird does this right away, before it could learn anything.' },
+        { id: 'hibernate', label: 'A groundhog hibernates in winter', bin: 'ins', ok: 'Hibernating is an instinct that helps animals survive winter.', no: 'Groundhogs hibernate without being taught. It is an instinct.' },
+        { id: 'cry', label: 'A newborn baby cries when hungry', bin: 'ins', ok: 'Newborns cry without being taught.', no: 'A newborn has not had time to learn. Crying is something babies are born doing.' },
+        { id: 'sit', label: 'A dog sits when told "sit"', bin: 'lrn', ok: 'The dog learned this through training.', no: 'Dogs are not born knowing the word "sit." Someone trained it.' },
+        { id: 'trash', label: 'A bear opens trash cans at a campsite', bin: 'lrn', ok: 'The bear learned that trash cans have food.', no: 'Bears learn from experience that campsites have food. It is learned.' },
+        { id: 'parrot', label: 'A parrot says "hello"', bin: 'lrn', ok: 'Parrots learn words by hearing people.', no: 'A parrot copies sounds it hears. It learned the word.' },
+        { id: 'chimp', label: 'A chimp uses a stick to catch termites', bin: 'lrn', ok: 'Young chimps learn this by watching adults.', no: 'Young chimps learn this by watching older chimps and practicing.' },
+        { id: 'read', label: 'You read a book', bin: 'lrn', ok: 'Reading is learned in school and at home.', no: 'Nobody is born knowing how to read. You learned it.' }
+      ]
+    }
+  };
+  var cur = 'traits', table = Lab.table(Lab.$('#tbody'), 4, 'Finish a sort to fill in the table.'), done = 0;
+  Lab.seg(Lab.$('#round'), [{ v: 'traits', label: 'Traits: inherited or acquired' }, { v: 'behaviors', label: 'Behaviors: instinct or learned' }], cur, function (v) { cur = v; build(); });
+
+  function build() {
+    var R = ROUNDS[cur];
+    Lab.$('#bank').innerHTML = ''; Lab.$('#bins').innerHTML = ''; Lab.$('#sortFb').hidden = true;
+    var defs = Lab.$('#defs'); defs.innerHTML = '';
+    R.defs.forEach(function (d) { defs.appendChild(Lab.el('div', { class: 'def' }, [Lab.el('b', null, d[0] + ': '), d[1]])); });
+    R.items.forEach(function (it) { delete it._done; delete it._miss; });
+    Lab.sorter({
+      bank: Lab.$('#bank'), binsRoot: Lab.$('#bins'), fb: Lab.$('#sortFb'), bins: R.bins, items: R.items,
+      onDone: function (first, total) {
+        done++;
+        table.add([done, R.label, { cls: 'num', text: total }, { cls: 'num', text: first + ' of ' + total }]);
+        var f = Lab.$('#sortFb'); f.className = 'fb ok'; f.textContent = 'All sorted! You got ' + first + ' of ' + total + ' right on the first try.' + (cur === 'traits' ? ' Now try the Behaviors sort.' : '');
+      }
+    });
+  }
+  Lab.$('#again').addEventListener('click', build);
+
+  Lab.check(Lab.$('#check'), [
+    { q: 'A puppy learns to fetch a ball. What kind of behavior is this?', opts: ['Instinct', 'Learned behavior'], a: 1, two: true,
+      why: 'The puppy learned to fetch through practice and play with people.',
+      miss: { 0: 'Not quite. An instinct is something an animal is born knowing. A puppy has to be taught to bring the ball back.' } },
+    { q: 'Which of these is an inherited trait?', opts: ['A scar on your knee', 'Your natural hair color', 'Knowing how to swim', 'Pierced ears'], a: 1, two: true,
+      why: 'Natural hair color is passed from parents to offspring.',
+      miss: { 0: 'Not quite. A scar comes from an injury during your life. It is acquired.', 2: 'Not quite. Swimming is a skill you learn. It is not a trait you are born with.', 3: 'Not quite. Pierced ears are a change made during life. They are acquired.' } },
+    { q: 'A dog has a scar. Will her puppies be born with the same scar?', opts: ['Yes, puppies get all of their mother\'s features.', 'No. A scar is acquired, so it is not passed to offspring.'], a: 1,
+      why: 'Only inherited traits are passed from parents to offspring. Acquired traits, like scars, are not.',
+      miss: { 0: 'Not quite. Puppies inherit traits like fur color and ear shape. A scar happened during the mother\'s life, so it is not passed on.' } }
+  ]);
+
+  build();
+})();
+</script>
+</body>
+</html>

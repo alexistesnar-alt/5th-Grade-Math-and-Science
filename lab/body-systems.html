@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Body Systems Lab — Virtual Science Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="lab.css">
+<script src="../brand.js"></script>
+<style>
+.ladder{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 12px}
+@media (max-width:700px){.ladder{grid-template-columns:1fr}}
+.rung{border:2px dashed var(--line-2);border-radius:8px;min-height:64px;padding:8px 10px;background:#fff;display:flex;flex-direction:column;justify-content:center}
+.rung .n{font:600 12px var(--mono);color:var(--faint)}
+.rung.full{border-style:solid;border-color:#ABEFC6;background:#ECFDF3}
+.rung b{color:var(--navy);font-size:15.5px}
+.rung span.ex{font-size:13px;color:var(--muted)}
+.jobs{display:grid;gap:10px}
+.job-row{display:grid;grid-template-columns:130px minmax(0,1fr);gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px}
+.job-row b{color:var(--navy)}
+.job-row select{width:100%;min-height:46px;font:500 15px var(--sans);padding:8px;border:1.5px solid var(--line-2);border-radius:8px;background:#fff;color:var(--ink)}
+.job-row.ok{border-color:#ABEFC6;background:#ECFDF3}.job-row.no{border-color:#FECDCA;background:#FEF3F2}
+.job-row .fbx{grid-column:1/-1;font-size:14.5px}
+@media (max-width:560px){.job-row{grid-template-columns:1fr}}
+#bins .bin{min-height:90px}
+#body text{font-family:Inter,system-ui,sans-serif}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← Science Lab</a>
+<div class="page-hdr">
+  <span class="eyebrow">Unit 1 · Fueling Athletes</span>
+  <h1>Body Systems Lab</h1>
+  <p>An athlete's body is built from tiny cells. Body systems work together to keep it moving.</p>
+  <p class="stds">LS.5.1.1 · LS.5.1.2</p>
+</div>
+
+<div class="lab-q"><span class="lbl">Question to investigate</span>
+  <p>How do the body's systems work together when an athlete runs a race?</p></div>
+
+<section class="section">
+  <span class="part-tag">Part 1</span>
+  <h2>From cell to athlete</h2>
+  <p class="sub">Tap the cards in order, from smallest to largest.</p>
+  <div class="ladder" id="ladder"></div>
+  <div class="sort-bank" id="lvBank"></div>
+  <div class="fb" id="lvFb" hidden aria-live="polite"></div>
+</section>
+
+<section class="section">
+  <span class="part-tag">Part 2</span>
+  <h2>Which system does each organ belong to?</h2>
+  <p class="sub">Tap an organ, then tap its system. With a mouse, you can drag.</p>
+  <div class="sort-bank" id="bank"></div>
+  <div class="bins" id="bins"></div>
+  <div class="fb" id="sortFb" hidden aria-live="polite"></div>
+</section>
+
+<section class="section">
+  <span class="part-tag">Part 3</span>
+  <h2>What is each system's job?</h2>
+  <div class="jobs" id="jobs"></div>
+</section>
+
+<div class="lab-grid">
+  <div class="panel stage">
+    <span class="part-tag">Part 4: Race day</span>
+    <svg id="body" viewBox="0 0 520 260" role="img" aria-label="A runner with a beating heart and breathing lungs">
+      <rect width="520" height="260" fill="#FBFBF8"/>
+      <line x1="0" y1="236" x2="520" y2="236" stroke="#C9CED8" stroke-width="3"/>
+      <g id="runner" transform="translate(110,0)" stroke="#1E2D4F" stroke-width="9" stroke-linecap="round" fill="none">
+        <circle cx="0" cy="62" r="20" fill="#1E2D4F" stroke="none"/>
+        <line x1="0" y1="86" x2="0" y2="150"/>
+        <line id="armA" x1="0" y1="98" x2="26" y2="130"/><line id="armB" x1="0" y1="98" x2="-26" y2="130"/>
+        <line id="legA" x1="0" y1="150" x2="22" y2="232"/><line id="legB" x1="0" y1="150" x2="-22" y2="232"/>
+      </g>
+      <g transform="translate(300,80)">
+        <path id="heart" d="M0 18 C-30 -8 -24 -34 0 -20 C24 -34 30 -8 0 18 Z" fill="#D92D20"/>
+        <text x="0" y="62" text-anchor="middle" font-size="16" font-weight="600" fill="#1E2D4F">Heart</text>
+        <text id="hrTxt" x="0" y="84" text-anchor="middle" font-size="16" fill="#5B6475" font-family="JetBrains Mono,monospace">— beats/min</text>
+      </g>
+      <g transform="translate(430,80)">
+        <g id="lungs"><path d="M-6 -30 L-6 -8 C-30 -26 -38 10 -30 24 C-22 32 -8 26 -6 14 Z" fill="#F4A3A8"/><path d="M6 -30 L6 -8 C30 -26 38 10 30 24 C22 32 8 26 6 14 Z" fill="#F4A3A8"/><line x1="0" y1="-40" x2="0" y2="-10" stroke="#C47C82" stroke-width="5"/></g>
+        <text x="0" y="62" text-anchor="middle" font-size="16" font-weight="600" fill="#1E2D4F">Lungs</text>
+        <text id="brTxt" x="0" y="84" text-anchor="middle" font-size="16" fill="#5B6475" font-family="JetBrains Mono,monospace">— breaths/min</text>
+      </g>
+    </svg>
+    <p class="ctl-note">Practice numbers for a healthy 10-year-old athlete.</p>
+  </div>
+  <div class="panel">
+    <h2>Test the athlete</h2>
+    <p class="sub">Pick an activity. Then measure.</p>
+    <div class="ctl"><span class="ctl-lbl">Activity</span><div id="act"></div></div>
+    <button class="btn wide" id="measure" type="button">Measure for 3 seconds</button>
+    <div class="fb info" id="raceFb" hidden aria-live="polite"></div>
+  </div>
+</div>
+
+<section class="section">
+  <h2>Data table</h2>
+  <p class="sub">Measure each activity. Try each one more than once.</p>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>#</th><th>Activity</th><th>Heartbeats per minute</th><th>Breaths per minute</th></tr></thead>
+    <tbody id="tbody"></tbody></table></div>
+</section>
+
+<section class="section">
+  <h2>What did you find?</h2>
+  <div id="check"></div>
+</section>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+
+<script src="lab.js"></script>
+<script>
+(function () {
+  // Part 1: levels of organization
+  var LEVELS = [
+    { id: 'cell', label: 'Cell', ex: 'one muscle cell', why: 'A cell is the smallest living part of the body.' },
+    { id: 'tissue', label: 'Tissue', ex: 'heart muscle tissue', why: 'A tissue is a group of cells of the same kind working together.' },
+    { id: 'organ', label: 'Organ', ex: 'the heart', why: 'An organ is made of different tissues working together.' },
+    { id: 'system', label: 'Organ system', ex: 'circulatory system', why: 'An organ system is a group of organs that work together.' },
+    { id: 'organism', label: 'Organism', ex: 'the athlete', why: 'An organism is a whole living thing made of many systems.' }
+  ];
+  var ladder = Lab.$('#ladder'), rungs = LEVELS.map(function (l, i) {
+    var r = Lab.el('div', { class: 'rung' }, [Lab.el('span', { class: 'n' }, (i + 1) + (i === 0 ? ' · smallest' : i === 4 ? ' · largest' : ''))]);
+    ladder.appendChild(r); return r;
+  });
+  var next = 0, lvFb = Lab.$('#lvFb');
+  Lab.shuffle(LEVELS).forEach(function (l) {
+    var b = Lab.el('button', { type: 'button', class: 'sort-card' }, [Lab.el('span', { class: 'sc-label' }, l.label), Lab.el('span', { class: 'sc-sub' }, l.ex)]);
+    b.addEventListener('click', function () {
+      var want = LEVELS[next], idx = LEVELS.indexOf(l);
+      lvFb.hidden = false;
+      if (l === want) {
+        b.remove();
+        rungs[next].classList.add('full');
+        rungs[next].appendChild(Lab.el('b', null, l.label)); rungs[next].appendChild(Lab.el('span', { class: 'ex' }, l.ex));
+        next++;
+        lvFb.className = 'fb ok'; lvFb.textContent = 'Yes! ' + l.why + (next === 5 ? ' You built the whole athlete!' : '');
+      } else {
+        b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+        lvFb.className = 'fb no';
+        lvFb.textContent = 'Not yet. ' + l.label + ' comes later. Hint for the next one: ' + want.why;
+        if (idx < next) lvFb.textContent = 'That one is already placed.';
+      }
+    });
+    Lab.$('#lvBank').appendChild(b);
+  });
+
+  // Part 2: organs into systems
+  var SYS = [
+    { id: 'dig', label: 'Digestive' }, { id: 'res', label: 'Respiratory' }, { id: 'cir', label: 'Circulatory' },
+    { id: 'mus', label: 'Muscular' }, { id: 'ske', label: 'Skeletal' }, { id: 'ner', label: 'Nervous' }];
+  var NAMES = {}; SYS.forEach(function (s) { NAMES[s.id] = s.label.toLowerCase(); });
+  function organ(id, label, bin, ok) { return { id: id, label: label, bin: bin, ok: ok, no: 'The ' + label.toLowerCase() + ' is not part of that system. Think about its job.' }; }
+  Lab.sorter({
+    bank: Lab.$('#bank'), binsRoot: Lab.$('#bins'), fb: Lab.$('#sortFb'), bins: SYS,
+    items: [
+      organ('stomach', 'Stomach', 'dig', 'The stomach mashes food and mixes it with juices to break it down.'),
+      organ('intestine', 'Small intestine', 'dig', 'The small intestine takes nutrients from food into the blood.'),
+      organ('lungs', 'Lungs', 'res', 'The lungs take in oxygen and get rid of carbon dioxide.'),
+      organ('trachea', 'Windpipe (trachea)', 'res', 'The windpipe carries air to and from the lungs.'),
+      { id: 'heart', label: 'Heart', bin: 'cir', ok: 'The heart is made of muscle, but its job is to pump blood, so it belongs to the circulatory system.', no: { mus: 'The heart is made of muscle, but its main job is pumping blood around the body. Which system moves blood?', _: 'The heart pumps blood. Which system moves blood around the body?' } },
+      organ('vessels', 'Blood vessels', 'cir', 'Blood vessels are the tubes that carry blood all around the body.'),
+      organ('biceps', 'Biceps muscle', 'mus', 'Muscles like the biceps pull on bones to move the body.'),
+      organ('calf', 'Calf muscles', 'mus', 'Calf muscles pull on bones to push off the ground when you run.'),
+      organ('femur', 'Thigh bone (femur)', 'ske', 'The femur is the longest bone. It supports your body when you stand and run.'),
+      organ('skull', 'Skull', 'ske', 'The skull is a bone that protects the brain.'),
+      organ('brain', 'Brain', 'ner', 'The brain is the control center. It sends and receives messages.'),
+      organ('cord', 'Spinal cord', 'ner', 'The spinal cord carries messages between the brain and the body.')
+    ]
+  });
+
+  // Part 3: jobs
+  var JOBS = {
+    dig: 'Breaks food down into nutrients the body can use for energy',
+    res: 'Brings oxygen into the body and gets rid of carbon dioxide',
+    cir: 'Carries blood with oxygen and nutrients all around the body',
+    mus: 'Pulls on bones to move the body',
+    ske: 'Supports and protects the body and gives muscles something to pull on',
+    ner: 'Sends messages between the brain and the body to control what it does'
+  };
+  var jobKeys = Lab.shuffle(Object.keys(JOBS));
+  SYS.forEach(function (s) {
+    var sel = Lab.el('select', { 'aria-label': 'Job of the ' + s.label + ' system', 'data-k': s.id }, [Lab.el('option', { value: '' }, 'Pick its job…')].concat(jobKeys.map(function (k) { return Lab.el('option', { value: k }, JOBS[k]); })));
+    var fb = Lab.el('div', { class: 'fbx', 'aria-live': 'polite' });
+    var row = Lab.el('div', { class: 'job-row' }, [Lab.el('b', null, s.label), sel, fb]);
+    sel.addEventListener('change', function () {
+      if (!sel.value) { row.className = 'job-row'; fb.textContent = ''; return; }
+      var ok = sel.value === s.id;
+      row.className = 'job-row ' + (ok ? 'ok' : 'no');
+      fb.textContent = ok ? 'Yes! That is the job of the ' + s.label.toLowerCase() + ' system.' : 'Not quite. That is the job of the ' + NAMES[sel.value] + ' system. Try again.';
+    });
+    Lab.$('#jobs').appendChild(row);
+  });
+
+  // Part 4: race day
+  var ACT = { rest: { label: 'Resting', hr: 80, br: 18, speed: 0, why: 'At rest, the muscles need only a little oxygen.' },
+              jog: { label: 'Jogging', hr: 140, br: 34, speed: 1, why: 'Jogging muscles need more oxygen and energy, so the heart and lungs speed up.' },
+              sprint: { label: 'Sprinting', hr: 185, br: 50, speed: 2, why: 'Sprinting muscles need lots of oxygen. The heart pumps faster to carry it, and the lungs breathe faster to bring it in.' } };
+  var act = Lab.seg(Lab.$('#act'), Object.keys(ACT).map(function (k) { return { v: k, label: ACT[k].label }; }), 'rest');
+  var table = Lab.table(Lab.$('#tbody'), 4, 'Measure an activity to fill in the table.'), trial = 0, busy = false;
+  var cur = { hr: 80, br: 18, speed: 0 }, phase = 0, bphase = 0, run = 0;
+  Lab.loop(function (dt) {
+    phase += dt * cur.hr / 60; bphase += dt * cur.br / 60; run += dt * (cur.speed * 2.2);
+    var beat = Math.max(0, Math.sin(phase * Math.PI * 2)) ** 6, s = 1 + 0.18 * beat;
+    Lab.$('#heart').setAttribute('transform', 'scale(' + s.toFixed(3) + ')');
+    var l = 1 + 0.12 * (0.5 - 0.5 * Math.cos(bphase * Math.PI * 2));
+    Lab.$('#lungs').setAttribute('transform', 'scale(' + l.toFixed(3) + ')');
+    var sw = cur.speed ? Math.sin(run * Math.PI * 2) * (14 + cur.speed * 6) : 0;
+    [['#legA', 150, 232, sw], ['#legB', 150, 232, -sw], ['#armA', 98, 130, -sw], ['#armB', 98, 130, sw]].forEach(function (p) {
+      var len = p[2] - p[1], a = p[3] * Math.PI / 180, base = p[0] === '#legA' || p[0] === '#armA' ? 0.28 : -0.28;
+      if (!cur.speed) a = base; else a += base * 0.3;
+      var el = Lab.$(p[0]); el.setAttribute('x2', (Math.sin(a) * len).toFixed(1)); el.setAttribute('y2', (p[1] + Math.cos(a) * len).toFixed(1));
+    });
+    return true;
+  });
+  Lab.$('#measure').addEventListener('click', function () {
+    if (busy) return;
+    busy = true; act.disable(true); Lab.$('#measure').disabled = true;
+    var A = ACT[act.get()], hr = Math.round(A.hr + Lab.rand(-5, 5)), br = Math.round(A.br + Lab.rand(-2, 2));
+    cur = { hr: hr, br: br, speed: A.speed };
+    Lab.$('#hrTxt').textContent = 'measuring…'; Lab.$('#brTxt').textContent = 'measuring…';
+    var f = Lab.$('#raceFb'); f.hidden = true;
+    setTimeout(function () {
+      busy = false; act.disable(false); Lab.$('#measure').disabled = false;
+      Lab.$('#hrTxt').textContent = hr + ' beats/min'; Lab.$('#brTxt').textContent = br + ' breaths/min';
+      trial++;
+      table.add([trial, A.label, { cls: 'num', text: hr }, { cls: 'num', text: br }]);
+      f.hidden = false; f.textContent = A.why;
+    }, 3000);
+  });
+
+  Lab.check(Lab.$('#check'), [
+    { q: 'Which order goes from smallest to largest?', opts: ['Organ → tissue → cell → organism → organ system', 'Cell → tissue → organ → organ system → organism', 'Cell → organ → tissue → organism → organ system'], a: 1,
+      why: 'Cells make tissues, tissues make organs, organs make organ systems, and systems make a whole organism.',
+      miss: { 0: 'Not quite. The cell is the smallest, so it comes first.', 2: 'Not quite. Tissues are groups of cells, and organs are made of tissues. So tissue comes before organ.' } },
+    { multi: true, q: 'During a race, which two systems team up to get oxygen to the leg muscles?', opts: ['Respiratory', 'Circulatory', 'Skeletal', 'Digestive'], a: [0, 1],
+      why: 'The respiratory system brings oxygen into the lungs. The circulatory system carries it in the blood to the muscles.',
+      miss: { 2: 'Not quite. The skeletal system supports the body and gives muscles something to pull on, but it does not carry oxygen.', 3: 'Not quite. The digestive system gives the body nutrients from food (fuel!), but it does not bring in oxygen.' },
+      hint: 'Which system brings in air, and which one moves blood?' },
+    { q: 'Why did the heart beat faster when the athlete sprinted?', opts: ['The heart was scared.', 'Working muscles need more oxygen and nutrients, so the heart pumps blood faster.', 'The bones needed more blood to grow.'], a: 1,
+      why: 'Your data shows it: more activity, more heartbeats and more breaths per minute. The systems work together to feed hard-working muscles.',
+      miss: { 0: 'Not quite. Look at your data: the heart rate goes up with the activity. What do working muscles need?', 2: 'Not quite. The muscles are doing the hard work during a race. What do they need more of?' } }
+  ]);
+})();
+</script>
+</body>
+</html>

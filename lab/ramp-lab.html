@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ramp Lab — Virtual Science Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="lab.css">
+<script src="../brand.js"></script>
+<style>
+#scene text{font-family:Inter,system-ui,sans-serif}
+#scene .tick{font:600 15px Inter,system-ui,sans-serif;fill:#5B6475}
+.lab-grid{grid-template-columns:minmax(0,1fr)}
+@media (min-width:700px){.ctls{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← Science Lab</a>
+<div class="page-hdr">
+  <span class="eyebrow">Unit 7 · Skateology</span>
+  <h1>Ramp Lab</h1>
+  <p>Roll a cart and measure how far it goes and how long it takes.</p>
+  <p class="stds">PS.5.2.1 · PS.5.2.2</p>
+</div>
+
+<div class="lab-q"><span class="lbl">Question to investigate</span>
+  <p>How do friction, gravity, and mass change how far and how fast a cart moves?</p></div>
+
+<div class="lab-grid">
+  <div class="panel stage">
+    <svg id="scene" viewBox="0 70 1000 230" role="img" aria-label="A cart on a ramp. A measuring tape runs along the floor.">
+      <defs>
+        <pattern id="p-ice" width="40" height="24" patternUnits="userSpaceOnUse"><rect width="40" height="24" fill="#D6ECFA"/><path d="M4 18 L16 6 M22 20 L34 8" stroke="#fff" stroke-width="3"/></pattern>
+        <pattern id="p-wood" width="60" height="24" patternUnits="userSpaceOnUse"><rect width="60" height="24" fill="#D2A26F"/><path d="M0 7 Q30 3 60 8 M0 16 Q30 20 60 15" stroke="#B07E4B" stroke-width="2" fill="none"/></pattern>
+        <pattern id="p-carpet" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#7C6AA6"/><circle cx="2" cy="2" r="1.4" fill="#5E4C8A"/><circle cx="6" cy="6" r="1.4" fill="#9585BD"/></pattern>
+        <pattern id="p-sand" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#C9A665"/><circle cx="3" cy="3" r="1.3" fill="#8E6F3A"/><circle cx="8" cy="7" r="1.1" fill="#E3CC95"/><circle cx="7" cy="2" r=".9" fill="#7A5C2C"/></pattern>
+      </defs>
+      <rect y="60" width="1000" height="260" fill="#FBFBF8"/>
+      <rect id="floor" x="0" y="240" width="1000" height="22" fill="url(#p-wood)"/>
+      <rect x="0" y="262" width="1000" height="38" fill="#EEEDE6"/>
+      <g id="tape"></g>
+      <g id="rampG">
+        <polygon id="rampBody" points="20,240 150,240 20,135" fill="#B8C2D6"/>
+        <line id="rampTop" x1="20" y1="135" x2="150" y2="240" stroke="url(#p-wood)" stroke-width="9"/>
+      </g>
+      <g id="launcher" style="display:none">
+        <rect x="8" y="196" width="14" height="44" rx="3" fill="#1E2D4F"/>
+        <path id="spring" d="" stroke="#5B6475" stroke-width="4" fill="none"/>
+        <rect id="plate" x="116" y="206" width="8" height="30" rx="2" fill="#1E2D4F"/>
+      </g>
+      <g id="flag" style="display:none"><line x1="0" y1="240" x2="0" y2="196" stroke="#B42318" stroke-width="3"/><path d="M0 196 L26 204 L0 212 Z" fill="#B42318"/></g>
+      <g id="cart">
+        <g transform="scale(1.35)">
+          <g id="blocks"></g>
+          <rect x="-22" y="-23" width="44" height="13" rx="3" fill="#FFC107" stroke="#E0A800" stroke-width="1.5"/>
+          <circle cx="-13" cy="-6" r="6" fill="#1E2D4F"/><circle cx="13" cy="-6" r="6" fill="#1E2D4F"/>
+          <circle cx="-13" cy="-6" r="2" fill="#fff"/><circle cx="13" cy="-6" r="2" fill="#fff"/>
+        </g>
+      </g>
+      <text id="msg" x="980" y="104" text-anchor="end" font-size="20" font-weight="600" fill="#1E2D4F"></text>
+    </svg>
+    <div class="readouts">
+      <div class="readout"><span class="k">Stopwatch</span><span class="v" id="clock">0.0 s</span></div>
+      <div class="readout"><span class="k">Distance</span><span class="v" id="dist">— cm</span></div>
+    </div>
+    <p class="ctl-note">The stopwatch and tape start at the bottom of the ramp. Drawing is not to scale.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Set up a trial</h2>
+    <p class="sub">Change one thing at a time. Then tap Run.</p>
+    <div class="ctls">
+    <div class="ctl"><span class="ctl-lbl">How does the cart start?</span><div id="c-start"></div></div>
+    <div class="ctl"><span class="ctl-lbl">Surface (friction)</span><div id="c-surf"></div></div>
+    <div class="ctl"><span class="ctl-lbl">Ramp height (gravity)</span><div id="c-h"></div>
+      <p class="ctl-note" id="h-note" hidden>The spring push uses a flat floor, so ramp height does not matter.</p></div>
+    <div class="ctl"><span class="ctl-lbl">Cart load (mass)</span><div id="c-load"></div></div>
+    </div>
+    <button class="btn wide" id="run" type="button">Run trial</button>
+  </div>
+</div>
+
+<div class="section" id="math" hidden>
+  <h2>Find the speed</h2>
+  <div class="mathbox"><div>Speed = distance ÷ time</div><div class="eq" id="eq"></div><div class="ctl-note">Rounded to the nearest tenth.</div></div>
+</div>
+
+<section class="section">
+  <h2>Data table</h2>
+  <p class="sub">Each trial adds a row. Run a test more than once to check your results.</p>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>#</th><th>Setup</th><th>Distance</th><th>Time</th><th>Speed = d ÷ t</th></tr></thead>
+    <tbody id="tbody"></tbody></table></div>
+  <div class="table-tools"><span class="count" id="count"></span><button class="btn ghost small" id="clear" type="button">Clear table</button></div>
+</section>
+
+<section class="section">
+  <h2>What did you find?</h2>
+  <p class="sub">Use your data. You can run more trials any time.</p>
+  <div id="check"></div>
+  <details class="note"><summary><b>Science note:</b> mass on a ramp</summary>
+    <p style="margin:8px 0 0">On the ramp, adding blocks barely changes the results. Gravity pulls harder on a heavier cart, but a heavier cart is also harder to speed up. These two things balance out. With the <b>same push</b>, though, more mass means the cart moves slower and stops sooner.</p></details>
+</section>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+
+<script src="lab.js"></script>
+<script>
+(function () {
+  var G = 9.8, L = 1.0, PUSH_E = 1.2;                // ramp length (m), spring energy (J)
+  var SURF = {
+    ice:  { name: 'Ice',       mu: 0.06, fill: 'url(#p-ice)' },
+    wood: { name: 'Wood',      mu: 0.10, fill: 'url(#p-wood)' },
+    carpet:{ name: 'Carpet',   mu: 0.14, fill: 'url(#p-carpet)' },
+    sand: { name: 'Sandpaper', mu: 0.18, fill: 'url(#p-sand)' }
+  };
+  var LOADS = [{ v: 0, label: 'Empty', kg: 0.5, txt: 'empty' }, { v: 1, label: '+1 block', kg: 1.0, txt: '+1 block' }, { v: 2, label: '+2 blocks', kg: 1.5, txt: '+2 blocks' }];
+  var X0 = 150, PX = 92, FLOOR = 240;   // floor: x = X0 + meters * PX
+
+  var start = Lab.seg(Lab.$('#c-start'), [{ v: 'ramp', label: 'Ramp' }, { v: 'push', label: 'Same spring push' }], 'ramp', draw);
+  var surf = Lab.seg(Lab.$('#c-surf'), Object.keys(SURF).map(function (k) { return { v: k, label: SURF[k].name }; }), 'wood', draw);
+  var hgt = Lab.seg(Lab.$('#c-h'), [{ v: 20, label: '20 cm' }, { v: 35, label: '35 cm' }, { v: 50, label: '50 cm' }], 35, draw);
+  var load = Lab.seg(Lab.$('#c-load'), LOADS, 0, draw);
+  var table = Lab.table(Lab.$('#tbody'), 5);
+  var cart = Lab.$('#cart'), running = false, trial = 0;
+
+  // measuring tape
+  var tape = Lab.$('#tape');
+  for (var m = 0; m <= 9; m++) {
+    var x = X0 + m * PX;
+    Lab.svg('line', { x1: x, y1: 262, x2: x, y2: 274, stroke: '#5B6475', 'stroke-width': 2 }, tape);
+    var t = Lab.svg('text', { x: x, y: 293, 'text-anchor': 'middle', class: 'tick' }, tape); t.textContent = m + ' m';
+    if (m < 9) Lab.svg('line', { x1: x + PX / 2, y1: 262, x2: x + PX / 2, y2: 268, stroke: '#9AA1AE', 'stroke-width': 1.5 }, tape);
+  }
+
+  function rampTopY() { return FLOOR - hgt.get() * 2.1; }
+  var svgEl = Lab.$('#scene');
+  function camera(x) {        // on narrow screens, zoom in and follow the cart
+    var narrow = svgEl.getBoundingClientRect().width < 600, vw = narrow ? 520 : 1000;
+    var vx = narrow ? Math.max(0, Math.min(1000 - vw, x - vw * 0.4)) : 0;
+    svgEl.setAttribute('viewBox', vx.toFixed(1) + (narrow ? ' 60 ' : ' 70 ') + vw + (narrow ? ' 240' : ' 230'));
+  }
+  window.addEventListener('resize', function () { camera(lastX); });
+  var lastX = 0;
+  function placeCart(x, y, deg) { lastX = x; camera(x); cart.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ') rotate(' + (deg || 0).toFixed(1) + ')'); }
+  function rampPoint(s) {           // s from 0 (top) to 1 (bottom)
+    var ty = rampTopY(), x1 = 38, y1 = ty + (38 - 20) * (FLOOR - ty) / 130;
+    return { x: x1 + (150 - x1) * s, y: y1 + (FLOOR - y1) * s, deg: Math.atan2(FLOOR - ty, 130) * 180 / Math.PI };
+  }
+  function drawSpring(px) {
+    var d = 'M22 221', n = 8, w = (px - 22) / n;
+    for (var i = 0; i < n; i++) d += ' L' + (22 + w * (i + 0.5)).toFixed(1) + ' ' + (i % 2 ? 230 : 212) + ' L' + (22 + w * (i + 1)).toFixed(1) + ' 221';
+    Lab.$('#spring').setAttribute('d', d);
+    Lab.$('#plate').setAttribute('x', px - 4);
+  }
+  function draw() {
+    if (running) return;
+    var s = SURF[surf.get()], push = start.get() === 'push';
+    Lab.$('#floor').setAttribute('fill', s.fill);
+    Lab.$('#rampTop').setAttribute('stroke', s.fill);
+    var ty = rampTopY();
+    Lab.$('#rampBody').setAttribute('points', '20,240 150,240 20,' + ty);
+    Lab.$('#rampTop').setAttribute('y1', ty);
+    Lab.$('#rampG').style.display = push ? 'none' : '';
+    Lab.$('#launcher').style.display = push ? '' : 'none';
+    hgt.disable(push); Lab.$('#h-note').hidden = !push;
+    var b = Lab.$('#blocks'); b.innerHTML = '';
+    for (var i = 0; i < load.get(); i++) Lab.svg('rect', { x: -11, y: -36 - i * 13, width: 22, height: 12, rx: 2, fill: '#8A6100', stroke: '#5c4100', 'stroke-width': 1 }, b);
+    Lab.$('#flag').style.display = 'none';
+    Lab.$('#msg').textContent = '';
+    if (push) { drawSpring(120); placeCart(X0, FLOOR, 0); }
+    else { var p = rampPoint(0); placeCart(p.x, p.y, p.deg); }
+  }
+
+  // physics for one trial (with small real-world wobble between trials)
+  function physics() {
+    var mu = SURF[surf.get()].mu, kg = LOADS[load.get()].kg, wob = 1 + (Math.random() - 0.5) * 0.06, v0, d;
+    if (start.get() === 'push') {
+      v0 = Math.sqrt(2 * PUSH_E / kg);                         // same push energy, more mass -> slower
+      d = PUSH_E / (mu * kg * G);
+    } else {
+      var h = hgt.get() / 100, cos = Math.sqrt(1 - (h / L) * (h / L));
+      var eff = h - mu * L * cos;                               // drop height left after friction on the ramp
+      v0 = Math.sqrt(2 * G * eff);
+      d = eff / mu;
+    }
+    d *= wob;
+    return { v0: v0, d: d, t: 2 * d / v0 };                    // slows evenly to a stop
+  }
+
+  Lab.$('#run').addEventListener('click', function () {
+    if (running) return;
+    draw();
+    running = true;
+    [start, surf, hgt, load].forEach(function (s) { s.disable(true); });
+    Lab.$('#run').disabled = true;
+    var P = physics(), push = start.get() === 'push';
+    var tRamp = push ? 0.35 : 2 * L / P.v0, a = P.v0 / P.t;
+    Lab.$('#clock').textContent = '0.0 s'; Lab.$('#dist').textContent = '— cm';
+    var startX = X0;
+    Lab.loop(function (dt, el) {
+      if (el < tRamp) {
+        if (push) { var k = el / tRamp; drawSpring(120 - 34 * Math.sin(k * Math.PI)); placeCart(startX, FLOOR, 0); }
+        else { var p = rampPoint((el / tRamp) * (el / tRamp)); placeCart(p.x, p.y, p.deg); }
+        return true;
+      }
+      var tf = Math.min(el - tRamp, P.t);
+      var xm = P.v0 * tf - 0.5 * a * tf * tf;
+      placeCart(startX + xm * PX, FLOOR, 0);
+      Lab.$('#clock').textContent = Lab.r1(tf) + ' s';
+      Lab.$('#dist').textContent = Math.round(xm * 100) + ' cm';
+      if (tf >= P.t) { finish(P, push, startX); return false; }
+      return true;
+    });
+  });
+
+  function finish(P, push, startX) {
+    running = false;
+    [start, surf, load].forEach(function (s) { s.disable(false); });
+    hgt.disable(push);
+    Lab.$('#run').disabled = false;
+    var dCm = Math.round(P.d * 100), tS = Math.max(0.1, Math.round(P.t * 10) / 10), sp = dCm / tS;
+    Lab.$('#clock').textContent = tS.toFixed(1) + ' s';
+    Lab.$('#dist').textContent = dCm + ' cm';
+    var f = Lab.$('#flag'); f.style.display = ''; f.setAttribute('transform', 'translate(' + (startX + P.d * PX).toFixed(1) + ',0)');
+    var mx = Math.max(60, Math.min(940, startX + P.d * PX)); Lab.$('#msg').setAttribute('x', mx.toFixed(1)); Lab.$('#msg').setAttribute('y', 138);
+    Lab.$('#msg').setAttribute('text-anchor', 'middle'); Lab.$('#msg').textContent = 'Stopped!';
+    trial++;
+    var setup = (push ? 'Spring push' : 'Ramp ' + hgt.get() + ' cm') + ' · ' + SURF[surf.get()].name + ' · ' + LOADS[load.get()].txt;
+    var eq = dCm + ' cm ÷ ' + tS.toFixed(1) + ' s = ' + Lab.r1(sp) + ' cm/s';
+    table.add([trial, setup, { cls: 'num', text: dCm + ' cm' }, { cls: 'num', text: tS.toFixed(1) + ' s' }, { cls: 'num', text: eq }]);
+    Lab.$('#count').textContent = trial + (trial === 1 ? ' trial' : ' trials');
+    Lab.$('#math').hidden = false;
+    Lab.$('#eq').textContent = eq;
+  }
+
+  Lab.$('#clear').addEventListener('click', function () { table.clear(); trial = 0; Lab.$('#count').textContent = ''; });
+
+  Lab.check(Lab.$('#check'), [
+    { q: 'Which surface had the most friction?', opts: ['Ice', 'Wood', 'Carpet', 'Sandpaper'], a: 3, two: true,
+      why: 'Sandpaper is the roughest surface. More friction slows the cart down faster, so it stops in the shortest distance.',
+      miss: { 0: 'Not quite. Ice is the smoothest, so it has the least friction. That is why the cart rolled the farthest on ice.',
+              1: 'Not quite. Wood is in the middle. Find the surface where the cart stopped the soonest.',
+              2: 'Close! Carpet has lots of friction, but one surface stopped the cart even sooner. Check your table.' } },
+    { q: 'A cart rolls 240 cm in 2.0 seconds. What is its speed?', opts: ['480 cm/s', '120 cm/s', '242 cm/s', '238 cm/s'], a: 1, two: true,
+      why: 'Speed = distance ÷ time. 240 ÷ 2.0 = 120 cm/s.',
+      miss: { 0: 'Not quite. 480 is distance × time. Speed is distance ÷ time: 240 ÷ 2.0.',
+              2: 'Not quite. 242 is distance + time. Speed is distance ÷ time: 240 ÷ 2.0.',
+              3: 'Not quite. 238 is distance − time. Speed is distance ÷ time: 240 ÷ 2.0.' } },
+    { q: 'With the same spring push, what happens when you add blocks to the cart?', opts: ['It goes farther and faster.', 'It goes a shorter distance and slower.', 'Nothing changes.'], a: 1,
+      why: 'More mass is harder to get moving. The same push makes a heavier cart move slower, so it stops sooner.',
+      miss: { 0: 'Not quite. Try the spring push with Empty, then with +2 blocks. Compare the distances in your table.',
+              2: 'Not quite. On the ramp, mass barely matters. But with the same push, compare Empty and +2 blocks in your table.' } }
+  ]);
+
+  draw();
+})();
+</script>
+</body>
+</html>

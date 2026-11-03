@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volume Builder — Math Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<script src="../brand.js"></script>
+<style>
+  .vb-q{font:600 19px/1.35 var(--sans);margin:0 0 8px;text-align:center}
+  .vb-fig{display:flex;justify-content:center;align-items:center;min-height:220px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px}
+  .vb-fig svg{display:block;width:100%;max-width:420px;height:auto;max-height:300px}
+  .vb-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px 0 0;min-height:0}
+  .vb-chip{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.08);font:600 16px/1.2 var(--mono)}
+  .vb-dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .vb-form{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin:14px 0 0}
+  .vb-form input{width:150px;min-height:56px;border-radius:12px;border:2px solid rgba(255,255,255,.3);background:#fff;color:#16213B;
+    font:700 26px/1 var(--mono);text-align:center;padding:0 10px}
+  .vb-form input:focus{outline:3px solid #FFC107;outline-offset:2px;border-color:#FFC107}
+  .vb-unit{font:500 16px/1.2 var(--sans);color:#D9DEE8;min-width:7ch}
+  .vb-hint{text-align:center;color:#FDBA74;font-size:15px;margin:8px 0 0;min-height:1.4em}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="a-wrap">
+  <a class="a-back" href="index.html">&larr; Arcade</a>
+  <div class="a-card" id="game">
+    <div id="play">
+      <p class="vb-q" id="q">How many unit cubes fill this box?</p>
+      <div class="vb-fig" id="fig"></div>
+      <div class="vb-chips" id="chips"></div>
+      <form class="vb-form" id="form" autocomplete="off" novalidate>
+        <label for="ans" class="a-sr">Volume</label>
+        <input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" enterkeyhint="done">
+        <span class="vb-unit" id="unit">cubic units</span>
+        <button class="a-btn" type="submit">Check</button>
+      </form>
+      <p class="vb-hint" id="hint" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="a-stds">Standards: NC.5.MD.4 · NC.5.MD.5</p>
+</main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="arcade.js"></script>
+<script>
+(function () {
+  "use strict";
+  var R = Arcade.rand, P = Arcade.pick;
+  var fig = document.getElementById("fig"), chips = document.getElementById("chips"), q = document.getElementById("q");
+  var form = document.getElementById("form"), ans = document.getElementById("ans"), unitEl = document.getElementById("unit"), hint = document.getElementById("hint");
+  var cur = null;   // the current problem
+
+  var BLUE = { top: "#BFDBFE", right: "#60A5FA", left: "#2563EB" };
+  var GOLD = { top: "#FEF3C7", right: "#FCD34D", left: "#D99A06" };
+  var C30 = 0.8660254;
+
+  // isometric projection: x goes down-right, y goes down-left, z goes up
+  function iso(x, y, z, s) { return [(x - y) * C30 * s, (x + y) * 0.5 * s - z * s]; }
+  function poly(pts, fill, s) {
+    return '<polygon points="' + pts.map(function (p) { var q = iso(p[0], p[1], p[2], s); return q[0].toFixed(1) + "," + q[1].toFixed(1); }).join(" ") +
+      '" fill="' + fill + '" stroke="#16213B" stroke-width="1.3" stroke-linejoin="round"/>';
+  }
+  function bounds(points, s) {
+    var xs = [], ys = [];
+    points.forEach(function (p) { var q = iso(p[0], p[1], p[2], s); xs.push(q[0]); ys.push(q[1]); });
+    return { x0: Math.min.apply(null, xs), x1: Math.max.apply(null, xs), y0: Math.min.apply(null, ys), y1: Math.max.apply(null, ys) };
+  }
+  function svgWrap(inner, b, pad, label) {
+    var w = b.x1 - b.x0 + pad * 2, h = b.y1 - b.y0 + pad * 2;
+    return '<svg viewBox="' + (b.x0 - pad).toFixed(1) + " " + (b.y0 - pad).toFixed(1) + " " + w.toFixed(1) + " " + h.toFixed(1) +
+      '" width="' + Math.round(w) + '" height="' + Math.round(h) + '" role="img" aria-label="' + label + '">' + inner + "</svg>";
+  }
+
+  // unit cubes, drawn back to front (sum of coordinates, small first)
+  function drawCubes(boxes, label) {
+    var cubes = [], corners = [];
+    boxes.forEach(function (bx) {
+      for (var x = bx.x; x < bx.x + bx.l; x++) for (var y = bx.y; y < bx.y + bx.w; y++) for (var z = 0; z < bx.h; z++) cubes.push([x, y, z, bx.col]);
+      corners.push([bx.x, bx.y, 0], [bx.x + bx.l, bx.y, 0], [bx.x, bx.y + bx.w, 0], [bx.x + bx.l, bx.y + bx.w, 0],
+        [bx.x, bx.y, bx.h], [bx.x + bx.l, bx.y, bx.h], [bx.x, bx.y + bx.w, bx.h], [bx.x + bx.l, bx.y + bx.w, bx.h]);
+    });
+    cubes.sort(function (a, b) { return (a[0] + a[1] + a[2]) - (b[0] + b[1] + b[2]); });
+    var s = 34, out = "";
+    cubes.forEach(function (c) {
+      var x = c[0], y = c[1], z = c[2], col = c[3];
+      out += poly([[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], col.left, s);
+      out += poly([[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]], col.right, s);
+      out += poly([[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]], col.top, s);
+    });
+    return svgWrap(out, bounds(corners, s), 8, label);
+  }
+
+  // one solid box with its sides labeled
+  function drawBox(l, w, h, u, baseOnly, B) {
+    // picture size: keep the shape, but keep it on screen
+    var m = Math.max(l, w, h), k = 6 / m;
+    var L = Math.max(1.4, l * k), W = Math.max(1.2, w * k), H = Math.max(1.2, h * k), s = 34;
+    var col = BLUE, out = "";
+    out += poly([[0, W, 0], [L, W, 0], [L, W, H], [0, W, H]], col.left, s);
+    out += poly([[L, 0, 0], [L, W, 0], [L, W, H], [L, 0, H]], col.right, s);
+    out += poly([[0, 0, H], [L, 0, H], [L, W, H], [0, W, H]], col.top, s);
+    if (baseOnly) {   // shade the base (bottom) with dashes
+      out += '<polygon points="' + [[0, 0, 0], [L, 0, 0], [L, W, 0], [0, W, 0]].map(function (p) { var q = iso(p[0], p[1], p[2], s); return q.join(","); }).join(" ") +
+        '" fill="rgba(255,193,7,.25)" stroke="#FFC107" stroke-width="2" stroke-dasharray="6 5"/>';
+    }
+    function lab(p, dx, dy, txt, anchor) {
+      var q = iso(p[0], p[1], p[2], s);
+      return '<text x="' + (q[0] + dx).toFixed(1) + '" y="' + (q[1] + dy).toFixed(1) + '" fill="#fff" font-size="19" font-weight="700" ' +
+        'font-family="JetBrains Mono, ui-monospace, monospace" text-anchor="' + anchor + '">' + txt + "</text>";
+    }
+    if (!baseOnly) {
+      out += lab([L / 2, W, 0], -12, 26, l + " " + u, "end");        // length: front-left bottom edge
+      out += lab([L, W / 2, 0], 12, 26, w + " " + u, "start");       // width: front-right bottom edge
+    }
+    out += lab([L, 0, H / 2], 12, 6, h + " " + u, "start");          // height: right edge
+    var b = bounds([[0, 0, 0], [L, 0, 0], [0, W, 0], [L, W, 0], [0, 0, H], [L, 0, H], [0, W, H], [L, W, H]], s);
+    b.x0 -= 70; b.x1 += 70; b.y1 += 26;
+    return svgWrap(out, b, 6, baseOnly ? "A box. Base area " + B + " square " + u + ", height " + h + " " + u : "A box " + l + " by " + w + " by " + h + " " + u);
+  }
+
+  function chip(color, text) {
+    return '<span class="vb-chip">' + (color ? '<span class="vb-dot" style="background:' + color + '"></span>' : "") + text + "</span>";
+  }
+
+  function make(level) {
+    var p = {};
+    if (level === 1) {
+      do { p.l = R(2, 6); p.w = R(1, 4); p.h = R(1, 4); } while (p.l * p.w * p.h < 4 || p.l * p.w * p.h > 72);
+      p.v = p.l * p.w * p.h; p.unit = "cubic units";
+      p.q = "How many unit cubes make this box?";
+      p.svg = drawCubes([{ x: 0, y: 0, l: p.l, w: p.w, h: p.h, col: BLUE }], "A box made of unit cubes");
+      p.chips = "";
+    } else if (level === 2) {
+      var u = P(["cm", "in", "ft", "m"]);
+      p.l = R(2, 10); p.w = R(2, 6); p.h = R(2, 6);
+      p.v = p.l * p.w * p.h; p.unit = "cubic " + u;
+      if (Math.random() < 0.35) {
+        p.base = true; p.B = p.l * p.w;
+        p.q = "Find the volume. Use base area × height.";
+        p.svg = drawBox(p.l, p.w, p.h, u, true, p.B);
+        p.chips = chip("#FFC107", "Base area = " + p.B + " sq " + u) + chip("", "Height = " + p.h + " " + u);
+      } else {
+        p.q = "Find the volume of the box.";
+        p.svg = drawBox(p.l, p.w, p.h, u, false);
+        p.chips = "";
+      }
+    } else {
+      // two boxes that touch: blue in back, gold in front on the right
+      var a, b;
+      do {
+        a = { x: 0, y: 0, l: R(2, 4), w: R(2, 3), h: R(1, 4), col: BLUE };
+        b = { l: R(1, 3), h: R(1, 4), col: GOLD };
+        b.w = R(1, a.w); b.x = a.l; b.y = a.w - b.w;
+      } while (a.h === b.h || a.l * a.w * a.h + b.l * b.w * b.h > 60);
+      p.a = a; p.b = b; p.va = a.l * a.w * a.h; p.vb = b.l * b.w * b.h; p.v = p.va + p.vb; p.unit = "cubic units";
+      p.q = "Find the total volume of both boxes.";
+      p.svg = drawCubes([a, b], "Two boxes made of unit cubes");
+      p.chips = chip(BLUE.right, "Blue: " + a.l + " × " + a.w + " × " + a.h) + chip(GOLD.right, "Gold: " + b.l + " × " + b.w + " × " + b.h);
+    }
+    return p;
+  }
+
+  function show() {
+    cur = make(game.level);
+    q.textContent = cur.q;
+    fig.innerHTML = cur.svg;
+    chips.innerHTML = cur.chips;
+    unitEl.textContent = cur.unit;
+    ans.value = ""; hint.textContent = "";
+    try { ans.focus({ preventScroll: true }); } catch (e) { ans.focus(); }
+  }
+
+  function why(n) {
+    var p = cur, V = p.v;
+    if (game.level === 3) {
+      var a = p.a, b = p.b, steps = '<span class="steps">' + a.l + " × " + a.w + " × " + a.h + " = " + p.va + " &nbsp;and&nbsp; " + b.l + " × " + b.w + " × " + b.h + " = " + p.vb + "<br>" + p.va + " + " + p.vb + " = " + V + "</span>";
+      if (n === p.va || n === p.vb) return "<b>That is only one box.</b> Add the volumes of both boxes." + steps;
+      if (n === p.va * p.vb) return "<b>You multiplied the two volumes.</b> Add them instead." + steps;
+      return "<b>Not quite.</b> Find each box, then add." + steps;
+    }
+    var l = p.l, w = p.w, h = p.h, step = '<span class="steps">' + (p.base ? p.B + " × " + h : l + " × " + w + " × " + h) + " = " + V + "</span>";
+    if (p.base && n === p.B + h) return "<b>You added.</b> Multiply the base area by the height." + step;
+    if (p.base && n === p.B) return "<b>That is just the base.</b> Multiply by the height too." + step;
+    if (n === l + w + h) return "<b>You added the sides.</b> Volume means multiply them." + step;
+    if (n === l * w) return "<b>That is one layer.</b> There are " + h + " layers, so multiply by " + h + "." + step;
+    if (n === l * h || n === w * h) return "<b>That is just one side.</b> Multiply all three sides." + step;
+    if (game.level === 1 && n === V - (l - 1) * (w - 1) * (h - 1) && n !== V) return "<b>You counted only the cubes you can see.</b> Some cubes are hidden inside." + step;
+    return "<b>Not quite.</b> It is " + l + " long, " + w + " wide and " + h + " tall." + step;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (game.locked() || !cur) return;
+    var t = ans.value.trim();
+    if (!/^\d{1,5}$/.test(t)) { hint.textContent = "Type a whole number, like 24."; ans.focus(); return; }
+    hint.textContent = "";
+    var n = parseInt(t, 10);
+    if (n === cur.v) {
+      var how = game.level === 3 ? cur.va + " + " + cur.vb + " = " + cur.v : cur.base ? cur.B + " × " + cur.h + " = " + cur.v : cur.l + " × " + cur.w + " × " + cur.h + " = " + cur.v;
+      game.right("<b>Yes!</b> " + how + " " + cur.unit + ".", show);
+    } else {
+      game.wrong(why(n), show);
+    }
+  });
+
+  var game = Arcade.init({
+    id: "volume-builder",
+    title: "Volume Builder",
+    howTo: "Find the volume: how many unit cubes fill the box?",
+    mode: "lives",
+    levels: [
+      { name: "Count the cubes", desc: "Boxes made of unit cubes." },
+      { name: "Use the sides", desc: "Length × width × height." },
+      { name: "Two boxes", desc: "Find both volumes and add." }
+    ],
+    onStart: show,
+    onStop: function () { cur = null; }
+  });
+  if (/[?&]test=1/.test(location.search)) window.__arcadePeek = function () { return cur && cur.v; };   // used by the page tests
+})();
+</script>
+</body>
+</html>

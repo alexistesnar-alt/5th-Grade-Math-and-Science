@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Lab — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<script src="../brand.js"></script>
+<style>
+.card{max-width:640px}
+.bar{display:flex;justify-content:space-between;gap:10px;font:600 13.5px var(--sans);color:var(--muted)}
+.prog{height:8px;background:#EEF0F4;border-radius:99px;margin:8px 0 18px;overflow:hidden}.prog i{display:block;height:100%;background:var(--gold-line)}
+.qq{font:600 clamp(26px,6vw,38px)/1.25 var(--mono);color:var(--navy);margin:6px 0 16px}
+.card .qq{font-size:clamp(22px,5vw,34px)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.row input{font:600 22px var(--mono);padding:10px 12px;border:2px solid var(--line-2);border-radius:8px;width:200px;max-width:100%}
+.row input:focus{border-color:var(--navy);outline:0}
+.chk,.go{font:600 16px var(--sans);background:var(--navy);color:#fff;border:0;border-radius:8px;padding:12px 18px;cursor:pointer;min-height:48px}
+.chk:disabled,.ch:disabled{opacity:.5;cursor:default}
+.chs{display:flex;gap:12px}.ch{font:700 28px var(--mono);width:80px;height:70px;border:2px solid var(--line-2);background:#fff;border-radius:10px;cursor:pointer;color:var(--navy)}
+.ch:hover:not(:disabled){border-color:var(--navy)}
+#fb{margin-top:16px;font-size:16px;line-height:1.5}#fb.ok{color:var(--ok)}#fb.no{color:#B42318}#fb .go{margin-top:10px}
+.ll-setup{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;max-width:760px}
+.lvls{display:flex;gap:6px;align-items:center;font-weight:600}
+.lv{font:600 16px var(--mono);width:44px;height:44px;border:2px solid var(--line-2);border-radius:8px;background:#fff;cursor:pointer}
+.lv.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.ll-setup select{font:16px var(--sans);padding:8px;border-radius:6px;border:1px solid var(--line-2)}
+.tm{display:flex;gap:8px;align-items:center}
+.miss{padding-left:18px}.miss li{margin:8px 0}.miss span{color:var(--muted);font-size:14.5px}
+.why{max-width:70ch}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap wide">
+  <div id="hubwrap">
+    <div class="page-hdr"><span class="eyebrow">Learning Lab</span><h1>Learning Lab</h1>
+      <p>Practice the skills 5th graders need to know quickly and accurately. Pick a skill, choose a level, and answer 10 questions. You get feedback after every answer.</p></div>
+    <div class="units-grid" id="hub"></div>
+    <div class="section why" style="margin-top:28px"><div class="section-title">How to grow your fluency</div>
+      <p>Fluency means you are <b>accurate</b>, you can do it <b>efficiently</b>, and you are <b>flexible</b> with strategies. Start with accuracy at level 1. When you get 9 or 10 right, move up a level. Try <b>Beat the clock</b> only after you are accurate.</p></div>
+  </div>
+  <div id="play" style="display:none"></div>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="ll.js"></script>
+</body>
+</html>

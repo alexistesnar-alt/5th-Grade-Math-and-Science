@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order of Ops Race — Math Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<script src="../brand.js"></script>
+<style>
+  .or-track{position:relative;height:96px;border-radius:14px;overflow:hidden;margin:0 0 16px;
+    background:linear-gradient(#3B4A6B,#2A3755);border:1px solid rgba(255,255,255,.12)}
+  .or-track::before{content:"";position:absolute;left:12px;right:12px;top:50%;border-top:3px dashed rgba(255,255,255,.35)}
+  .or-finish{position:absolute;right:0;top:0;bottom:0;width:22px;
+    background:repeating-conic-gradient(#fff 0 25%,#16213B 0 50%) 0 0/11px 11px}
+  .or-start{position:absolute;left:12px;top:6px;font:600 11px/1 var(--mono);color:#AEB7C8;letter-spacing:.08em}
+  .or-car{position:absolute;top:50%;left:6px;width:76px;height:40px;margin-top:-22px;transition:left .6s cubic-bezier(.3,1.3,.5,1)}
+  .or-car svg{display:block;width:100%;height:100%}
+  .or-car.sput{animation:orShake .45s}
+  @keyframes orShake{20%{transform:translateX(-5px) rotate(-3deg)}50%{transform:translateX(5px)}80%{transform:translateX(-3px)}}
+  .or-ticks{position:absolute;left:0;right:0;bottom:6px;display:flex;justify-content:space-between;padding:0 30px 0 52px;pointer-events:none}
+  .or-ticks i{width:2px;height:7px;background:rgba(255,255,255,.3)}
+  .or-left{font:600 14px/1 var(--mono);color:#AEB7C8;text-align:center;margin:-6px 0 10px}
+  .or-ex{text-align:center;font:700 clamp(28px,8vw,48px)/1.2 var(--mono);color:#fff;margin:6px 0 4px;overflow-wrap:anywhere}
+  .or-ex .br{color:#FFC107}
+  .or-q{text-align:center;font:600 18px/1.3 var(--sans);color:#D9DEE8;margin:0 0 6px}
+  .or-form{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin:12px 0 0}
+  .or-form input{width:150px;min-height:56px;border-radius:12px;border:2px solid rgba(255,255,255,.3);background:#fff;color:#16213B;font:700 26px/1 var(--mono);text-align:center;padding:0 10px}
+  .or-form input:focus{outline:3px solid #FFC107;outline-offset:2px;border-color:#FFC107}
+  .or-hint{text-align:center;color:#FDBA74;font-size:15px;margin:8px 0 0;min-height:1.4em}
+  @media (prefers-reduced-motion:reduce){.or-car{transition:none}.or-car.sput{animation:none}}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="a-wrap">
+  <a class="a-back" href="index.html">&larr; Arcade</a>
+  <div class="a-card" id="game">
+    <div id="play">
+      <div class="or-track" aria-hidden="true">
+        <span class="or-start">START</span>
+        <div class="or-ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="or-finish"></div>
+        <div class="or-car" id="car"><svg viewBox="0 0 76 40"><path d="M6 26 Q6 16 16 15 L26 6 Q29 4 34 4 L50 4 Q55 4 58 9 L63 15 Q72 16 72 24 L72 29 Q72 31 70 31 L8 31 Q6 31 6 29 Z" fill="#FFC107" stroke="#16213B" stroke-width="2"/><path d="M28 9 L33 8 L33 15 L22 15 Z M37 8 L49 8 Q52 8 54 11 L56 15 L37 15 Z" fill="#BFDBFE"/><text x="44" y="26" font-size="10" font-weight="700" fill="#16213B" font-family="JetBrains Mono, monospace" text-anchor="middle">5</text><circle cx="20" cy="31" r="7" fill="#16213B"/><circle cx="20" cy="31" r="3" fill="#AEB7C8"/><circle cx="58" cy="31" r="7" fill="#16213B"/><circle cx="58" cy="31" r="3" fill="#AEB7C8"/></svg></div>
+      </div>
+      <p class="or-left" id="left"></p>
+      <p class="or-q">What is the value?</p>
+      <div class="or-ex" id="ex"></div>
+      <form class="or-form" id="form" autocomplete="off" novalidate>
+        <label for="ans" class="a-sr">Answer</label>
+        <input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" enterkeyhint="go">
+        <button class="a-btn" type="submit">Go!</button>
+      </form>
+      <p class="or-hint" id="hint" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="a-stds">Standard: NC.5.OA.2</p>
+</main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="arcade.js"></script>
+<script>
+(function () {
+  "use strict";
+  var R = Arcade.rand, P = Arcade.pick;
+  var exEl = document.getElementById("ex"), form = document.getElementById("form"), ans = document.getElementById("ans");
+  var hint = document.getElementById("hint"), car = document.getElementById("car"), leftEl = document.getElementById("left");
+  var GOAL = 10, cur = null, pos = 0;
+
+  /* ---------- expressions as trees: {v} or {op, l, r, br} ---------- */
+  function N(v) { return { v: v }; }
+  function O(op, l, r, br) { return { op: op, l: l, r: r, br: br || null }; }
+  var SYM = { "+": "+", "-": "−", "*": "×", "/": "÷" };
+  function isNum(n) { return n.v !== undefined; }
+  function show(n, html) {
+    if (isNum(n)) return String(n.v);
+    var s = show(n.l, html) + " " + SYM[n.op] + " " + show(n.r, html);
+    if (!n.br) return s;
+    var o = n.br === "[" ? "[" : "(", c = n.br === "[" ? "]" : ")";
+    return html ? '<span class="br">' + o + "</span>" + s + '<span class="br">' + c + "</span>" : o + s + c;
+  }
+  // exact whole-number value, or null if a step is not a whole number 0–200
+  function val(n) {
+    if (isNum(n)) return n.v;
+    var a = val(n.l), b = val(n.r), r;
+    if (a === null || b === null) return null;
+    if (n.op === "+") r = a + b; else if (n.op === "-") r = a - b; else if (n.op === "*") r = a * b;
+    else { if (b === 0 || a % b !== 0) return null; r = a / b; }
+    return r < 0 || r > 200 ? null : r;
+  }
+  // do the first step (the one to do first), return {tree, step}
+  function reduce(n) {
+    var done = null;
+    function go(t) {
+      if (isNum(t)) return t;
+      if (isNum(t.l) && isNum(t.r)) { var v = val(t); done = { node: t, v: v }; return N(v); }
+      if (!isNum(t.l)) return O(t.op, go(t.l), t.r, t.br);
+      return O(t.op, t.l, go(t.r), t.br);
+    }
+    var out = go(n);
+    return { tree: out, step: done };
+  }
+  // value if you ignore ( ) and [ ] but still × ÷ first; and plain left to right
+  function tokens(n, out) { if (isNum(n)) out.push(n.v); else { tokens(n.l, out); out.push(n.op); tokens(n.r, out); } return out; }
+  function apply(a, op, b) { return op === "+" ? a + b : op === "-" ? a - b : op === "*" ? a * b : a / b; }
+  function leftToRight(t) { var a = t[0]; for (var i = 1; i < t.length; i += 2) a = apply(a, t[i], t[i + 1]); return a; }
+  function noBrackets(t) {
+    var s = [t[0]];
+    for (var i = 1; i < t.length; i += 2) {
+      if (t[i] === "*" || t[i] === "/") s[s.length - 1] = apply(s[s.length - 1], t[i], t[i + 1]);
+      else s.push(t[i], t[i + 1]);
+    }
+    return leftToRight(s);
+  }
+  function hasBr(n) { return !isNum(n) && (!!n.br || hasBr(n.l) || hasBr(n.r)); }
+
+  /* ---------- problem makers ---------- */
+  var r = function () { return N(R(1, 12)); }, m = function () { return N(R(2, 9)); };
+  var MAKERS = {
+    1: [
+      function () { return O("*", O("+", r(), r(), "("), m()); },
+      function () { return O("*", m(), O("+", r(), r(), "(")); },
+      function () { return O("*", O("-", N(R(6, 15)), r(), "("), m()); },
+      function () { return O("/", O("+", r(), r(), "("), N(R(2, 5))); },
+      function () { return O("-", N(R(15, 30)), O("+", r(), r(), "(")); },
+      function () { return O("+", r(), O("*", m(), m())); }
+    ],
+    2: [
+      function () { return O("-", O("*", O("+", r(), r(), "("), m()), r()); },
+      function () { return O("+", O("*", m(), O("-", N(R(6, 15)), r(), "(")), r()); },
+      function () { return O("+", O("/", O("+", r(), r(), "("), N(R(2, 6))), r()); },
+      function () { return O("+", r(), O("*", m(), m())); },
+      function () { return O("-", N(R(20, 60)), O("*", m(), m())); },
+      function () { return O("*", O("-", N(R(8, 15)), r(), "("), O("+", N(R(1, 6)), N(R(1, 6)), "(")); }
+    ],
+    3: [
+      function () { return O("*", m(), O("-", O("+", r(), r(), "("), r(), "[")); },
+      function () { return O("-", O("*", O("+", r(), r(), "("), m(), "["), r()); },
+      function () { return O("/", O("*", O("+", r(), r(), "("), m()), N(R(2, 6))); },
+      function () { return O("+", r(), O("*", m(), O("-", N(R(8, 15)), r(), "("), "[")); },
+      function () { return O("/", O("+", O("*", m(), m()), r(), "["), N(R(2, 6))); }
+    ]
+  };
+  // every step must be a whole number from 0 to 200
+  function allOK(n) {
+    if (isNum(n)) return true;
+    return val(n) !== null && allOK(n.l) && allOK(n.r);
+  }
+  function make(level) {
+    for (var tries = 0; tries < 500; tries++) {
+      var t = P(MAKERS[level])(), v = val(t);
+      if (v === null || !allOK(t)) continue;
+      var tk = tokens(t, []);
+      // the order must matter: skipping ( ) or going left to right gives a different answer
+      if (hasBr(t) ? noBrackets(tk) === v : leftToRight(tk) === v) continue;
+      return { tree: t, v: v, noBr: noBrackets(tk), l2r: leftToRight(tk) };
+    }
+    return { tree: O("*", O("+", N(2), N(3), "("), N(4)), v: 20, noBr: 14, l2r: 20 };
+  }
+
+  function steps(t) {
+    var out = [show(t)], first = null, cur = t;
+    while (!isNum(cur)) {
+      var s = reduce(cur);
+      if (!first) first = s.step;
+      cur = s.tree; out.push(show(cur));
+    }
+    return { line: out.join(" &rarr; "), first: first };
+  }
+  function firstNote(f) {
+    var n = f.node, part = show(O(n.op, n.l, n.r)) + " = " + f.v;
+    if (n.br) return "Do the part in " + (n.br === "[" ? "[ ]" : "( )") + " first: " + part + ".";
+    if (n.op === "*") return "Multiply first: " + part + ".";
+    if (n.op === "/") return "Divide first: " + part + ".";
+    return "Start with " + part + ".";
+  }
+
+  function moveCar() {
+    car.style.left = "calc(6px + (100% - 104px) * " + (pos / GOAL) + ")";
+    leftEl.textContent = (GOAL - pos) + (GOAL - pos === 1 ? " step" : " steps") + " to the finish";
+  }
+  function next() {
+    cur = make(game.level);
+    exEl.innerHTML = show(cur.tree, true);
+    exEl.setAttribute("aria-label", show(cur.tree));
+    ans.value = ""; hint.textContent = "";
+    try { ans.focus({ preventScroll: true }); } catch (e) { ans.focus(); }
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (game.locked() || !cur) return;
+    var t = ans.value.trim();
+    if (!/^\d{1,4}$/.test(t)) { hint.textContent = "Type a whole number, like 24."; ans.focus(); return; }
+    hint.textContent = "";
+    var n = parseInt(t, 10), st = steps(cur.tree);
+    if (n === cur.v) {
+      pos++; moveCar();
+      if (pos >= GOAL) {
+        game.right("<b>Finish!</b> " + show(cur.tree) + " = " + cur.v + ".", function () { game.end("finish"); }, { delay: 900 });
+        return;
+      }
+      game.right("<b>Yes!</b> " + show(cur.tree) + " = " + cur.v + ".", next, { delay: 900 });
+      return;
+    }
+    car.classList.remove("sput"); void car.offsetWidth; car.classList.add("sput");
+    var lead = hasBr(cur.tree) && n === cur.noBr ? "<b>You skipped the " + (/\[/.test(show(cur.tree)) ? "brackets" : "parentheses") + ".</b> "
+      : !hasBr(cur.tree) && n === cur.l2r ? "<b>You went left to right.</b> × and ÷ come before + and −. "
+      : "<b>Not quite.</b> ";
+    game.wrong(lead + firstNote(st.first) + '<span class="steps">' + st.line + "</span>", next);
+  });
+
+  var game = Arcade.init({
+    id: "order-of-ops-race",
+    title: "Order of Ops Race",
+    howTo: "Solve each one to move your car. Reach the finish!",
+    mode: "lives",
+    ends: { finish: "You crossed the finish line!", lives: "Out of gas" },
+    levels: [
+      { name: "Parentheses", desc: "One set of ( ) or ×." },
+      { name: "Three steps", desc: "( ) first, then × ÷, then + −." },
+      { name: "Brackets", desc: "[ ( ) ] — inside out." }
+    ],
+    onStart: function () { pos = 0; moveCar(); next(); },
+    onStop: function () {
+      // finish bonus: 5 points for each heart left
+      if (pos >= GOAL) game.addScore(5 * game.lives());
+      cur = null;
+    }
+  });
+  if (/[?&]test=1/.test(location.search)) window.__arcadePeek = function () { return cur && cur.v; };
+  window.__arcadeTest = { make: make, show: show, steps: steps };
+})();
+</script>
+</body>
+</html>

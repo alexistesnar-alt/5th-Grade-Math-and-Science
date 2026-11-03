@@ -1,0 +1,50 @@
+HOW TO UPDATE THIS SITE  (Mrs. Tesnar's 5th Grade Math & Science)
+==============================================================
+
+Every page is a plain .html file. Open one on GitHub, click the pencil
+(Edit), change the words, and click "Commit changes". The website updates
+in about 2 minutes.
+
+CHANGE THE NAME AT THE TOP OF EVERY PAGE
+  site-bar.js  →  near the top:  var NAME = "Mrs. Tesnar", SUBJECT = "5th Grade";
+  The page titles and footers say "Mrs. Tesnar's 5th Grade".
+
+CHANGE THE TOP-BAR LINKS
+  site-bar.js  →  the LINKS list right under NAME.
+
+PAGES
+  index.html               Home page
+  math/index.html          Math year at a glance (units, dates, NC standards)
+  math/unit1.html …        One page per math unit: targets, standards, vocabulary, notes/homework links, practice
+  science/index.html       Science year at a glance (units, pacing, NC science standards)
+  science/unit1.html …     One page per science unit: phenomenon, standards, words to know, notebook, labs
+  learning-lab/            Fluency practice (facts, multi-digit, decimals, fractions, order of operations, volume)
+  arcade/                  Math games
+  lab/                     Virtual science lab activities
+  notes/                   Interactive science notebooks with practice
+  practice/                Extra math practice for each unit (Illustrative Math style)
+  vocabulary.html          Math and science words with definitions
+  formulas.html            Formula and equation sheet
+  class-information.html   Welcome, how we learn, schedule, supplies, grading, contact
+  resources.html           Helpful links
+
+ADD YOUR LESSON NOTES OR HOMEWORK TO A UNIT
+  Open math/unit1.html (or any unit). Find the rows that say "Lesson notes" and "Homework".
+  Replace href="#" with the link to the Google Doc, PDF or IM student page.
+
+ADD A UNIT PAGE
+  1. Open math/unit1.html → copy everything.
+  2. Add file → Create new file → name it math/unit2.html → paste → edit the words.
+  3. In math/index.html, change that unit card's href="#" to href="unit2.html".
+
+ADD A LINK TO A PDF OR GOOGLE DOC
+  In a unit page, each row looks like:
+    <a href="#" class="feature-card"> … </a>
+  Replace # with the link (for a Google Doc: Share → "Anyone with the link" → Copy link).
+  To post a PDF: Add file → Upload files, then link to it, e.g. href="files/lesson1.pdf".
+
+LOOK
+  site.css   colors and layout     brand.js / brand.css   fonts (Source Serif 4, Inter)
+  Navy #1E2D4F · Gold #FFC107 · Background #F7F7F4
+
+PRIVACY: this site is public. Never post student names, grades or answer keys.

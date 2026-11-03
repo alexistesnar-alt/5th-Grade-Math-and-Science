@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asheville Weather Station — Virtual Science Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="lab.css">
+<script src="../brand.js"></script>
+<style>
+.inst{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.inst{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;background:#FBFBF8;min-width:0}
+.tile svg{width:72px;height:72px;display:block;margin:0 auto 4px}
+.tile .k{font:600 12.5px/1.3 var(--sans);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tile .v{font:600 16px/1.35 var(--mono);color:var(--navy)}
+.tile .s{font-size:13px;color:var(--muted)}
+.dayhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 10px}
+.dayhead b{font:600 20px var(--serif);color:var(--navy)}
+#graph text{font-family:Inter,system-ui,sans-serif;font-size:14px;fill:#5B6475}
+#graph .lab{font-weight:700;font-size:14px}
+.gwrap{margin-top:10px}
+.cmp td.num{text-align:right}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← Science Lab</a>
+<div class="page-hdr">
+  <span class="eyebrow">Unit 4 · The Great Smoky Mountains</span>
+  <h1>Asheville Weather Station</h1>
+  <p>Read the weather instruments each day for one week. Look for patterns.</p>
+  <p class="stds">ESS.5.1.1 · ESS.5.1.2 · ESS.5.1.3</p>
+</div>
+
+<div class="lab-q"><span class="lbl">Question to investigate</span>
+  <p>What patterns in weather data can help us forecast a storm?</p></div>
+<p style="margin:-8px 0 18px"><span class="tag-practice">Practice data: made up for this lab, but like a real week in Asheville, NC in March.</span></p>
+
+<div class="lab-grid">
+  <div class="panel">
+    <div class="dayhead"><b id="dayName">Ready to start</b><span class="ctl-note" id="dayNote">Tap the button to read Monday's instruments.</span></div>
+    <div class="inst">
+      <div class="tile"><svg viewBox="0 0 72 72" aria-hidden="true"><rect x="30" y="6" width="12" height="48" rx="6" fill="#fff" stroke="#8EA3BC" stroke-width="2"/><circle cx="36" cy="58" r="9" fill="#D92D20"/><rect id="th" x="33" y="40" width="6" height="18" fill="#D92D20"/></svg>
+        <div class="k">Thermometer</div><div class="v" id="v-temp">—</div><div class="s">high / low</div></div>
+      <div class="tile"><svg viewBox="0 0 72 72" aria-hidden="true"><rect x="24" y="6" width="24" height="60" rx="3" fill="#fff" stroke="#8EA3BC" stroke-width="2"/><rect id="rg" x="26" y="64" width="20" height="0" fill="#5DA9DD"/><path d="M48 16h-6M48 28h-6M48 40h-6M48 52h-6" stroke="#8EA3BC" stroke-width="2"/></svg>
+        <div class="k">Rain gauge</div><div class="v" id="v-rain">—</div><div class="s">inches of rain</div></div>
+      <div class="tile"><svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="30" fill="#fff" stroke="#8EA3BC" stroke-width="2"/><text x="36" y="15" text-anchor="middle" font-size="10" font-weight="700" fill="#5B6475">N</text><text x="36" y="66" text-anchor="middle" font-size="10" font-weight="700" fill="#5B6475">S</text><text x="62" y="40" text-anchor="middle" font-size="10" font-weight="700" fill="#5B6475">E</text><text x="10" y="40" text-anchor="middle" font-size="10" font-weight="700" fill="#5B6475">W</text><g id="vane"><path d="M36 54 L36 20 M30 27 L36 18 L42 27" stroke="#1E2D4F" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg>
+        <div class="k">Wind vane &amp; anemometer</div><div class="v" id="v-wind">—</div><div class="s" id="v-windfrom">speed and direction</div></div>
+      <div class="tile"><svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="38" r="30" fill="#fff" stroke="#8EA3BC" stroke-width="2"/><path d="M14 52 A26 26 0 0 1 58 52" fill="none" stroke="#E3E5EA" stroke-width="6"/><line id="needle" x1="36" y1="38" x2="36" y2="14" stroke="#B42318" stroke-width="3" stroke-linecap="round"/><circle cx="36" cy="38" r="4" fill="#1E2D4F"/><text x="12" y="66" font-size="8" fill="#5B6475">low</text><text x="48" y="66" font-size="8" fill="#5B6475">high</text></svg>
+        <div class="k">Barometer</div><div class="v" id="v-pres">—</div><div class="s" id="v-trend">air pressure (in.)</div></div>
+    </div>
+    <div class="btn-row" style="margin-top:14px"><button class="btn" id="next" type="button">Read Monday's weather</button></div>
+    <div id="forecast" class="note" hidden>
+      <span class="ctl-lbl">Make a forecast for Thursday</span>
+      <p style="margin:0 0 10px">The air pressure has dropped two days in a row. Clouds are building. What will Thursday be like?</p>
+      <div id="fcSeg"></div>
+      <div class="fb" id="fcFb" hidden aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Graph the data</h2>
+    <p class="sub">Pick what to graph.</p>
+    <div id="gSel"></div>
+    <div class="gwrap"><svg id="graph" viewBox="0 0 420 300" role="img" aria-label="Line graph of the weather data"></svg></div>
+  </div>
+</div>
+
+<section class="section">
+  <h2>Data table</h2>
+  <p class="sub">One row for each day you read the instruments.</p>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>Day</th><th>High / Low</th><th>Rain</th><th>Wind</th><th>Pressure</th><th>Sky</th></tr></thead>
+    <tbody id="tbody"></tbody></table></div>
+</section>
+
+<section class="section" id="coast" hidden>
+  <span class="part-tag">Coast vs. mountains</span>
+  <h2>Asheville and Wilmington, same week</h2>
+  <p class="sub">Asheville is in the mountains. Wilmington is on the coast, next to the Atlantic Ocean. Tap the button to find the difference between each day's high and low.</p>
+  <div class="table-scroll"><table class="data-table cmp">
+    <thead><tr><th>Day</th><th>Asheville high / low</th><th>Difference</th><th>Wilmington high / low</th><th>Difference</th></tr></thead>
+    <tbody id="cmpBody"></tbody></table></div>
+  <div class="btn-row" style="margin-top:10px"><button class="btn navy small" id="showDiff" type="button">Show the differences</button></div>
+  <details class="note"><summary><b>How the ocean changes North Carolina weather</b></summary>
+    <ul style="margin:8px 0 0;padding-left:20px">
+      <li>Water heats up and cools down more slowly than land. So the coast has milder days and nights.</li>
+      <li><b>Sea breeze:</b> on sunny afternoons the land gets hotter than the ocean, so cool air blows from the sea onto land. At night it flips, and a <b>land breeze</b> blows out to sea.</li>
+      <li>The <b>Gulf Stream</b> is a warm ocean current that flows past North Carolina. It keeps the coast warmer in winter and gives energy to storms.</li>
+      <li><b>Hurricanes</b> form over warm ocean water. They get weaker as they move over land, like the mountains.</li>
+    </ul></details>
+</section>
+
+<section class="section">
+  <h2>What did you find?</h2>
+  <p class="sub">Read all 7 days first.</p>
+  <div id="check"></div>
+</section>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+
+<script src="lab.js"></script>
+<script>
+(function () {
+  // Practice data (made up, realistic for Asheville, NC in March). A cold front passes on Thursday.
+  var DAYS = [
+    { d: 'Monday',    hi: 58, lo: 34, rain: 0.00, ws: 6,  wd: 'SW', p: 30.22, sky: 'Sunny' },
+    { d: 'Tuesday',   hi: 64, lo: 40, rain: 0.00, ws: 9,  wd: 'S',  p: 30.05, sky: 'Partly cloudy' },
+    { d: 'Wednesday', hi: 66, lo: 48, rain: 0.12, ws: 14, wd: 'S',  p: 29.84, sky: 'Cloudy, showers' },
+    { d: 'Thursday',  hi: 55, lo: 42, rain: 0.85, ws: 18, wd: 'W',  p: 29.62, sky: 'Thunderstorms' },
+    { d: 'Friday',    hi: 46, lo: 29, rain: 0.02, ws: 15, wd: 'NW', p: 29.96, sky: 'Clearing, windy' },
+    { d: 'Saturday',  hi: 52, lo: 27, rain: 0.00, ws: 7,  wd: 'NW', p: 30.30, sky: 'Sunny' },
+    { d: 'Sunday',    hi: 59, lo: 33, rain: 0.00, ws: 5,  wd: 'SW', p: 30.18, sky: 'Sunny' }
+  ];
+  var WILM = [[66, 47], [70, 52], [73, 58], [72, 61], [63, 50], [60, 45], [64, 47]];
+  var DIRNAME = { N: 'north', S: 'south', E: 'east', W: 'west', NW: 'northwest', SW: 'southwest', NE: 'northeast', SE: 'southeast' };
+  var DIRDEG = { N: 0, NE: 45, E: 90, SE: 135, S: 180, SW: 225, W: 270, NW: 315 };
+  var n = 0, waitingForecast = false, vaneAng = 0;
+  var table = Lab.table(Lab.$('#tbody'), 6, 'Read the instruments to fill in the table.');
+  var gKind = 'temp';
+  Lab.seg(Lab.$('#gSel'), [{ v: 'temp', label: 'Temperature' }, { v: 'pres', label: 'Air pressure' }, { v: 'rain', label: 'Rain' }, { v: 'wind', label: 'Wind speed' }], 'temp', function (v) { gKind = v; graph(); });
+
+  function animateTo(cur, target, set) {
+    var from = cur;
+    Lab.loop(function (dt, t) { var k = Math.min(1, t / 0.9), e = 1 - Math.pow(1 - k, 3); set(from + (target - from) * e); return k < 1; });
+  }
+
+  Lab.$('#next').addEventListener('click', function () {
+    if (n >= 7 || waitingForecast) return;
+    var D = DAYS[n], prev = DAYS[n - 1];
+    Lab.$('#dayName').textContent = D.d;
+    Lab.$('#dayNote').textContent = 'Day ' + (n + 1) + ' of 7';
+    Lab.$('#v-temp').textContent = D.hi + '° / ' + D.lo + '°F';
+    Lab.$('#v-rain').textContent = D.rain.toFixed(2) + ' in';
+    Lab.$('#v-wind').textContent = D.ws + ' mph';
+    Lab.$('#v-windfrom').textContent = 'from the ' + DIRNAME[D.wd];
+    Lab.$('#v-pres').textContent = D.p.toFixed(2);
+    var trend = !prev ? 'air pressure (in.)' : D.p < prev.p ? '▼ falling' : '▲ rising';
+    Lab.$('#v-trend').textContent = trend;
+    var th = Lab.$('#th'); var h = 6 + (D.hi - 20) * 0.7; th.setAttribute('y', 58 - h); th.setAttribute('height', h);
+    var rh = Math.min(56, D.rain * 60); Lab.$('#rg').setAttribute('y', 64 - rh); Lab.$('#rg').setAttribute('height', rh);
+    var target = DIRDEG[D.wd] + 180;           // arrow points where the wind is going
+    while (target - vaneAng > 180) target -= 360; while (target - vaneAng < -180) target += 360;
+    animateTo(vaneAng, target, function (a) { vaneAng = a; Lab.$('#vane').setAttribute('transform', 'rotate(' + a.toFixed(1) + ' 36 36)'); });
+    var ang = (D.p - 30.0) / 0.5 * 70;           // needle: 29.5 → -70°, 30.5 → +70°
+    Lab.$('#needle').setAttribute('transform', 'rotate(' + ang.toFixed(1) + ' 36 38)');
+    table.add([D.d, { cls: 'num', text: D.hi + '° / ' + D.lo + '°F' }, { cls: 'num', text: D.rain.toFixed(2) + ' in' }, { cls: 'num', text: D.ws + ' mph ' + D.wd }, { cls: 'num', text: D.p.toFixed(2) + (prev ? (D.p < prev.p ? ' ▼' : ' ▲') : '') }, D.sky]);
+    n++;
+    graph();
+    if (n === 3) { waitingForecast = true; Lab.$('#forecast').hidden = false; Lab.$('#next').disabled = true; }
+    if (n < 7) Lab.$('#next').textContent = 'Read ' + DAYS[n].d + '\'s weather';
+    else { Lab.$('#next').textContent = 'Week complete'; Lab.$('#next').disabled = true; Lab.$('#coast').hidden = false; }
+  });
+
+  Lab.seg(Lab.$('#fcSeg'), [{ v: 'sun', label: 'Sunny and calm' }, { v: 'storm', label: 'Rain and storms likely' }, { v: 'snow', label: 'A big snowstorm, for sure' }], null, function (v) {
+    var fb = Lab.$('#fcFb'); fb.hidden = false;
+    if (v === 'storm') {
+      fb.className = 'fb ok'; fb.textContent = 'Great forecast! Falling air pressure usually means stormy weather is coming. Read Thursday to check.';
+      waitingForecast = false; Lab.$('#next').disabled = false;
+      Lab.$$('#fcSeg button').forEach(function (b) { b.disabled = true; });
+    } else if (v === 'sun') { fb.className = 'fb no'; fb.textContent = 'Not quite. Sunny, calm weather usually comes with high or rising pressure. Here the pressure is falling.'; }
+    else { fb.className = 'fb no'; fb.textContent = 'Not quite. It has been 64° to 66°F, too warm for snow. Falling pressure does mean a storm, though.'; }
+  });
+
+  function graph() {
+    var g = Lab.$('#graph'); g.innerHTML = '';
+    var L = 46, R = 376, T = 28, B = 255, S = Lab.svg;
+    var cfg = gKind === 'temp' ? { lo: 20, hi: 80, step: 10, unit: '°F', title: 'Temperature (°F)' }
+      : gKind === 'pres' ? { lo: 29.5, hi: 30.4, step: 0.1, unit: ' in', title: 'Air pressure (inches)', dec: 1 }
+      : gKind === 'rain' ? { lo: 0, hi: 1, step: 0.2, unit: ' in', title: 'Rain (inches)', dec: 1 }
+      : { lo: 0, hi: 20, step: 5, unit: ' mph', title: 'Wind speed (mph)' };
+    function y(v) { return B - (v - cfg.lo) / (cfg.hi - cfg.lo) * (B - T); }
+    function x(i) { return L + 18 + i * (R - L - 36) / 6; }
+    for (var v = cfg.lo; v <= cfg.hi + 1e-9; v += cfg.step) {
+      S('line', { x1: L, x2: R, y1: y(v), y2: y(v), stroke: '#E3E5EA', 'stroke-width': 1 }, g);
+      var t = S('text', { x: L - 6, y: y(v) + 5, 'text-anchor': 'end' }, g); t.textContent = cfg.dec ? v.toFixed(cfg.dec) : Math.round(v);
+    }
+    S('line', { x1: L, x2: R, y1: B, y2: B, stroke: '#9AA1AE', 'stroke-width': 1.5 }, g);
+    DAYS.forEach(function (D, i) { var t = S('text', { x: x(i), y: B + 20, 'text-anchor': 'middle' }, g); t.textContent = D.d.slice(0, 3); });
+    var tt = S('text', { x: L, y: 13, 'font-weight': 600, fill: '#1E2D4F' }, g); tt.textContent = cfg.title;
+    tt.setAttribute('style', 'fill:#1E2D4F;font-weight:600');
+    var data = DAYS.slice(0, n);
+    if (!data.length) { var e = S('text', { x: (L + R) / 2, y: (T + B) / 2, 'text-anchor': 'middle' }, g); e.textContent = 'Read Monday to start the graph.'; return; }
+    function line(vals, color, name) {
+      if (vals.length > 1) S('polyline', { points: vals.map(function (v, i) { return x(i) + ',' + y(v); }).join(' '), fill: 'none', stroke: color, 'stroke-width': 2.5, 'stroke-linejoin': 'round' }, g);
+      vals.forEach(function (v, i) {
+        var c = S('circle', { cx: x(i), cy: y(v), r: 5.5, fill: color, stroke: '#fff', 'stroke-width': 2 }, g);
+        var ti = S('title', {}, c); ti.textContent = DAYS[i].d + ': ' + (name ? name + ' ' : '') + v + cfg.unit;
+      });
+      if (name) { var last = vals.length - 1, lb = S('text', { x: x(last) + 9, y: y(vals[last]) + (name === 'High' ? -8 : 16), class: 'lab' }, g); lb.textContent = name; lb.setAttribute('style', 'fill:' + color); }
+    }
+    if (gKind === 'temp') {
+      line(data.map(function (D) { return D.hi; }), '#C2410C', 'High');
+      line(data.map(function (D) { return D.lo; }), '#1D4ED8', 'Low');
+      var lg = S('g', { transform: 'translate(' + (R - 100) + ',10)' }, g);
+      S('rect', { x: 0, y: -2, width: 12, height: 4, fill: '#C2410C' }, lg); var a = S('text', { x: 16, y: 5 }, lg); a.textContent = 'High';
+      S('rect', { x: 62, y: -2, width: 12, height: 4, fill: '#1D4ED8' }, lg); var b = S('text', { x: 78, y: 5 }, lg); b.textContent = 'Low';
+    } else if (gKind === 'pres') line(data.map(function (D) { return D.p; }), '#1E2D4F');
+    else {
+      data.forEach(function (D, i) {
+        var v = gKind === 'rain' ? D.rain : D.ws, top = y(v), bw = 26;
+        var r = S('rect', { x: x(i) - bw / 2, y: Math.min(top, B - 1), width: bw, height: Math.max(1, B - top), rx: 3, fill: gKind === 'rain' ? '#3F8FCC' : '#5B6475' }, g);
+        var ti = S('title', {}, r); ti.textContent = D.d + ': ' + v + cfg.unit;
+        var lb = S('text', { x: x(i), y: top - 6, 'text-anchor': 'middle' }, g); lb.textContent = gKind === 'rain' ? v.toFixed(2) : v;
+      });
+    }
+  }
+
+  // coast comparison
+  var cmp = Lab.$('#cmpBody'), diffCells = [];
+  DAYS.forEach(function (D, i) {
+    var a = Lab.el('td', { class: 'num' }, '?'), b = Lab.el('td', { class: 'num' }, '?');
+    diffCells.push([a, D.hi - D.lo, b, WILM[i][0] - WILM[i][1]]);
+    cmp.appendChild(Lab.el('tr', null, [Lab.el('td', null, D.d.slice(0, 3)), Lab.el('td', { class: 'num' }, D.hi + '° / ' + D.lo + '°'), a, Lab.el('td', { class: 'num' }, WILM[i][0] + '° / ' + WILM[i][1] + '°'), b]));
+  });
+  Lab.$('#showDiff').addEventListener('click', function () {
+    diffCells.forEach(function (c) { c[0].textContent = c[1] + '°'; c[2].textContent = c[3] + '°'; });
+    Lab.$('#showDiff').disabled = true;
+  });
+
+  Lab.check(Lab.$('#check'), [
+    { q: 'The air pressure fell from Monday to Thursday. What weather came with the lowest pressure?', opts: ['Sunny and calm', 'Thunderstorms and the most rain', 'Snow'], a: 1,
+      why: 'Thursday had the lowest pressure (29.62 in) and 0.85 inches of rain. Falling pressure is a clue that a storm is coming.',
+      miss: { 0: 'Not quite. Look at Thursday in your table. What was the sky like, and how much rain fell?', 2: 'Not quite. No snow fell this week. Look at Thursday\'s rain and sky.' } },
+    { q: 'A cold front passed on Thursday. What changed on Friday and Saturday?', opts: ['It got warmer and the wind came from the south.', 'It got colder, the wind came from the northwest, and the pressure rose.', 'Nothing changed.'], a: 1,
+      why: 'Behind a cold front, cooler, drier air moves in. The wind shifts to the northwest, and the pressure rises as skies clear.',
+      miss: { 0: 'Not quite. Compare Wednesday and Friday. Did the highs go up or down? Which way did the wind come from?', 2: 'Not quite. Look at the Temperature and Air pressure graphs around Thursday.' } },
+    { q: 'Which city had a smaller difference between its high and low each day, and why?', opts: ['Asheville, because mountains are close to the sun.', 'Wilmington, because the ocean warms and cools slowly.', 'They were the same.'], a: 1,
+      why: 'Water heats and cools more slowly than land, so the ocean keeps the coast from getting very hot or very cold.',
+      miss: { 0: 'Not quite. Tap "Show the differences" and compare the two columns. Asheville\'s differences are bigger.', 2: 'Not quite. Tap "Show the differences." Wilmington\'s numbers are smaller every day.' } }
+  ]);
+
+  graph();
+})();
+</script>
+</body>
+</html>

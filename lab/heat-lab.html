@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heating and Cooling Lab — Virtual Science Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="lab.css">
+<script src="../brand.js"></script>
+<style>
+#scene text{font-family:Inter,system-ui,sans-serif}
+.cap{margin:0 0 8px;font:600 17px/1.35 var(--sans);color:var(--navy);min-height:46px}
+.uses{display:grid;gap:10px}
+.use-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px}
+.use-row b{color:var(--navy)}
+.use-row select{width:100%;min-height:46px;font:500 15px var(--sans);padding:8px;border:1.5px solid var(--line-2);border-radius:8px;background:#fff;color:var(--ink)}
+.use-row.ok{border-color:#ABEFC6;background:#ECFDF3}
+.use-row.no{border-color:#FECDCA;background:#FEF3F2}
+.use-row .fbx{grid-column:1/-1;font-size:14.5px}
+@media (max-width:560px){.use-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← Science Lab</a>
+<div class="page-hdr">
+  <span class="eyebrow">Unit 6 · An EGGcellent Material</span>
+  <h1>Heating and Cooling Lab</h1>
+  <p>Heat a material, then cool it. Does it go back to how it started?</p>
+  <p class="stds">PS.5.1.3</p>
+</div>
+
+<div class="lab-q"><span class="lbl">Question to investigate</span>
+  <p>How do heating and cooling change materials, and how does that make them useful?</p></div>
+
+<div class="lab-grid">
+  <div class="panel stage">
+    <p id="obs" class="cap" aria-live="polite"></p>
+    <svg id="scene" viewBox="0 36 600 300" role="img" aria-label="A material in a dish above a heater and a cooling tray">
+      <rect width="600" height="360" fill="#FBFBF8"/>
+      <!-- thermometer -->
+      <rect x="520" y="70" width="26" height="220" rx="13" fill="#fff" stroke="#8EA3BC" stroke-width="3"/>
+      <circle cx="533" cy="300" r="22" fill="#D92D20" stroke="#8EA3BC" stroke-width="3"/>
+      <rect id="merc" x="527" y="200" width="12" height="100" fill="#D92D20"/>
+      <g font-size="13" fill="#5B6475" font-family="Inter,sans-serif"><line x1="546" y1="275" x2="556" y2="275" stroke="#5B6475" stroke-width="2"/><text x="560" y="279">32°</text><line x1="546" y1="157" x2="556" y2="157" stroke="#5B6475" stroke-width="2"/><text x="560" y="161">212°</text></g>
+      <text id="tempTxt" x="533" y="58" text-anchor="middle" font-size="20" font-weight="700" fill="#1E2D4F" font-family="JetBrains Mono,monospace"></text>
+      <!-- stand + dish -->
+      <rect x="150" y="214" width="260" height="10" rx="4" fill="#5B6475"/>
+      <path d="M170 196 Q280 236 390 196" fill="#fff" stroke="#8EA3BC" stroke-width="4"/>
+      <g id="mat"></g>
+      <!-- heater -->
+      <g id="flame" opacity="0"><path d="M250 300 Q262 262 280 250 Q298 262 310 300 Z" fill="#FF8A00"/><path d="M266 300 Q272 278 280 270 Q290 278 294 300 Z" fill="#FFC107"/></g>
+      <g id="cold" opacity="0"><rect x="190" y="276" width="180" height="26" rx="6" fill="#BFE3F7" stroke="#6BA6CF" stroke-width="2"/><text x="280" y="295" text-anchor="middle" font-size="15" font-weight="700" fill="#1E5A85">ICE TRAY</text></g>
+      <rect x="160" y="304" width="240" height="18" rx="4" fill="#1E2D4F"/>
+    </svg>
+    <div class="readouts">
+      <div class="readout"><span class="k">Temperature</span><span class="v" id="r-temp">—</span></div>
+      <div class="readout"><span class="k">State</span><span class="v" id="r-state" style="font-family:var(--sans);font-size:18px">—</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Test a material</h2>
+    <p class="sub">Pick a material. Heat it, then cool it.</p>
+    <div class="ctl"><span class="ctl-lbl">Material</span><div id="c-mat"></div></div>
+    <div class="btn-row">
+      <button class="btn" id="heat" type="button">1. Heat it</button>
+      <button class="btn navy" id="cool" type="button" disabled>2. Cool it</button>
+    </div>
+    <div class="fb info" id="stepFb" aria-live="polite">Start by heating the material.</div>
+  </div>
+</div>
+
+<section class="section">
+  <h2>Data table</h2>
+  <p class="sub">A row is added after you heat and cool a material.</p>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>Material</th><th>After heating</th><th>After cooling</th><th>Back to the start?</th></tr></thead>
+    <tbody id="tbody"></tbody></table></div>
+  <div class="table-tools"><span class="count" id="count">0 of 7 materials tested</span></div>
+</section>
+
+<section class="section">
+  <span class="part-tag">Sort it</span>
+  <h2>Reversible or irreversible?</h2>
+  <p class="sub">Tap a card, then tap a box. A <b>reversible</b> change can be undone. An <b>irreversible</b> change cannot.</p>
+  <div class="sort-bank" id="bank"></div>
+  <div class="bins" id="bins"></div>
+  <div class="fb" id="sortFb" hidden aria-live="polite"></div>
+</section>
+
+<section class="section">
+  <span class="part-tag">Match it</span>
+  <h2>How do people use this change?</h2>
+  <p class="sub">Pick the best use for each material.</p>
+  <div class="uses" id="uses"></div>
+</section>
+
+<section class="section">
+  <h2>What did you find?</h2>
+  <div id="check"></div>
+</section>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+
+<script src="lab.js"></script>
+<script>
+(function () {
+  // start/hot/cold temps in °F; shapes: block, puddle, egg, spoon, clay
+  var M = {
+    chocolate: { name: 'Chocolate', color: '#5A3420', t0: 70, hot: 115, cold: 40, s0: 'Solid', sHot: 'Liquid (melted)', sCold: 'Solid again', back: true, kind: 'rev',
+      hotShape: 'puddle', coldShape: 'block', heatObs: 'The chocolate melted into a liquid.', coolObs: 'The chocolate turned solid again.' },
+    butter: { name: 'Butter', color: '#F5D76E', t0: 40, hot: 110, cold: 40, s0: 'Solid', sHot: 'Liquid (melted)', sCold: 'Solid again', back: true, kind: 'rev',
+      hotShape: 'puddle', coldShape: 'block', heatObs: 'The butter melted.', coolObs: 'The butter got firm again.' },
+    ice: { name: 'Ice', color: '#CDEBFA', t0: 20, hot: 50, cold: 20, s0: 'Solid', sHot: 'Liquid water', sCold: 'Solid ice again', back: true, kind: 'rev',
+      hotShape: 'puddle', coldShape: 'block', heatObs: 'The ice melted into liquid water.', coolObs: 'The water froze into ice again.' },
+    egg: { name: 'Raw egg', color: '#F3E6A8', t0: 70, hot: 180, cold: 40, s0: 'Runny liquid', sHot: 'Cooked solid', sCold: 'Still cooked', back: false, kind: 'irr',
+      hotShape: 'fried', coldShape: 'fried', heatObs: 'The egg cooked. The clear part turned white and firm.', coolObs: 'The egg stayed cooked. It did not turn runny again.' },
+    wax: { name: 'Candle wax', color: '#F4EFE6', t0: 70, hot: 160, cold: 70, s0: 'Solid', sHot: 'Liquid (melted)', sCold: 'Solid again', back: true, kind: 'rev',
+      hotShape: 'puddle', coldShape: 'block', heatObs: 'The wax melted into a clear liquid.', coolObs: 'The wax hardened again.' },
+    spoon: { name: 'Metal spoon', color: '#A9B2BF', t0: 70, hot: 300, cold: 70, s0: 'Solid', sHot: 'Solid (very hot)', sCold: 'Solid', back: true, kind: 'rev',
+      hotShape: 'spoon', coldShape: 'spoon', heatObs: 'The spoon got very hot but stayed solid.', coolObs: 'The spoon cooled and looks the same as before.' },
+    clay: { name: 'Clay', color: '#9C8E80', t0: 70, hot: 1800, cold: 70, s0: 'Soft solid', sHot: 'Hard (fired)', sCold: 'Still hard', back: false, kind: 'irr', hotColor: '#C0623A',
+      hotShape: 'mug', coldShape: 'mug', heatObs: 'In a hot kiln, the soft clay turned hard.', coolObs: 'The clay stayed hard. It cannot get soft again.' }
+  };
+  var keys = Object.keys(M), cur = 'chocolate', phase = 0, temp = M.chocolate.t0, busy = false, tested = {};
+  var matSeg = Lab.seg(Lab.$('#c-mat'), keys.map(function (k) { return { v: k, label: M[k].name }; }), cur, function (v) { cur = v; reset(); });
+  var table = Lab.table(Lab.$('#tbody'), 4, 'Heat and cool a material to fill in the table.');
+  var mat = Lab.$('#mat'), S = Lab.svg;
+
+  function shape(kind, m, color) {
+    mat.innerHTML = '';
+    color = color || m.color;
+    if (kind === 'block') S('rect', { x: 235, y: 150, width: 90, height: 52, rx: 6, fill: color, stroke: 'rgba(0,0,0,.25)', 'stroke-width': 2 }, mat);
+    else if (kind === 'puddle') S('ellipse', { cx: 280, cy: 200, rx: 92, ry: 12, fill: color, stroke: 'rgba(0,0,0,.2)', 'stroke-width': 2 }, mat);
+    else if (kind === 'raw') { S('ellipse', { cx: 280, cy: 200, rx: 80, ry: 11, fill: '#EEF3D6', opacity: .85, stroke: '#D8DDB8' }, mat); S('ellipse', { cx: 280, cy: 194, rx: 22, ry: 12, fill: '#F2B705' }, mat); }
+    else if (kind === 'fried') { S('path', { d: 'M200 200 Q205 176 240 180 Q270 168 300 178 Q350 170 360 198 Q330 210 280 208 Q230 210 200 200 Z', fill: '#FFFFFF', stroke: '#D5D9E0', 'stroke-width': 2 }, mat); S('ellipse', { cx: 285, cy: 190, rx: 22, ry: 13, fill: '#F2B705' }, mat); }
+    else if (kind === 'spoon') { S('ellipse', { cx: 225, cy: 196, rx: 34, ry: 12, fill: color, stroke: '#7D8796', 'stroke-width': 2 }, mat); S('rect', { x: 255, y: 191, width: 120, height: 9, rx: 4, fill: color, stroke: '#7D8796', 'stroke-width': 2 }, mat); }
+    else if (kind === 'lump') S('path', { d: 'M232 202 Q226 160 262 156 Q290 140 318 160 Q338 176 330 202 Z', fill: color, stroke: 'rgba(0,0,0,.25)', 'stroke-width': 2 }, mat);
+    else if (kind === 'mug') { S('path', { d: 'M240 150 L246 202 L314 202 L320 150 Z', fill: color, stroke: 'rgba(0,0,0,.3)', 'stroke-width': 2 }, mat); S('path', { d: 'M320 162 Q346 166 340 184 Q336 196 316 192', fill: 'none', stroke: color, 'stroke-width': 7 }, mat); }
+  }
+  function startShape(m) { return cur === 'egg' ? 'raw' : cur === 'clay' ? 'lump' : cur === 'spoon' ? 'spoon' : 'block'; }
+  function showTemp(t) {
+    var c = Math.round((t - 32) * 5 / 9);
+    Lab.$('#r-temp').textContent = Math.round(t) + '°F (' + c + '°C)';
+    Lab.$('#tempTxt').textContent = Math.round(t) + '°F';
+    var h = Math.max(4, Math.min(214, 4 + t / 320 * 210));   // 0–320°F; the kiln (1800°F) goes off the top
+    Lab.$('#merc').setAttribute('y', 300 - h); Lab.$('#merc').setAttribute('height', h);
+  }
+  function reset() {
+    var m = M[cur]; phase = 0; temp = m.t0;
+    shape(startShape(m), m); showTemp(temp);
+    Lab.$('#r-state').textContent = m.s0;
+    Lab.$('#obs').textContent = m.name + ' at the start';
+    Lab.$('#flame').setAttribute('opacity', 0); Lab.$('#cold').setAttribute('opacity', 0);
+    Lab.$('#heat').disabled = false; Lab.$('#cool').disabled = true;
+    say('info', cur === 'clay' ? 'Clay is heated in a kiln, a very hot oven. Tap Heat it.' : 'Start by heating the material.');
+  }
+  function say(k, msg) { var f = Lab.$('#stepFb'); f.className = 'fb ' + k; f.textContent = msg; }
+
+  function animate(from, to, dur, onDone) {
+    busy = true; matSeg.disable(true); Lab.$('#heat').disabled = true; Lab.$('#cool').disabled = true;
+    Lab.loop(function (dt, t) {
+      var k = Math.min(1, t / dur); temp = from + (to - from) * (1 - Math.pow(1 - k, 2)); showTemp(temp);
+      var f = Lab.$('#flame'); if (+f.getAttribute('opacity') > 0) f.setAttribute('transform', 'translate(280,300) scale(1,' + (0.9 + 0.12 * Math.sin(t * 20)).toFixed(3) + ') translate(-280,-300)');
+      if (k >= 1) { busy = false; matSeg.disable(false); onDone(); return false; }
+      return true;
+    });
+  }
+  Lab.$('#heat').addEventListener('click', function () {
+    if (busy || phase !== 0) return;
+    var m = M[cur];
+    Lab.$('#flame').setAttribute('opacity', 1); Lab.$('#cold').setAttribute('opacity', 0);
+    Lab.$('#obs').textContent = cur === 'clay' ? 'Heating in a kiln…' : 'Heating…';
+    animate(m.t0, m.hot, 2.2, function () {
+      phase = 1;
+      shape(m.hotShape, m, m.hotColor);
+      Lab.$('#r-state').textContent = m.sHot; Lab.$('#obs').textContent = m.heatObs;
+      Lab.$('#cool').disabled = false;
+      say('info', m.heatObs + ' Now cool it.');
+    });
+  });
+  Lab.$('#cool').addEventListener('click', function () {
+    if (busy || phase !== 1) return;
+    var m = M[cur];
+    Lab.$('#flame').setAttribute('opacity', 0); Lab.$('#cold').setAttribute('opacity', 1);
+    Lab.$('#obs').textContent = 'Cooling…';
+    animate(m.hot, m.cold, 2.2, function () {
+      phase = 2;
+      shape(m.coldShape, m, m.hotColor);
+      Lab.$('#r-state').textContent = m.sCold; Lab.$('#obs').textContent = m.coolObs;
+      say('info', m.coolObs + (m.back ? ' Cooling undid the change, so it is reversible.' : ' Cooling did not undo the change, so it is irreversible.') + ' Pick another material to test.');
+      table.add([m.name, m.sHot, m.sCold, m.back ? 'Yes' : 'No']);
+      tested[cur] = 1;
+      Lab.$('#count').textContent = Object.keys(tested).length + ' of 7 materials tested';
+      Lab.$('#heat').disabled = true;
+    });
+  });
+
+  // sort
+  Lab.sorter({
+    bank: Lab.$('#bank'), binsRoot: Lab.$('#bins'), fb: Lab.$('#sortFb'),
+    bins: [{ id: 'rev', label: 'Reversible', hint: 'Cooling or heating can change it back.' }, { id: 'irr', label: 'Irreversible', hint: 'It cannot go back to how it was.' }],
+    items: [
+      { id: 'chocolate', label: 'Melting chocolate', bin: 'rev', ok: 'Melted chocolate turns solid again when it cools.', no: 'Look at your table. Did the chocolate go back to a solid when it cooled?' },
+      { id: 'butter', label: 'Melting butter', bin: 'rev', ok: 'Melted butter gets firm again in the fridge.', no: 'Melted butter gets firm again when it cools. It can go back.' },
+      { id: 'ice', label: 'Melting ice', bin: 'rev', ok: 'Water can freeze back into ice.', no: 'Water can freeze back into ice in the freezer, so it can go back.' },
+      { id: 'egg', label: 'Cooking an egg', bin: 'irr', ok: 'Heat made the egg into something new. You cannot un-cook it.', no: 'Did the cooked egg turn runny again when it cooled? Heat changed it for good.' },
+      { id: 'wax', label: 'Melting wax', bin: 'rev', ok: 'Melted wax hardens again when it cools.', no: 'Melted wax hardens again when it cools, so it can go back.' },
+      { id: 'spoon', label: 'Heating a metal spoon', bin: 'rev', ok: 'The spoon stayed solid and went back to normal when it cooled.', no: 'The spoon only got hot. When it cooled, it was the same as before.' },
+      { id: 'clay', label: 'Firing clay in a kiln', bin: 'irr', ok: 'Fired clay becomes hard for good. Water will not make it soft again.', no: 'Fired clay stays hard. It never turns back into soft clay.' }
+    ]
+  });
+
+  // uses
+  var USES = {
+    chocolate: 'Melt it, pour it into a mold, and let it harden into a shape',
+    ice: 'Freeze water to keep food and drinks cold in a cooler',
+    egg: 'Cook it so it turns firm enough to eat',
+    wax: 'Melt it, pour it around a wick, and let it harden into a candle',
+    spoon: 'Make pots and pans, because it stays solid on a hot stove',
+    clay: 'Fire it in a kiln to make hard bricks and mugs',
+    butter: 'Keep it cold to stay firm, or melt it to pour into a recipe'
+  };
+  var useKeys = Lab.shuffle(Object.keys(USES));
+  keys.forEach(function (k) {
+    var sel = Lab.el('select', { 'aria-label': 'Use for ' + M[k].name, 'data-k': k }, [Lab.el('option', { value: '' }, 'Pick a use…')].concat(useKeys.map(function (u) { return Lab.el('option', { value: u }, USES[u]); })));
+    var fb = Lab.el('div', { class: 'fbx', 'aria-live': 'polite' });
+    var row = Lab.el('div', { class: 'use-row' }, [Lab.el('b', null, M[k].name), sel, fb]);
+    sel.addEventListener('change', function () {
+      if (!sel.value) { row.className = 'use-row'; fb.textContent = ''; return; }
+      var ok = sel.value === k;
+      row.className = 'use-row ' + (ok ? 'ok' : 'no');
+      fb.textContent = ok ? 'Yes! That use depends on how ' + M[k].name.toLowerCase() + ' changes when heated or cooled.'
+        : 'Not quite. That use fits ' + M[sel.value].name.toLowerCase() + ' better. Think about what heat does to ' + M[k].name.toLowerCase() + '.';
+    });
+    Lab.$('#uses').appendChild(row);
+  });
+
+  Lab.check(Lab.$('#check'), [
+    { q: 'Why can\'t cooling make a cooked egg runny again?', opts: ['The egg is still too warm.', 'Heating changed the egg into something new. That change cannot be undone.', 'Eggs cannot get cold.'], a: 1,
+      why: 'Cooking is an irreversible change. The heat changed what the egg is made of.',
+      miss: { 0: 'Not quite. Even when the egg was cooled to 40°F, it stayed cooked. Check your table.', 2: 'Not quite. The egg did cool down to 40°F, but it stayed cooked.' } },
+    { q: 'Which material is best for a cooking pot?', opts: ['Chocolate', 'Wax', 'Metal', 'Butter'], a: 2, two: true,
+      why: 'Metal stays solid even on a hot stove. Chocolate, wax and butter would melt.',
+      miss: { 0: 'Not quite. Chocolate melts at a low temperature. A pot made of it would melt on the stove.', 1: 'Not quite. Wax melts when heated, so a wax pot would melt.', 3: 'Not quite. Butter melts on a warm stove.' } },
+    { q: 'Melted chocolate cools in a mold and gets hard. What kind of change is this?', opts: ['Reversible: it can melt again.', 'Irreversible: it can never melt again.'], a: 0,
+      why: 'You can melt the chocolate again and make a new shape. It is still chocolate.',
+      miss: { 1: 'Not quite. If you heat the chocolate again, it melts again. So the change can be undone.' } }
+  ]);
+
+  reset();
+})();
+</script>
+</body>
+</html>

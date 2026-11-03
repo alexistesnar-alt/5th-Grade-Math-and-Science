@@ -1,0 +1,119 @@
+/* ==========================================================================
+   Virtual Science Lab — shared styles for lab/*.html
+   Works with ../site.css (colors, cards, headers). Each lab page adds its
+   own small <style> block for its drawing.
+   ========================================================================== */
+.lab-q{background:#FFF8E1;border:1px solid #F1DC9A;border-left:5px solid var(--gold-line);border-radius:var(--radius);
+  padding:14px 18px;margin:0 0 22px}
+.lab-q .lbl{display:block;font:600 12.5px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-text);margin:0 0 8px}
+.lab-q p{margin:0;font-size:18px;line-height:1.45;color:var(--ink);font-weight:500}
+.how{margin:0 0 10px;color:var(--muted);font-size:15.5px}
+
+.lab-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;align-items:start;margin:0 0 20px}
+@media (max-width:860px){.lab-grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;min-width:0}
+.panel>h2,.section>h2{font:600 21px/1.3 var(--serif);color:var(--navy);margin:0 0 6px}
+.section{min-width:0}
+.section .sub,.panel .sub{color:var(--muted);margin:0 0 14px;font-size:15.5px}
+.stage svg{display:block;width:100%;height:auto}
+.part-tag{display:inline-block;font:600 12px/1 var(--mono);color:var(--gold-text);letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px}
+
+/* ---------- controls ---------- */
+.ctl{margin:0 0 16px}
+.ctl-lbl{display:block;font:600 14.5px/1.3 var(--sans);color:var(--navy);margin:0 0 8px}
+.ctl-note{font-size:13.5px;color:var(--muted);margin:6px 0 0}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{flex:1 1 auto;min-width:70px;min-height:46px;padding:10px 12px;border:1.5px solid var(--line-2);background:#fff;
+  border-radius:8px;font:600 15px/1.2 var(--sans);color:var(--navy);cursor:pointer;touch-action:manipulation}
+.seg button:hover{border-color:var(--navy)}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.seg button:disabled{opacity:.45;cursor:not-allowed}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:12px 22px;border-radius:8px;border:0;
+  font:700 16.5px/1.2 var(--sans);cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:inset 0 -3px 0 var(--gold-line);touch-action:manipulation}
+.btn:hover{filter:brightness(1.04)}
+.btn.navy{background:var(--navy);color:#fff;box-shadow:none}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line-2);box-shadow:none;font-weight:600}
+.btn.small{min-height:44px;padding:9px 16px;font-size:15px}
+.btn:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn.wide{width:100%}
+input[type=range].big{width:100%;height:44px;accent-color:var(--navy);cursor:pointer}
+
+.readouts{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 0}
+.readout{flex:1 1 130px;background:#F2F3F6;border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.readout .k{display:block;font:600 12px/1.2 var(--sans);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.readout .v{display:block;font:600 22px/1.3 var(--mono);color:var(--navy)}
+.num,.mono{font-family:var(--mono)}
+
+.mathbox{background:#F2F5FB;border:1px solid #CBD5EA;border-radius:8px;padding:12px 14px;margin:12px 0 0;font-size:16px}
+.mathbox .eq{font:600 17px/1.5 var(--mono);color:var(--navy);overflow-wrap:anywhere}
+.note{background:#F2F3F6;border-radius:8px;padding:12px 14px;font-size:15px;color:var(--ink);margin:12px 0 0}
+.tag-practice{display:inline-block;background:#FFF1C2;color:#6B4C00;border:1px solid #F1DC9A;border-radius:6px;padding:4px 9px;font:600 13px/1.3 var(--sans)}
+
+/* ---------- data table ---------- */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:8px}
+.data-table{min-width:100%;border-collapse:collapse}
+.data-table th{font-size:13.5px;white-space:nowrap;padding:9px 10px}
+.data-table td{font-size:15px;padding:8px 10px;border:0;border-top:1px solid var(--line)}
+.data-table td.num{font-family:var(--mono);white-space:nowrap}
+.data-table tr.new td{animation:rowIn 1.2s ease-out}
+@keyframes rowIn{from{background:#FFF3C4}to{background:transparent}}
+.data-table .empty-row td{color:var(--faint);font-style:italic;text-align:center;padding:16px}
+.table-tools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 0}
+.table-tools .count{color:var(--muted);font-size:14px}
+
+/* ---------- feedback ---------- */
+.fb{margin:10px 0 0;padding:11px 14px;border-radius:8px;font-size:15.5px;line-height:1.5}
+.fb[hidden]{display:none}
+.fb.ok{background:#ECFDF3;color:#14532D;border:1px solid #ABEFC6}
+.fb.no{background:#FEF3F2;color:#7A271A;border:1px solid #FECDCA}
+.fb.info{background:#F2F3F6;color:var(--ink);border:1px solid var(--line)}
+
+/* ---------- "What did you find?" check ---------- */
+.cq{margin:0 0 22px}
+.cq:last-of-type{margin-bottom:10px}
+.cq-text{font-weight:600;margin:0 0 10px;font-size:17px;color:var(--ink)}
+.cq-n{font-family:var(--mono);color:var(--gold-text)}
+.choices{display:grid;gap:8px}
+@media (min-width:700px){.choices.two{grid-template-columns:1fr 1fr}}
+.choice{text-align:left;min-height:48px;padding:11px 14px;border:1.5px solid var(--line-2);border-radius:8px;background:#fff;
+  font:500 16px/1.4 var(--sans);color:var(--ink);cursor:pointer;touch-action:manipulation}
+.choice:hover:not(:disabled){border-color:var(--navy)}
+.choice[aria-pressed="true"]{border-color:var(--navy);background:#EEF2FA}
+.choice.right{border-color:var(--ok);background:#ECFDF3;color:#14532D}
+.choice.wrong{border-color:#B42318;background:#FEF3F2;color:#7A271A}
+.choice:disabled{cursor:default}
+.choice:disabled:not(.right):not(.wrong){opacity:.55}
+.check-score{font-weight:600;color:var(--navy);margin:6px 0 0}
+
+/* ---------- tap / drag sorting ---------- */
+.sort-bank{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:12px;background:#F2F3F6;border:1px dashed var(--line-2);border-radius:8px;margin:0 0 12px}
+.sort-bank:empty::after{content:"All sorted!";color:var(--ok);font-weight:600;align-self:center}
+.sort-card{display:inline-flex;flex-direction:column;align-items:flex-start;min-height:46px;padding:9px 13px;border:1.5px solid var(--line-2);
+  border-radius:8px;background:#fff;font:600 15px/1.25 var(--sans);color:var(--navy);cursor:pointer;text-align:left;touch-action:manipulation;user-select:none}
+.sort-card .sc-sub{font:500 12.5px/1.3 var(--sans);color:var(--muted);margin-top:2px}
+.sort-card[aria-pressed="true"]{border-color:var(--gold-line);background:#FFF8E1;box-shadow:0 0 0 3px #FFE38A}
+.sort-card.placed{border-color:#ABEFC6;background:#ECFDF3;color:#14532D;cursor:default}
+.sort-card.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.sort-ghost{position:fixed;z-index:1000;pointer-events:none;opacity:.9;box-shadow:0 10px 24px rgba(30,45,79,.25)}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.bin{border:2px dashed var(--line-2);border-radius:var(--radius);background:#fff;padding:10px;min-height:110px;cursor:pointer;min-width:0}
+.bin.ready{border-color:var(--gold-line);background:#FFFCF1}
+.bin.over{border-color:var(--navy);background:#EEF2FA}
+.bin-head{display:block;width:100%;text-align:left;background:none;border:0;padding:4px 2px 8px;cursor:pointer;font:inherit}
+.bin-title{display:block;font:600 17px/1.25 var(--serif);color:var(--navy)}
+.bin-hint{display:block;font-size:13.5px;color:var(--muted);line-height:1.35;margin-top:2px}
+.bin-list{display:flex;flex-wrap:wrap;gap:6px}
+.bin-list .sort-card{min-height:36px;padding:6px 10px;font-size:14px}
+
+.done-badge{display:inline-block;margin-left:8px;font:600 13px/1 var(--sans);color:var(--ok)}
+.locked{opacity:.55;pointer-events:none}
+@media (max-width:640px){
+  .panel{padding:14px}
+  .lab-q p{font-size:17px}
+  .readout .v{font-size:19px}
+  .data-table td{font-size:14px;padding:7px 8px}
+  .data-table th{padding:8px}
+}
+@media (prefers-reduced-motion:reduce){.data-table tr.new td,.sort-card.shake{animation:none}}

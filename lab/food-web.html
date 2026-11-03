@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hemlock Forest Food Web — Virtual Science Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="lab.css">
+<script src="../brand.js"></script>
+<style>
+#web text{font-family:Inter,system-ui,sans-serif}
+#web .nm{font-size:16px;font-weight:600;fill:#1E2D4F}
+#web .badge text{font-size:20px;font-weight:700;fill:#fff}
+.lab-grid{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+@media (max-width:860px){.lab-grid{grid-template-columns:minmax(0,1fr)}}
+.web-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+#web{min-width:640px}
+.swipe{display:none;font-size:13.5px;color:var(--muted);margin:6px 0 0}
+@media (max-width:700px){.swipe{display:block}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--muted);margin:10px 0 0}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
+#scen button{flex:1 1 200px;text-align:left}
+.effects{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:6px}
+.effects li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:start;font-size:15px;padding:6px 8px;border-radius:6px;background:#F7F8FA}
+.effects .ar{font:700 18px/1.2 var(--mono);text-align:center}
+.up{color:#15803D}.down{color:#B42318}.same{color:#5B6475}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← Science Lab</a>
+<div class="page-hdr">
+  <span class="eyebrow">Unit 3 · The Gray Ghosts</span>
+  <h1>Hemlock Forest Food Web</h1>
+  <p>Meet the living things in a Southern Appalachian hemlock forest. See how they depend on each other.</p>
+  <p class="stds">LS.5.2.2 · LS.5.2.3</p>
+</div>
+
+<div class="lab-q"><span class="lbl">Question to investigate</span>
+  <p>What happens to the whole forest when one living thing is added or taken away?</p></div>
+
+<section class="section">
+  <span class="part-tag">Part 1</span>
+  <h2>Producer, consumer, or decomposer?</h2>
+  <p class="sub">Tap a card, then tap a box. With a mouse, you can drag.</p>
+  <div class="sort-bank" id="bank"></div>
+  <div class="bins" id="bins"></div>
+  <div class="fb" id="sortFb" hidden aria-live="polite"></div>
+</section>
+
+<div class="lab-grid">
+  <div class="panel stage">
+    <div class="web-scroll"><svg id="web" viewBox="0 0 720 480" role="img" aria-label="Food web of a hemlock forest. Arrows point from food to the eater.">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5B6475"/></marker>
+        <marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8A6100"/></marker>
+      </defs>
+      <rect width="720" height="480" fill="#FBFBF8"/>
+      <g id="links"></g><g id="nodes"></g>
+    </svg></div>
+    <p class="swipe">Swipe sideways to see the whole web.</p>
+    <div class="legend">
+      <span><i style="background:#DCF2E3;border:2px solid #15803D"></i>Producer</span>
+      <span><i style="background:#E4EAF7;border:2px solid #1D4ED8"></i>Consumer</span>
+      <span><i style="background:#F6EBD9;border:2px solid #8A6100"></i>Decomposer</span>
+      <span>Arrows point from the food to the eater.</span>
+      <span>Dashed: dead leaves and wood go to decomposers.</span>
+    </div>
+  </div>
+  <div class="panel">
+    <span class="part-tag">Part 2</span>
+    <h2>Change the forest</h2>
+    <p class="sub">Pick a change. Make a prediction first.</p>
+    <div id="scen"></div>
+    <div id="predBox" hidden style="margin-top:14px">
+      <span class="ctl-lbl" id="predQ"></span>
+      <div id="pred"></div>
+      <div class="fb" id="predFb" hidden aria-live="polite"></div>
+    </div>
+    <ul class="effects" id="effects"></ul>
+    <button class="btn ghost small" id="reset" type="button" style="margin-top:12px">Reset the forest</button>
+  </div>
+</div>
+
+<section class="section">
+  <h2>Data table</h2>
+  <p class="sub">Each change you test adds a row of predicted effects.</p>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>Change</th><th>Goes up</th><th>Goes down</th><th>Your prediction</th></tr></thead>
+    <tbody id="tbody"></tbody></table></div>
+</section>
+
+<section class="section">
+  <h2>What did you find?</h2>
+  <div id="check"></div>
+</section>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+
+<script src="lab.js"></script>
+<script>
+(function () {
+  var ORG = {
+    hawk:     { name: 'Red-shouldered hawk', x: 360, y: 44,  role: 'consumer' },
+    bird:     { name: 'Songbird (warbler)', x: 140, y: 150, role: 'consumer' },
+    sala:     { name: 'Salamander', x: 370, y: 160, role: 'consumer' },
+    bear:     { name: 'Black bear', x: 590, y: 150, role: 'consumer' },
+    beetle:   { name: 'Adelgid-eating beetle', x: 110, y: 270, role: 'consumer', hidden: true },
+    adelgid:  { name: 'Woolly adelgid', x: 110, y: 330, role: 'consumer', hidden: true },
+    insects:  { name: 'Caterpillars & beetles', x: 330, y: 280, role: 'consumer' },
+    worm:     { name: 'Earthworm', x: 585, y: 262, role: 'decomposer' },
+    hemlock:  { name: 'Eastern hemlock', x: 170, y: 430, role: 'producer' },
+    rhodo:    { name: 'Rhododendron', x: 400, y: 430, role: 'producer' },
+    fungi:    { name: 'Fungi', x: 600, y: 345, role: 'decomposer' }
+  };
+  var LINKS = [['hemlock', 'insects'], ['rhodo', 'insects'], ['hemlock', 'adelgid'], ['adelgid', 'beetle'], ['insects', 'bird'], ['insects', 'sala'], ['insects', 'bear'],
+    ['worm', 'sala'], ['worm', 'bird'], ['sala', 'hawk'], ['bird', 'hawk'], ['hemlock', 'fungi', 1], ['rhodo', 'worm', 1], ['rhodo', 'fungi', 1]];
+  var COL = { producer: ['#DCF2E3', '#15803D'], consumer: ['#E4EAF7', '#1D4ED8'], decomposer: ['#F6EBD9', '#8A6100'], unknown: ['#F2F3F6', '#9AA1AE'] };
+  var known = {}, nodeEls = {}, S = Lab.svg;
+  var W = 182, H = 44;
+
+  function drawWeb(effects) {
+    var links = Lab.$('#links'), nodes = Lab.$('#nodes');
+    links.innerHTML = ''; nodes.innerHTML = '';
+    LINKS.forEach(function (l) {
+      var a = ORG[l[0]], b = ORG[l[1]];
+      if (a.hidden || b.hidden) return;
+      var dx = b.x - a.x, dy = b.y - a.y, len = Math.sqrt(dx * dx + dy * dy);
+      // trim the line so it starts and ends at the box edges
+      function trim(dxx, dyy) { var tx = Math.abs(dxx) > 0 ? (W / 2 + 4) / Math.abs(dxx) : 1e9, ty = Math.abs(dyy) > 0 ? (H / 2 + 4) / Math.abs(dyy) : 1e9; return Math.min(tx, ty); }
+      var t = trim(dx, dy);
+      S('line', { x1: a.x + dx * t, y1: a.y + dy * t, x2: b.x - dx * t, y2: b.y - dy * t, stroke: l[2] ? '#8A6100' : '#5B6475', 'stroke-width': 2.2,
+        'stroke-dasharray': l[2] ? '7 6' : 'none', 'marker-end': l[2] ? 'url(#ahd)' : 'url(#ah)', opacity: (effects && effects[l[0]] === 'gone') || (effects && effects[l[1]] === 'gone') ? .2 : 1 }, links);
+    });
+    Object.keys(ORG).forEach(function (k) {
+      var o = ORG[k]; if (o.hidden) return;
+      var c = COL[known[k] ? o.role : 'unknown'], g = S('g', { transform: 'translate(' + o.x + ',' + o.y + ')' }, nodes);
+      var gone = effects && effects[k] === 'gone';
+      S('rect', { x: -W / 2, y: -H / 2, width: W, height: H, rx: 10, fill: c[0], stroke: c[1], 'stroke-width': 2.5, opacity: gone ? .35 : 1 }, g);
+      var tx = S('text', { class: 'nm', 'text-anchor': 'middle', y: 6, opacity: gone ? .45 : 1 }, g); tx.textContent = o.name;
+      if (gone) S('line', { x1: -W / 2 + 8, y1: 0, x2: W / 2 - 8, y2: 0, stroke: '#B42318', 'stroke-width': 3 }, g);
+      var e = effects && effects[k];
+      if (e && e !== 'gone') {
+        var bg = S('g', { class: 'badge', transform: 'translate(' + (W / 2 - 4) + ',' + (-H / 2 + 2) + ')' }, g);
+        S('circle', { r: 15, fill: e === 'up' || e === 'new' ? '#15803D' : e === 'down' ? '#B42318' : '#5B6475', stroke: '#fff', 'stroke-width': 2 }, bg);
+        var bt = S('text', { 'text-anchor': 'middle', y: 7 }, bg); bt.textContent = e === 'up' || e === 'new' ? '▲' : e === 'down' ? '▼' : '=';
+      }
+      nodeEls[k] = g;
+    });
+  }
+
+  // Part 1: sort
+  var ITEMS = [
+    { id: 'hemlock', label: 'Eastern hemlock', sub: 'evergreen tree', bin: 'producer', ok: 'Hemlocks make their own food from sunlight. They are producers.', no: { consumer: 'Trees do not eat other living things. They use sunlight to make food.', decomposer: 'A living hemlock makes its own food from sunlight.' } },
+    { id: 'rhodo', label: 'Rhododendron', sub: 'shrub', bin: 'producer', ok: 'Rhododendron is a plant. It makes its own food from sunlight.', no: 'Rhododendron is a plant. Plants make their own food from sunlight.' },
+    { id: 'insects', label: 'Caterpillars & beetles', sub: 'insects', bin: 'consumer', ok: 'Insects eat plants or other animals. They are consumers.', no: 'Insects cannot make their own food. They eat leaves or other living things.' },
+    { id: 'sala', label: 'Salamander', bin: 'consumer', ok: 'Salamanders eat insects and worms. They are consumers.', no: 'A salamander eats insects and worms to get energy.' },
+    { id: 'bird', label: 'Songbird (warbler)', bin: 'consumer', ok: 'Songbirds eat insects. They are consumers.', no: 'A songbird gets its energy by eating insects.' },
+    { id: 'bear', label: 'Black bear', bin: 'consumer', ok: 'Bears eat insects, berries, nuts and more. They are consumers.', no: 'A bear eats lots of foods. It cannot make its own food.' },
+    { id: 'hawk', label: 'Red-shouldered hawk', bin: 'consumer', ok: 'Hawks hunt other animals. They are consumers.', no: 'A hawk hunts birds and salamanders for food.' },
+    { id: 'fungi', label: 'Fungi', sub: 'mushrooms', bin: 'decomposer', ok: 'Fungi break down dead logs and leaves and return nutrients to the soil.', no: { producer: 'Fungi are not plants. They cannot use sunlight to make food.', consumer: 'Fungi break down dead things instead of eating living things.' } },
+    { id: 'worm', label: 'Earthworm', bin: 'decomposer', ok: 'Earthworms break down dead leaves and add nutrients to the soil.', no: 'Earthworms eat dead leaves and break them down. That is the job of a decomposer.' },
+    { id: 'adelgid', label: 'Hemlock woolly adelgid', sub: 'tiny invasive insect', bin: 'consumer', ok: 'Adelgids suck sap from living hemlocks. They are consumers that came from Asia.', no: { producer: 'An adelgid is an insect. It feeds on hemlock sap instead of making food.', decomposer: 'Adelgids feed on living trees, not dead ones.' } }
+  ];
+  Lab.sorter({
+    bank: Lab.$('#bank'), binsRoot: Lab.$('#bins'), fb: Lab.$('#sortFb'), items: ITEMS,
+    bins: [{ id: 'producer', label: 'Producer', hint: 'Makes its own food from sunlight' }, { id: 'consumer', label: 'Consumer', hint: 'Eats other living things' }, { id: 'decomposer', label: 'Decomposer', hint: 'Breaks down dead things' }],
+    onPlace: function (it, ok) { if (ok) { known[it.id] = 1; drawWeb(curEffects); } }
+  });
+
+  // Part 2: change the forest
+  var SCEN = {
+    adelgid: { label: 'The woolly adelgid spreads', show: ['adelgid'], ask: 'songbirds', askKey: 'bird', answer: 'down',
+      fx: { adelgid: ['up', 'Adelgids have few natural enemies here, so they spread fast.'], hemlock: ['down', 'Adelgids suck sap from hemlocks. Many trees die in 4 to 10 years.'],
+            insects: ['down', 'Insects that live on hemlocks lose food and shelter.'], bird: ['down', 'Fewer insects to eat, and some warblers nest only in hemlocks.'],
+            sala: ['down', 'Without hemlock shade, the forest floor and streams get warmer and drier.'], hawk: ['down', 'Fewer songbirds and salamanders to hunt.'],
+            rhodo: ['up', 'More sunlight reaches the ground where hemlocks died.'], fungi: ['up', 'More dead wood to break down.'], bear: ['same', 'Bears eat many foods, so they are not hurt as much.'] } },
+    hawk: { label: 'Hawks disappear', ask: 'songbirds', askKey: 'bird', answer: 'up',
+      fx: { hawk: ['gone', 'No hawks hunt here now.'], bird: ['up', 'No hawks are hunting them.'], sala: ['up', 'No hawks are hunting them.'],
+            insects: ['down', 'More songbirds and salamanders eat more insects.'], worm: ['down', 'More salamanders and birds eat more worms.'], bear: ['same', 'Bears do not depend on hawks.'] } },
+    beetle: { label: 'Scientists release beetles that eat adelgids', show: ['adelgid', 'beetle'], ask: 'hemlocks', askKey: 'hemlock', answer: 'up',
+      fx: { beetle: ['new', 'Park scientists really do release these tiny beetles in the Smokies.'], adelgid: ['down', 'The beetles eat the adelgids.'],
+            hemlock: ['up', 'With fewer adelgids, hemlocks can slowly recover.'], insects: ['up', 'Healthier hemlocks mean more food for insects.'],
+            bird: ['up', 'More insects and more hemlocks for nesting.'], hawk: ['up', 'More songbirds to hunt.'] } },
+    decomp: { label: 'All decomposers are removed', ask: 'plants', askKey: 'rhodo', answer: 'down',
+      fx: { fungi: ['gone', 'No fungi.'], worm: ['gone', 'No earthworms.'], hemlock: ['down', 'Dead leaves pile up, and the soil runs out of nutrients plants need.'],
+            rhodo: ['down', 'Without nutrients from decomposers, plants cannot grow well.'], insects: ['down', 'Fewer healthy plants to eat.'],
+            sala: ['down', 'No worms and fewer insects to eat.'], bird: ['down', 'Fewer insects and worms to eat.'], hawk: ['down', 'Less prey to hunt.'], bear: ['down', 'Less food over time.'] } }
+  };
+  var curEffects = null, table = Lab.table(Lab.$('#tbody'), 4, 'Pick a change to fill in the table.'), predSeg = null;
+  Lab.seg(Lab.$('#scen'), Object.keys(SCEN).map(function (k) { return { v: k, label: SCEN[k].label }; }), null, startScen);
+
+  function startScen(k) {
+    var s = SCEN[k];
+    resetForest(true);
+    (s.show || []).forEach(function (id) { ORG[id].hidden = false; known[id] = known[id] || (id === 'beetle' ? 1 : 0); });
+    if (k === 'adelgid') ORG.beetle.hidden = true;
+    drawWeb(null);
+    Lab.$('#effects').innerHTML = '';
+    Lab.$('#predBox').hidden = false;
+    Lab.$('#predQ').textContent = 'Predict: what will happen to the ' + s.ask + '?';
+    Lab.$('#pred').innerHTML = '';
+    var fb = Lab.$('#predFb'); fb.hidden = true;
+    predSeg = Lab.seg(Lab.$('#pred'), [{ v: 'up', label: 'Go up ▲' }, { v: 'down', label: 'Go down ▼' }, { v: 'same', label: 'Stay the same' }], null, function (v) {
+      predSeg.disable(true);
+      var right = v === s.answer;
+      fb.hidden = false; fb.className = 'fb ' + (right ? 'ok' : 'no');
+      fb.textContent = (right ? 'Good prediction! ' : 'Not quite, but good thinking. ') + 'The ' + s.ask + ' ' + (s.answer === 'up' ? 'go up' : 'go down') + ': ' + s.fx[s.askKey][1];
+      show(k, s, right, v);
+    });
+  }
+  function show(k, s, right, v) {
+    curEffects = {};
+    Object.keys(s.fx).forEach(function (id) { curEffects[id] = s.fx[id][0]; });
+    drawWeb(curEffects);
+    var ul = Lab.$('#effects'); ul.innerHTML = '';
+    var ups = [], downs = [];
+    Object.keys(s.fx).forEach(function (id) {
+      var d = s.fx[id][0], sym = d === 'up' || d === 'new' ? '▲' : d === 'down' ? '▼' : d === 'gone' ? '✕' : '=';
+      var cls = d === 'up' || d === 'new' ? 'up' : d === 'same' ? 'same' : 'down';
+      ul.appendChild(Lab.el('li', null, [Lab.el('span', { class: 'ar ' + cls, 'aria-hidden': 'true' }, sym), Lab.el('span', null, [Lab.el('b', null, ORG[id].name + ': '), s.fx[id][1]])]));
+      if (d === 'up' || d === 'new') ups.push(ORG[id].name); else if (d === 'down' || d === 'gone') downs.push(ORG[id].name);
+    });
+    table.add([s.label, ups.join(', ') || '—', downs.join(', ') || '—', (v === 'up' ? 'Up' : v === 'down' ? 'Down' : 'Same') + (right ? ' ✓' : ' ✗')]);
+  }
+  function resetForest(keep) {
+    ORG.adelgid.hidden = true; ORG.beetle.hidden = true; curEffects = null;
+    if (!keep) { Lab.$('#effects').innerHTML = ''; Lab.$('#predBox').hidden = true; }
+    drawWeb(null);
+  }
+  Lab.$('#reset').addEventListener('click', function () { resetForest(false); Lab.$$('#scen button').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); }); });
+
+  Lab.check(Lab.$('#check'), [
+    { q: 'Why are fungi called decomposers?', opts: ['They make food from sunlight.', 'They hunt other animals.', 'They break down dead things and return nutrients to the soil.'], a: 2,
+      why: 'Decomposers break down dead plants and animals. The nutrients go back into the soil for producers to use.',
+      miss: { 0: 'Not quite. Fungi are not plants. They cannot make food from sunlight.', 1: 'Not quite. Fungi do not hunt. Think about what happens to a fallen log.' } },
+    { q: 'The woolly adelgid kills hemlock trees. Why do songbirds go down too?', opts: ['Songbirds eat adelgids and get sick.', 'There are fewer insects to eat and fewer hemlocks to nest in.', 'Songbirds are producers.'], a: 1,
+      why: 'Living things are connected. When hemlocks die, the animals that depend on them for food and shelter are affected too.',
+      miss: { 0: 'Not quite. Follow the arrows: hemlock → insects → songbird. What happens to the songbird\'s food?', 2: 'Not quite. Songbirds are consumers. They eat insects.' } },
+    { q: 'In a food web, which way do the arrows point?', opts: ['From the food to the eater, the way energy flows.', 'From the eater to its food.', 'From the biggest animal to the smallest.'], a: 0,
+      why: 'Hemlock → caterpillar means the caterpillar eats the hemlock and gets its energy.',
+      miss: { 1: 'Not quite. The arrow shows where the energy goes. Energy goes from the food into the eater.', 2: 'Not quite. Arrows show who eats whom, not size.' } }
+  ]);
+
+  drawWeb(null);
+})();
+</script>
+</body>
+</html>

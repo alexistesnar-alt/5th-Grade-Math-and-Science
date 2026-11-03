@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decimal Dash — Math Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<script src="../brand.js"></script>
+<style>
+  .dd-q{font:600 20px/1.35 var(--sans);text-align:center;margin:2px 0 14px}
+  .dd-q em{font-style:normal;color:#FFC107}
+  .dd-cards{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:12px;min-height:170px;align-items:stretch}
+  .dd-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:150px;padding:18px 8px;
+    border-radius:16px;border:3px solid rgba(255,255,255,.18);background:#fff;color:#16213B;cursor:pointer;touch-action:manipulation;
+    font:700 clamp(26px,7vw,44px)/1.1 var(--mono);animation:ddDrop .38s cubic-bezier(.2,.9,.3,1.25) both}
+  .dd-card:nth-child(2){animation-delay:.07s}.dd-card:nth-child(3){animation-delay:.14s}
+  .dd-card:hover{border-color:#FFC107;transform:translateY(-2px)}
+  .dd-card .ex{font-size:clamp(20px,5.4vw,32px);overflow-wrap:anywhere}
+  .dd-card .key{position:absolute;top:8px;left:10px;font:600 12px/1 var(--mono);color:#687082}
+  .dd-card .val{font:600 15px/1.2 var(--mono);color:#5B6475;min-height:1.2em}
+  .dd-card.good{border-color:#22C55E;background:#DCFCE7}
+  .dd-card.bad{border-color:#F97316;background:#FFEDD5}
+  .dd-n3 .dd-card{font-size:clamp(22px,5.6vw,40px)}
+  @keyframes ddDrop{from{opacity:0;transform:translateY(-46px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.dd-card{animation:none}}
+  @media (max-width:480px){.dd-n3{grid-template-columns:1fr!important}.dd-n3 .dd-card{min-height:84px;flex-direction:row}}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="a-wrap">
+  <a class="a-back" href="index.html">&larr; Arcade</a>
+  <div class="a-card" id="game">
+    <div id="play">
+      <p class="dd-q" id="q">Tap the <em>greater</em> number.</p>
+      <div class="dd-cards" id="cards"></div>
+    </div>
+  </div>
+  <p class="a-stds">Standards: NC.5.NBT.3 · NC.5.NBT.1</p>
+</main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="arcade.js"></script>
+<script>
+(function () {
+  "use strict";
+  var R = Arcade.rand, P = Arcade.pick, S = Arcade.shuffle;
+  var qEl = document.getElementById("q"), box = document.getElementById("cards");
+  var cur = null;
+  var M = 1000000;   // every number is stored as a whole number of millionths: no rounding mistakes
+
+  // millionths -> text, e.g. 450000 -> "0.45"
+  function fmt(u) {
+    var w = Math.floor(u / M), f = String(u % M);
+    while (f.length < 6) f = "0" + f;
+    f = f.replace(/0+$/, "");
+    return f ? w + "." + f : String(w);
+  }
+  var T = 1000;   // thousandths -> millionths
+  // three tricky decimals (thousandths), all different
+  function family() {
+    var w = R(0, 3), base = w * 1000, d, e, p, qd, v;
+    switch (R(1, 5)) {
+      case 1:   // 0.5, 0.45, 0.459: more digits is not bigger
+        d = R(2, 9); e = R(1, 9);
+        v = [base + d * 100, base + (d - 1) * 100 + e * 10, base + (d - 1) * 100 + R(1, 9) * 10 + R(1, 9)]; break;
+      case 2:   // 0.6, 0.06, 0.006
+        d = R(1, 9); v = [base + d * 100, base + d * 10, base + d]; break;
+      case 3:   // 0.35, 0.53, 0.305
+        p = R(1, 9); do { qd = R(1, 9); } while (qd === p);
+        v = [base + p * 100 + qd * 10, base + qd * 100 + p * 10, base + p * 100 + qd]; break;
+      case 4:   // 3.04, 2.987, 2.8
+        v = [base + 1000 + R(1, 9) * 10, base + 900 + R(1, 9) * 10 + R(1, 9), base + 800 + R(0, 9) * 10]; break;
+      default:  // same whole and tenths, close together
+        d = R(0, 9);
+        v = [base + d * 100 + R(0, 99), base + d * 100 + R(0, 99), base + d * 100 + R(0, 99)];
+    }
+    return v;
+  }
+  function distinct(a) { for (var i = 0; i < a.length; i++) for (var j = i + 1; j < a.length; j++) if (a[i] === a[j]) return false; return true; }
+  function nums(n) {
+    var v;
+    do { v = S(family()).slice(0, n); } while (!distinct(v) || v.some(function (x) { return x === 0; }));
+    return v.map(function (x) { return x * T; });   // to millionths
+  }
+
+  // place-by-place reason for why `a` beats `b`
+  var PLACES = ["tenths", "hundredths", "thousandths"];
+  function digits(u) { var t = u / T; return { w: Math.floor(t / 1000), d: [Math.floor(t / 100) % 10, Math.floor(t / 10) % 10, t % 10] }; }
+  // `first` is the right answer; less = true when the least one wins
+  function reason(first, other, less) {
+    var a = digits(first), b = digits(other), sign = less ? " &lt; " : " &gt; ";
+    if (a.w !== b.w) return "Look at the whole numbers first: " + a.w + sign + b.w + ".";
+    for (var i = 0; i < 3; i++) if (a.d[i] !== b.d[i])
+      return (i ? "The " + PLACES.slice(0, i).join(" and ") + " match. " : "") + "Compare the " + PLACES[i] + ": " + a.d[i] + sign + b.d[i] + ".";
+    return "";
+  }
+  function nDigits(u) { var s = fmt(u); return s.indexOf(".") < 0 ? 0 : s.length - s.indexOf(".") - 1; }
+
+  // level 3: write each number as something × or ÷ 10, 100 or 1000
+  function dressUp(u) {
+    var opts = [];
+    for (var k = 1; k <= 3; k++) {
+      var p = Math.pow(10, k);
+      if (nDigits(u) + k <= 3 && u % p === 0) opts.push({ t: fmt(u / p) + " × " + p, k: k, op: "×" });   // base has at most 3 decimals
+      if (u * p <= 9999 * M) opts.push({ t: fmt(u * p) + " ÷ " + p, k: k, op: "÷" });
+    }
+    return P(opts);
+  }
+
+  function make(level) {
+    var n = level === 2 ? 3 : 2, v = nums(n), items = v.map(function (u) { return { u: u, txt: fmt(u) }; });
+    if (level === 3) items.forEach(function (it) { var d = dressUp(it.u); it.ex = d.t; });
+    var best = items[0];
+    items.forEach(function (it) { if (level === 2 ? it.u < best.u : it.u > best.u) best = it; });
+    return { items: items, best: best, least: level === 2 };
+  }
+
+  function show() {
+    cur = make(game.level);
+    qEl.innerHTML = cur.least ? "Tap the <em>least</em> number." : game.level === 3 ? "Work it out. Tap the <em>greater</em> one." : "Tap the <em>greater</em> number.";
+    box.style.setProperty("--n", cur.items.length);
+    box.className = "dd-cards" + (cur.items.length === 3 ? " dd-n3" : "");
+    box.innerHTML = cur.items.map(function (it, i) {
+      return '<button type="button" class="dd-card" data-i="' + i + '"><span class="key">' + (i + 1) + "</span>" +
+        (it.ex ? '<span class="ex">' + it.ex + '</span><span class="val"></span>' : it.txt) + "</button>";
+    }).join("");
+  }
+
+  function choose(i) {
+    if (game.locked() || !cur || !cur.items[i]) return;
+    var it = cur.items[i], best = cur.best, btns = box.querySelectorAll(".dd-card");
+    if (game.level === 3) cur.items.forEach(function (x, j) { btns[j].querySelector(".val").textContent = "= " + x.txt; });
+    if (it === best) {
+      btns[i].classList.add("good");
+      game.right("<b>Yes!</b> " + best.txt + " is the " + (cur.least ? "least." : "greatest."), show, { delay: 800 });
+      return;
+    }
+    btns[i].classList.add("bad");
+    btns[cur.items.indexOf(best)].classList.add("good");
+    var html;
+    if (game.level === 3) {
+      html = "<b>" + best.ex + " = " + best.txt + "</b>, and " + it.ex + " = " + it.txt + ". So " + best.txt + " is greater." +
+        '<span class="steps">× 10, 100, 1000 makes a number bigger. ÷ makes it smaller.</span>';
+    } else if (cur.least) {
+      html = "<b>" + best.txt + " is the least.</b> " + reason(best.u, it.u, true) +
+        (nDigits(best.u) > nDigits(it.u) ? '<span class="steps">More digits does not mean bigger.</span>' : "");
+    } else {
+      html = "<b>" + best.txt + " is greater.</b> " + reason(best.u, it.u) +
+        (nDigits(it.u) > nDigits(best.u) ? '<span class="steps">More digits does not mean bigger.</span>' : "");
+    }
+    game.wrong(html, show);
+  }
+
+  box.addEventListener("click", function (e) {
+    var b = e.target.closest(".dd-card"); if (b) choose(+b.getAttribute("data-i"));
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^[1-3]$/.test(e.key) && cur && !game.locked()) { e.preventDefault(); choose(+e.key - 1); }
+  });
+
+  var game = Arcade.init({
+    id: "decimal-dash",
+    title: "Decimal Dash",
+    howTo: "Tap the right decimal as fast as you can.",
+    mode: "timer", seconds: 60,
+    levels: [
+      { name: "Greater", desc: "Pick the greater of two decimals." },
+      { name: "Least", desc: "Pick the least of three." },
+      { name: "Powers of 10", desc: "Multiply or divide, then pick." }
+    ],
+    onStart: show,
+    onStop: function () { cur = null; }
+  });
+  if (/[?&]test=1/.test(location.search)) window.__arcadePeek = function () { return cur && cur.items.indexOf(cur.best); };
+  window.__arcadeTest = { fmt: fmt, make: make };
+})();
+</script>
+</body>
+</html>

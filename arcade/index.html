@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Arcade — Mrs. Tesnar's 5th Grade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<script src="../brand.js"></script>
+<style>
+  .best{display:block;font:500 12px/1 var(--mono);color:var(--gold-text);margin-top:8px;min-height:12px}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap wide">
+<div class="page-hdr">
+  <span class="eyebrow">Math Arcade</span>
+  <h1>Math Arcade</h1>
+  <p>Quick math games. Pick one, choose a level, and beat your best score.</p>
+</div>
+<div class="units-grid">
+<a href="volume-builder.html" class="unit-card" data-game="volume-builder"><div class="unit-num">Game 1</div><span class="unit-card-title">Volume Builder</span><div class="unit-desc">Count cubes and multiply to find the volume of boxes.</div><span class="unit-std">NC.5.MD.4 · NC.5.MD.5</span><span class="best"></span></a>
+<a href="decimal-dash.html" class="unit-card" data-game="decimal-dash"><div class="unit-num">Game 2</div><span class="unit-card-title">Decimal Dash</span><div class="unit-desc">Race the clock to pick the greater or least decimal.</div><span class="unit-std">NC.5.NBT.3 · NC.5.NBT.1</span><span class="best"></span></a>
+<a href="fraction-pop.html" class="unit-card" data-game="fraction-pop"><div class="unit-num">Game 3</div><span class="unit-card-title">Fraction Pop</span><div class="unit-desc">Pop the bubbles that equal the target fraction.</div><span class="unit-std">NC.5.NF.1 · NC.5.NF.4</span><span class="best"></span></a>
+<a href="coordinate-quest.html" class="unit-card" data-game="coordinate-quest"><div class="unit-num">Game 4</div><span class="unit-card-title">Coordinate Quest</span><div class="unit-desc">Plant flags on the grid and follow number patterns.</div><span class="unit-std">NC.5.G.1 · NC.5.OA.3</span><span class="best"></span></a>
+<a href="order-of-ops-race.html" class="unit-card" data-game="order-of-ops-race"><div class="unit-num">Game 5</div><span class="unit-card-title">Order of Ops Race</span><div class="unit-desc">Solve expressions with parentheses to win the race.</div><span class="unit-std">NC.5.OA.2</span><span class="best"></span></a>
+</div>
+<div class="section-label">More practice</div>
+<a href="../math/index.html" class="feature-card"><div><div class="ft">Math units</div><div class="fd">Notes, practice and videos for each unit</div></div></a>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script>
+  // show each game's best score saved in this browser (any level)
+  document.querySelectorAll("[data-game]").forEach(function (card) {
+    var best = 0;
+    for (var l = 1; l <= 3; l++) {
+      try { var v = parseInt(localStorage.getItem("math5-arcade:" + card.getAttribute("data-game") + ":best:" + l), 10); if (v > best) best = v; } catch (e) { }
+    }
+    if (best) card.querySelector(".best").textContent = "Your best: " + best;
+  });
+</script>
+</body>
+</html>

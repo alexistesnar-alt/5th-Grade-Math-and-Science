@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Water Cycle Lab — Virtual Science Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="lab.css">
+<script src="../brand.js"></script>
+<style>
+.scene-box{position:relative}
+.hot{position:absolute;transform:translate(-50%,-50%);min-width:44px;height:44px;border-radius:22px;border:3px solid #fff;background:var(--navy);color:#fff;
+  font:700 17px/1 var(--mono);cursor:pointer;box-shadow:0 3px 10px rgba(30,45,79,.35);padding:0 12px;touch-action:manipulation}
+.hot.sel{background:var(--gold);color:var(--navy)}
+.hot.done{background:#15803D;font:600 13px/1 var(--sans);height:34px;cursor:default;opacity:.92}
+.chooser{margin:12px 0 0;padding:12px;border:1px solid var(--line);border-radius:8px;background:#F7F8FA}
+.chooser .seg button{flex:1 1 130px}
+.sunrow{display:flex;align-items:center;gap:12px}
+.sunrow .v{font:600 22px var(--mono);color:var(--navy);min-width:20px}
+@media (max-width:520px){.hot{min-width:36px;height:36px;font-size:15px;padding:0 8px}.hot.done{font-size:12px}}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<div class="page-wrap">
+<a href="index.html" class="back-link">← Science Lab</a>
+<div class="page-hdr">
+  <span class="eyebrow">Unit 4 · The Great Smoky Mountains</span>
+  <h1>Water Cycle Lab</h1>
+  <p>The sun's energy moves water from the ground to the sky and back again.</p>
+  <p class="stds">ESS.5.1.4</p>
+</div>
+
+<div class="lab-q"><span class="lbl">Question to investigate</span>
+  <p>How does the strength of the sun change how much water evaporates, how many clouds form, and how much it rains?</p></div>
+
+<div class="lab-grid">
+  <div class="panel stage">
+    <div class="scene-box" id="box">
+      <svg id="scene" viewBox="0 0 800 460" role="img" aria-label="A lake, trees and the Smoky Mountains under the sun, with a cloud and rain">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE6FA"/><stop offset="1" stop-color="#F3F8FC"/></linearGradient>
+          <radialGradient id="glow"><stop offset="0" stop-color="#FFD54F" stop-opacity=".8"/><stop offset="1" stop-color="#FFD54F" stop-opacity="0"/></radialGradient>
+        </defs>
+        <rect width="800" height="460" fill="url(#sky)"/>
+        <circle id="glowC" cx="90" cy="80" r="90" fill="url(#glow)"/>
+        <circle id="sun" cx="90" cy="80" r="40" fill="#FFC107" stroke="#E0A800" stroke-width="3"/>
+        <polygon points="290,460 300,400 420,310 520,250 600,205 680,175 760,225 800,250 800,460" fill="#6E8F63"/>
+        <polygon points="560,230 600,205 680,175 720,200 690,215 640,200" fill="#8DA884"/>
+        <path id="river" d="M690 205 Q660 260 610 285 Q540 320 520 350 Q480 395 380 400 Q330 404 300 412" fill="none" stroke="#5DA9DD" stroke-width="9" stroke-linecap="round" stroke-dasharray="14 10"/>
+        <path d="M0 382 Q150 372 310 386 L310 460 L0 460 Z" fill="#3F8FCC"/>
+        <path d="M0 382 Q150 372 310 386" fill="none" stroke="#9FD0F0" stroke-width="3"/>
+        <g id="trees"></g>
+        <g id="parts"></g>
+        <g id="cloud" transform="translate(560,100) scale(.6)">
+          <g id="cloudShape"><circle cx="-50" cy="10" r="38"/><circle cx="0" cy="-10" r="50"/><circle cx="55" cy="8" r="40"/><rect x="-88" y="10" width="180" height="38" rx="19"/></g>
+        </g>
+        <g id="rain"></g>
+      </svg>
+    </div>
+    <div class="chooser" id="chooser" hidden>
+      <span class="ctl-lbl" id="chooseQ"></span>
+      <div id="chooseSeg"></div>
+      <div class="fb" id="labelFb" hidden aria-live="polite"></div>
+    </div>
+    <p class="ctl-note" id="labelNote">Tap a numbered spot to label that part of the water cycle. <span id="labelCount">0 of 5 labeled.</span></p>
+  </div>
+
+  <div class="panel">
+    <h2>Run the sun</h2>
+    <p class="sub">Set the sun. Then measure for 10 seconds.</p>
+    <div class="ctl"><label class="ctl-lbl" for="sunIn">Sun strength (1 = weak, 5 = strong)</label>
+      <div class="sunrow"><input class="big" type="range" id="sunIn" min="1" max="5" step="1" value="3"><span class="v" id="sunV">3</span></div></div>
+    <button class="btn wide" id="measure" type="button">Measure for 10 seconds</button>
+    <div class="readouts">
+      <div class="readout"><span class="k">Vapor puffs</span><span class="v" id="r-vap">0</span></div>
+      <div class="readout"><span class="k">Raindrops</span><span class="v" id="r-rain">0</span></div>
+    </div>
+    <p class="ctl-note">Each white puff is water vapor going up. The sky starts clear for each test.</p>
+  </div>
+</div>
+
+<section class="section">
+  <h2>Data table</h2>
+  <p class="sub">Test each sun strength. Try the same one twice.</p>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>Sun</th><th>Vapor puffs</th><th>Cloud size</th><th>Rain</th></tr></thead>
+    <tbody id="tbody"></tbody></table></div>
+</section>
+
+<section class="section">
+  <h2>What did you find?</h2>
+  <div id="check"></div>
+</section>
+</div>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+
+<script src="lab.js"></script>
+<script>
+(function () {
+  var S = Lab.svg, sun = 3, W = 0, parts = [], drops = [], evapAcc = 0, transAcc = 0, rainAcc = 0;
+  var measuring = false, mT = 0, vapCount = 0, rainCount = 0, riverOff = 0;
+  var table = Lab.table(Lab.$('#tbody'), 4, 'Measure to fill in the table.');
+  var TREES = [[330, 392], [362, 378], [395, 360], [430, 340], [462, 322]];
+  TREES.forEach(function (t) {
+    S('rect', { x: t[0] - 3, y: t[1] - 6, width: 6, height: 12, fill: '#6B4A2B' }, Lab.$('#trees'));
+    S('polygon', { points: (t[0] - 18) + ',' + (t[1] - 4) + ' ' + t[0] + ',' + (t[1] - 52) + ' ' + (t[0] + 18) + ',' + (t[1] - 4), fill: '#2F6B3A' }, Lab.$('#trees'));
+  });
+
+  function setSun(v) {
+    sun = v; Lab.$('#sunV').textContent = v;
+    Lab.$('#sun').setAttribute('r', 26 + v * 6);
+    Lab.$('#glowC').setAttribute('r', 50 + v * 22);
+  }
+  Lab.$('#sunIn').addEventListener('input', function (e) { setSun(+e.target.value); });
+
+  function spawn(x, y) {
+    var el = S('g', {}, Lab.$('#parts'));
+    S('path', { d: 'M-10 0 q5 -9 10 0 t10 0', fill: 'none', stroke: '#fff', 'stroke-width': 6, 'stroke-linecap': 'round' }, el);
+    S('path', { d: 'M-10 0 q5 -9 10 0 t10 0', fill: 'none', stroke: '#5E9BCB', 'stroke-width': 2.5, 'stroke-linecap': 'round' }, el);
+    parts.push({ el: el, x0: x, y0: y, x1: 560 + Lab.rand(-60, 60), y1: 110 + Lab.rand(-10, 20), t: 0 });
+    if (measuring) vapCount++;
+  }
+  function cloudScale() { return Math.min(1.6, 0.45 + W / 10); }
+
+  Lab.loop(function (dt) {
+    evapAcc += 0.5 * sun * dt; transAcc += 0.2 * sun * dt;
+    while (evapAcc >= 1) { evapAcc -= 1; spawn(Lab.rand(30, 290), 380); }
+    while (transAcc >= 1) { transAcc -= 1; var t = TREES[Math.floor(Math.random() * TREES.length)]; spawn(t[0], t[1] - 50); }
+    parts = parts.filter(function (p) {
+      p.t += dt / 3;
+      if (p.t >= 1) { p.el.remove(); W += 1; return false; }
+      var x = p.x0 + (p.x1 - p.x0) * p.t, y = p.y0 + (p.y1 - p.y0) * p.t;
+      p.el.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')');
+      p.el.setAttribute('opacity', (p.t < .1 ? p.t * 10 : p.t > .85 ? (1 - p.t) / .15 : 1).toFixed(2));
+      return true;
+    });
+    if (W > 5) {
+      rainAcc += 2.5 * (W - 5) * dt;
+      while (rainAcc >= 1) {
+        rainAcc -= 1; W -= 0.2;
+        if (measuring) rainCount++;
+        var sc = cloudScale();
+        drops.push({ el: S('line', { x1: 0, y1: 0, x2: -4, y2: 16, stroke: '#2F7FC1', 'stroke-width': 3.5, 'stroke-linecap': 'round' }, Lab.$('#rain')),
+          x: 560 + Lab.rand(-80, 80) * sc, y: 100 + 40 * sc, vy: 260 });
+      }
+    }
+    drops = drops.filter(function (d) {
+      d.y += d.vy * dt;
+      var ground = d.x > 600 ? 210 + Math.abs(d.x - 680) * 0.4 : 205 + (600 - d.x) * 0.55;
+      if (d.y > ground) { d.el.remove(); return false; }
+      d.el.setAttribute('transform', 'translate(' + d.x.toFixed(1) + ',' + d.y.toFixed(1) + ')');
+      return true;
+    });
+    var sc = cloudScale(), g = Math.round(255 - Math.min(1, W / 12) * 95);
+    Lab.$('#cloud').setAttribute('transform', 'translate(560,100) scale(' + sc.toFixed(3) + ')');
+    Lab.$('#cloudShape').setAttribute('fill', 'rgb(' + g + ',' + g + ',' + Math.min(255, g + 10) + ')');
+    Lab.$('#cloud').setAttribute('opacity', W < 0.5 ? 0.25 : 1);
+    riverOff -= dt * 30; Lab.$('#river').setAttribute('stroke-dashoffset', riverOff.toFixed(1));
+    if (measuring) {
+      mT += dt;
+      Lab.$('#r-vap').textContent = vapCount; Lab.$('#r-rain').textContent = rainCount;
+      Lab.$('#measure').textContent = 'Measuring… ' + Math.max(0, Math.ceil(10 - mT)) + ' s';
+      if (mT >= 10) endMeasure();
+    }
+    return true;
+  });
+
+  Lab.$('#measure').addEventListener('click', function () {
+    if (measuring) return;
+    parts.forEach(function (p) { p.el.remove(); }); drops.forEach(function (d) { d.el.remove(); });
+    parts = []; drops = []; W = 0; evapAcc = transAcc = rainAcc = 0;
+    measuring = true; mT = 0; vapCount = 0; rainCount = 0;
+    Lab.$('#measure').disabled = true; Lab.$('#sunIn').disabled = true;
+  });
+  function endMeasure() {
+    measuring = false;
+    Lab.$('#measure').disabled = false; Lab.$('#sunIn').disabled = false;
+    Lab.$('#measure').textContent = 'Measure for 10 seconds';
+    var cloud = W < 4 ? 'Small' : W < 9 ? 'Medium' : 'Large';
+    var rain = rainCount === 0 ? 'None' : rainCount < 25 ? 'Light' : 'Heavy';
+    table.add([{ cls: 'num', text: sun }, { cls: 'num', text: vapCount }, cloud, rain + (rainCount ? ' (' + rainCount + ' drops)' : '')]);
+  }
+
+  // labeling
+  var SPOTS = [
+    { x: 150, y: 335, ans: 'evaporation' }, { x: 420, y: 255, ans: 'transpiration' }, { x: 470, y: 70, ans: 'condensation' },
+    { x: 640, y: 200, ans: 'precipitation' }, { x: 470, y: 395, ans: 'collection' }];
+  var TERMS = {
+    evaporation: { name: 'Evaporation', desc: 'the sun heats liquid water and it turns into water vapor, a gas that rises' },
+    transpiration: { name: 'Transpiration', desc: 'plants give off water vapor through tiny holes in their leaves' },
+    condensation: { name: 'Condensation', desc: 'water vapor cools high in the sky and turns into tiny drops that form clouds' },
+    precipitation: { name: 'Precipitation', desc: 'water falls from clouds as rain, snow, sleet or hail' },
+    collection: { name: 'Collection', desc: 'water gathers in rivers, lakes, oceans and under the ground' }
+  };
+  var box = Lab.$('#box'), cur = null, labeled = 0, hotBtns = [];
+  SPOTS.forEach(function (s, i) {
+    var b = Lab.el('button', { type: 'button', class: 'hot', style: 'left:' + (s.x / 8) + '%;top:' + (s.y / 4.6) + '%', 'aria-label': 'Spot ' + (i + 1) + ': label it' }, String(i + 1));
+    b.addEventListener('click', function () {
+      if (s.done) return;
+      cur = i; hotBtns.forEach(function (h) { h.classList.remove('sel'); }); b.classList.add('sel');
+      Lab.$('#chooser').hidden = false;
+      Lab.$('#chooseQ').textContent = 'Spot ' + (i + 1) + ': what is happening here?';
+      Lab.$('#labelFb').hidden = true;
+      var seg = Lab.$('#chooseSeg'); seg.innerHTML = '';
+      Lab.seg(seg, Object.keys(TERMS).map(function (k) { return { v: k, label: TERMS[k].name }; }), null, pick);
+    });
+    box.appendChild(b); hotBtns.push(b);
+  });
+  function pick(term) {
+    var s = SPOTS[cur], fb = Lab.$('#labelFb'), b = hotBtns[cur];
+    fb.hidden = false;
+    if (term === s.ans) {
+      s.done = true; labeled++;
+      b.classList.remove('sel'); b.classList.add('done'); b.textContent = TERMS[term].name; b.setAttribute('aria-label', 'Spot ' + (cur + 1) + ': ' + TERMS[term].name);
+      fb.className = 'fb ok'; fb.textContent = 'Yes! ' + TERMS[term].name + ': ' + TERMS[term].desc + '.';
+      Lab.$('#labelCount').textContent = labeled === 5 ? 'All 5 labeled. Great work!' : labeled + ' of 5 labeled.';
+      Lab.$$('#chooseSeg button').forEach(function (x) { x.disabled = true; });
+    } else {
+      fb.className = 'fb no';
+      fb.textContent = 'Not quite. ' + TERMS[term].name + ' is when ' + TERMS[term].desc + '. Look closely at spot ' + (cur + 1) + ' and try again.';
+    }
+  }
+
+  Lab.check(Lab.$('#check'), [
+    { q: 'What gives the water cycle its energy?', opts: ['The moon', 'The sun', 'The wind', 'The ocean'], a: 1, two: true,
+      why: 'The sun\'s energy heats water so it evaporates. That starts the whole cycle.',
+      miss: { 0: 'Not quite. The moon pulls on ocean tides, but it does not heat water. Which slider did you change?', 2: 'Not quite. Wind moves clouds, but the energy that makes water evaporate comes from somewhere else.', 3: 'Not quite. The ocean holds water, but something has to heat it.' } },
+    { q: 'When you made the sun stronger, what happened?', opts: ['Less water evaporated.', 'More water evaporated, and the clouds and rain grew.', 'Nothing changed.'], a: 1,
+      why: 'More energy from the sun means more evaporation. More water vapor makes bigger clouds and more rain.',
+      miss: { 0: 'Not quite. Look at the Vapor puffs column. Compare sun 1 and sun 5.', 2: 'Not quite. Compare the Vapor puffs and Rain columns for sun 1 and sun 5.' } },
+    { q: 'Water vapor leaving a hemlock tree\'s needles is called…', opts: ['Condensation', 'Precipitation', 'Transpiration', 'Collection'], a: 2, two: true,
+      why: 'Transpiration is when plants give off water vapor through their leaves or needles.',
+      miss: { 0: 'Not quite. Condensation happens in the sky when vapor cools into cloud drops.', 1: 'Not quite. Precipitation is water falling from clouds.', 3: 'Not quite. Collection is water gathering in lakes, rivers and oceans.' } }
+  ]);
+
+  setSun(3);
+})();
+</script>
+</body>
+</html>
