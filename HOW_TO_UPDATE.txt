@@ -28,6 +28,25 @@ PAGES
   class-information.html   Welcome, how we learn, schedule, supplies, grading, contact
   resources.html           Helpful links
 
+LESSON PAGES (one page per lesson)
+  Every lesson has its own page, like math/unit0/lesson-1.html or science/unit0/lesson-3.html.
+  Each page has: Goals (I can + NC standards), Outline + Materials, Interactive Notes,
+  Practice, a Lab, and an Exit Ticket (students see their score at the end).
+
+  The WORDS for every lesson in a unit live in ONE file:
+    lessons/data/math-u0.js       Math: Launching the Year
+    lessons/data/science-u0.js    Science: Unit 0
+  Open the file, find the lesson ("n: 2," is Lesson 2), and change the words inside the quotes.
+  Keep the quotes, commas and brackets.
+
+  ADD A LINK TO A MATERIAL (slides, handout, Google Doc)
+    In the lesson's materials list, change   'Student handout'
+    to   { t: 'Student handout', href: 'PASTE THE SHARE LINK HERE' }
+    (Google Doc: Share → "Anyone with the link" → Copy link.)
+
+  Student work (notes, sketches, scores) saves only on that student's device. Nothing is sent.
+  The unit page shows the list of lessons automatically.
+
 ADD YOUR LESSON NOTES OR HOMEWORK TO A UNIT
   Open math/unit1.html (or any unit). Find the rows that say "Lesson notes" and "Homework".
   Replace href="#" with the link to the Google Doc, PDF or IM student page.

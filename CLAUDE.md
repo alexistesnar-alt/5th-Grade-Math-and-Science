@@ -14,6 +14,7 @@ Built from the look of Mr. Allen's 8th grade site. Pushing to `main` publishes i
 - **Standards:** always cite NC codes (NC.5.xxx for math; LS/ESS/PS.5.x.x for science).
 - **Math correctness:** compute answers in code with exact arithmetic (fractions as n/d with gcd, decimals as scaled integers);
   pages self-test on load. Mixed numbers are typed "2 1/3" like the NC EOG.
+- **NC.5.MD.2** is NC's version (categorical / numerical / changes over time, line graphs) — not the Common Core line-plots-with-fractions standard.
 - **Edits to existing material:** discuss first; correct in place; don't delete pages without approval.
 
 ## Where things live
@@ -26,6 +27,8 @@ Built from the look of Mr. Allen's 8th grade site. Pushing to `main` publishes i
 | `lab/` | Virtual science lab activities (`lab.js`, `lab.css`) |
 | `notes/` | Interactive science notebooks; lesson content is data inside each `science-unitN.html` |
 | `practice/` | IM-style extra math practice per unit (`practice.js` engine + self-test) |
+| `lessons/` | Lesson engine (`lesson.js`, `lesson.css`) + one data file per unit in `lessons/data/` |
+| `math/unitN/lesson-K.html`, `science/unitN/lesson-K.html` | Per-lesson pages (tiny stubs). Regenerate with `python3 _tools/make_lesson_pages.py` |
 | `vocabulary.html`, `formulas.html` | Reference pages |
 | `HOW_TO_UPDATE.txt` | Plain-language guide for Mrs. Tesnar |
 

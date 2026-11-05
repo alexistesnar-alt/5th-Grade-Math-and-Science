@@ -1,0 +1,704 @@
+/* ==========================================================================
+   LessonKit — draws every math and science lesson page.
+
+   A lesson page is a tiny HTML file that loads this file, then a unit data
+   file (lessons/data/math-u0.js …), then calls LessonKit.boot().
+   The words, questions and answers for each lesson live in the data file.
+
+   Sections on every lesson page:
+     1 Goals (I can + NC standards + words to know)   2 Lesson outline + materials
+     3 Interactive notes   4 Practice   5 Lab   6 Exit ticket (score at the end)
+
+   Answers are checked with exact arithmetic (fractions as [n, d]).
+   Student work is saved in this browser only (localStorage). Nothing is sent.
+   ========================================================================== */
+(function () {
+  'use strict';
+  var UNITS = {};
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function el(html) { var t = document.createElement('template'); t.innerHTML = String(html).trim(); return t.content.firstElementChild; }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var M = '−';
+
+  /* ---------- storage (this browser only) ---------- */
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem('g5ls:' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem('g5ls:' + k, JSON.stringify(v)); } catch (e) { /* storage off */ } }
+  };
+
+  /* ---------- exact numbers ---------- */
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a || 1; }
+  function fr(n, d) { if (d < 0) { n = -n; d = -d; } var g = gcd(n, d); return [n / g, d / g]; }
+  function feq(a, b) { return a && b && a[0] * b[1] === b[0] * a[1]; }
+  // Parse what a student typed: whole number, decimal, fraction "3/4" or mixed number "2 1/3".
+  // Commas are allowed. Words after the number (like "cubic units") are ignored.
+  function parseNum(s) {
+    s = String(s).trim().replace(/,/g, '').replace(/[−–]/g, '-').replace(/\s+/g, ' ');
+    s = s.replace(/\s*[a-zA-Z°%].*$/, '').trim();
+    var m;
+    if ((m = s.match(/^(-?\d+) (\d+)\/(\d+)$/))) { var w = +m[1], d = +m[3]; if (!d) return null; return fr((Math.abs(w) * d + (+m[2])) * (w < 0 ? -1 : 1), d); }
+    if ((m = s.match(/^(-?\d+)\/(\d+)$/))) return +m[2] ? fr(+m[1], +m[2]) : null;
+    if ((m = s.match(/^(-?)(\d*)\.?(\d*)$/)) && (m[2] || m[3])) {
+      var p = m[3] || ''; var den = Math.pow(10, p.length); var v = (+(m[2] || 0)) * den + (+(p || 0));
+      return fr(m[1] ? -v : v, den);
+    }
+    return null;
+  }
+  function showNum(f) {
+    if (typeof f === 'number') return f.toLocaleString('en-US');
+    var n = f[0], d = f[1];
+    if (d === 1) return n.toLocaleString('en-US');
+    if (Math.abs(n) > d) return Math.trunc(n / d) + ' ' + Math.abs(n % d) + '/' + d;
+    return n + '/' + d;
+  }
+  function toFr(a) { return typeof a === 'number' ? parseNum(String(a)) : (typeof a === 'string' ? parseNum(a) : a); }
+  function norm(s) { return String(s).toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+  /* ======================================================================
+     FIGURES — small SVG graphs drawn from numbers (no pictures to load)
+     ====================================================================== */
+  var FIG = {};
+  var C = { navy: '#1E2D4F', ink: '#1B2333', grid: '#E3E5EA', mute: '#5B6475', gold: '#E0A800', bar: '#3B5998', fill: '#FFC107', ok: '#15803D' };
+  function niceMax(v, step) { return Math.max(step, Math.ceil(v / step) * step); }
+  function axisText(x, y, t, anchor, size, weight, rot) {
+    return '<text x="' + x + '" y="' + y + '" font-size="' + (size || 13) + '" font-family="Inter,system-ui,sans-serif" fill="' + C.ink + '" text-anchor="' + (anchor || 'middle') + '"' +
+      (weight ? ' font-weight="' + weight + '"' : '') + (rot ? ' transform="rotate(' + rot + ' ' + x + ' ' + y + ')"' : '') + '>' + esc(t) + '</text>';
+  }
+  // Bar graph: {title, cats:[], vals:[], yLabel, xLabel, step, max}
+  FIG.bar = function (o, live) {
+    var n = o.cats.length, step = o.step || 1, max = o.max || niceMax(Math.max.apply(null, o.vals.concat([step])), step);
+    var L = 56, T = o.title ? 36 : 14, W = Math.max(360, 70 + n * 78), H = 300, B = 62, pw = W - L - 16, ph = H - T - B, cw = pw / n;
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" role="img" aria-label="' + esc((o.title || 'Bar graph') + ': ' + o.cats.map(function (c, i) { return c + ' ' + (o.vals[i] == null ? 'blank' : o.vals[i]); }).join(', ')) + '">';
+    if (o.title) s += axisText(L + pw / 2, 22, o.title, 'middle', 15, 600);
+    for (var v = 0; v <= max; v += step) { var y = T + ph - v / max * ph; s += '<line x1="' + L + '" x2="' + (L + pw) + '" y1="' + y + '" y2="' + y + '" stroke="' + C.grid + '"/>' + axisText(L - 8, y + 4, String(v), 'end', 12); }
+    o.cats.forEach(function (c, i) {
+      var x = L + i * cw, val = o.vals[i] || 0, bh = val / max * ph;
+      if (val > 0) s += '<rect x="' + (x + cw * 0.18) + '" y="' + (T + ph - bh) + '" width="' + cw * 0.64 + '" height="' + bh + '" fill="' + (o.color || C.bar) + '" rx="2"/>';
+      if (live) s += '<rect class="hit" data-i="' + i + '" x="' + x + '" y="' + (T - 6) + '" width="' + cw + '" height="' + (ph + 12) + '" fill="transparent" style="cursor:pointer"/>';
+      s += axisText(x + cw / 2, T + ph + 18, c, 'middle', 12.5);
+    });
+    s += '<line x1="' + L + '" x2="' + (L + pw) + '" y1="' + (T + ph) + '" y2="' + (T + ph) + '" stroke="' + C.ink + '" stroke-width="1.5"/><line x1="' + L + '" x2="' + L + '" y1="' + T + '" y2="' + (T + ph) + '" stroke="' + C.ink + '" stroke-width="1.5"/>';
+    if (o.yLabel) s += axisText(16, T + ph / 2, o.yLabel, 'middle', 12.5, 600, -90);
+    if (o.xLabel) s += axisText(L + pw / 2, H - 12, o.xLabel, 'middle', 12.5, 600);
+    s += '</svg>';
+    return { svg: s, geo: { L: L, T: T, ph: ph, pw: pw, cw: cw, max: max, step: step } };
+  };
+  // Line plot: {title, min, max, vals:[counts per tick], xLabel}
+  FIG.lineplot = function (o, live) {
+    var ticks = []; for (var t = o.min; t <= o.max; t++) ticks.push(t);
+    var n = ticks.length, W = Math.max(360, 60 + n * 46), top = Math.max(5, Math.max.apply(null, o.vals.concat([4])) + 1);
+    var T = o.title ? 34 : 12, rowH = 26, H = T + top * rowH + 60, base = T + top * rowH, L = 30, cw = (W - 2 * L) / (n - 1 || 1);
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" role="img" aria-label="' + esc((o.title || 'Line plot') + ': ' + ticks.map(function (k, i) { return k + ' has ' + (o.vals[i] || 0); }).join(', ')) + '">';
+    if (o.title) s += axisText(W / 2, 22, o.title, 'middle', 15, 600);
+    s += '<line x1="' + (L - 14) + '" x2="' + (W - L + 14) + '" y1="' + base + '" y2="' + base + '" stroke="' + C.ink + '" stroke-width="2"/>';
+    ticks.forEach(function (k, i) {
+      var x = L + i * cw;
+      s += '<line x1="' + x + '" x2="' + x + '" y1="' + (base - 6) + '" y2="' + (base + 6) + '" stroke="' + C.ink + '" stroke-width="1.5"/>' + axisText(x, base + 24, String(k), 'middle', 13.5, 600);
+      for (var j = 0; j < (o.vals[i] || 0); j++) { var y = base - 16 - j * rowH; s += '<text x="' + x + '" y="' + (y + 7) + '" font-size="22" font-weight="700" fill="' + C.navy + '" text-anchor="middle" font-family="Inter,sans-serif">×</text>'; }
+      if (live) s += '<rect class="hit" data-i="' + i + '" x="' + (x - cw / 2) + '" y="' + T + '" width="' + cw + '" height="' + (base - T + 30) + '" fill="transparent" style="cursor:pointer"/>';
+    });
+    if (o.xLabel) s += axisText(W / 2, H - 8, o.xLabel, 'middle', 12.5, 600);
+    s += '</svg>';
+    return { svg: s, geo: { L: L, T: T, base: base, rowH: rowH, cw: cw, n: n } };
+  };
+  // Line graph (data that changes over time): {title, xs:[labels], vals:[], step, max, yLabel, xLabel}
+  FIG.linegraph = function (o, live) {
+    var n = o.xs.length, step = o.step || 1, max = o.max || niceMax(Math.max.apply(null, o.vals.filter(function (v) { return v != null; }).concat([step])), step);
+    var L = 58, T = o.title ? 36 : 14, W = Math.max(380, 80 + n * 64), H = 310, B = 64, pw = W - L - 24, ph = H - T - B, cw = pw / (n - 1 || 1);
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" role="img" aria-label="' + esc((o.title || 'Line graph') + ': ' + o.xs.map(function (x, i) { return x + ' ' + (o.vals[i] == null ? 'blank' : o.vals[i]); }).join(', ')) + '">';
+    if (o.title) s += axisText(L + pw / 2, 22, o.title, 'middle', 15, 600);
+    for (var v = 0; v <= max; v += step) { var y = T + ph - v / max * ph; s += '<line x1="' + L + '" x2="' + (L + pw) + '" y1="' + y + '" y2="' + y + '" stroke="' + C.grid + '"/>' + axisText(L - 8, y + 4, String(v), 'end', 12); }
+    var pts = [];
+    o.xs.forEach(function (x, i) {
+      var px = L + i * cw;
+      s += '<line x1="' + px + '" x2="' + px + '" y1="' + T + '" y2="' + (T + ph) + '" stroke="' + C.grid + '"/>' + axisText(px, T + ph + 18, x, 'middle', 12);
+      if (o.vals[i] != null) pts.push([px, T + ph - o.vals[i] / max * ph]);
+      else pts.push(null);
+    });
+    var seg = []; pts.forEach(function (p) { if (p) seg.push(p.join(',')); else seg.push('|'); });
+    seg.join(' ').split('|').forEach(function (chunk) { chunk = chunk.trim(); if (chunk.indexOf(' ') > 0) s += '<polyline points="' + chunk + '" fill="none" stroke="' + C.navy + '" stroke-width="2.5"/>'; });
+    pts.forEach(function (p) { if (p) s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="5.5" fill="' + C.fill + '" stroke="' + C.navy + '" stroke-width="2"/>'; });
+    if (live) o.xs.forEach(function (x, i) { s += '<rect class="hit" data-i="' + i + '" x="' + (L + i * cw - cw / 2) + '" y="' + (T - 8) + '" width="' + cw + '" height="' + (ph + 16) + '" fill="transparent" style="cursor:pointer"/>'; });
+    s += '<line x1="' + L + '" x2="' + (L + pw) + '" y1="' + (T + ph) + '" y2="' + (T + ph) + '" stroke="' + C.ink + '" stroke-width="1.5"/><line x1="' + L + '" x2="' + L + '" y1="' + T + '" y2="' + (T + ph) + '" stroke="' + C.ink + '" stroke-width="1.5"/>';
+    if (o.yLabel) s += axisText(16, T + ph / 2, o.yLabel, 'middle', 12.5, 600, -90);
+    if (o.xLabel) s += axisText(L + pw / 2, H - 12, o.xLabel, 'middle', 12.5, 600);
+    s += '</svg>';
+    return { svg: s, geo: { L: L, T: T, ph: ph, pw: pw, cw: cw, max: max, step: step } };
+  };
+  function tableHTML(t) {
+    return '<div class="tw"><table class="dt">' + (t.caption ? '<caption style="caption-side:top;text-align:left;font-weight:600;color:#1E2D4F;padding:4px 0">' + t.caption + '</caption>' : '') +
+      '<tr>' + t.head.map(function (h, i) { return '<th' + (i === 0 && t.leftCol ? ' class="l"' : '') + '>' + h + '</th>'; }).join('') + '</tr>' +
+      t.rows.map(function (r) { return '<tr>' + r.map(function (c, i) { return '<td' + (i === 0 && t.leftCol ? ' class="l"' : '') + '>' + c + '</td>'; }).join('') + '</tr>'; }).join('') + '</table></div>';
+  }
+  // fig spec: {bar:{…}} | {lineplot:{…}} | {linegraph:{…}} | {table:{…}} | {svg:"…"}  (+ caption)
+  function figHTML(f) {
+    if (!f) return '';
+    var inner = f.bar ? FIG.bar(f.bar).svg : f.lineplot ? FIG.lineplot(f.lineplot).svg : f.linegraph ? FIG.linegraph(f.linegraph).svg : f.table ? tableHTML(f.table) : (f.svg || f.html || '');
+    return '<figure class="fig" style="margin:10px 0">' + inner + (f.caption ? '<figcaption>' + f.caption + '</figcaption>' : '') + '</figure>';
+  }
+
+  /* ======================================================================
+     QUESTIONS
+     types: choice | multi | number | text | sort
+     every question can have: q (html), fig, hint, why (shown after)
+     ====================================================================== */
+  var OK = ['Yes! ', 'Correct. ', 'Nice work. ', 'You got it. ', 'Right. '];
+  function okWord() { return OK[Math.floor(Math.random() * OK.length)]; }
+
+  function makeQ(q, i, total, opts) {
+    opts = opts || {};
+    var type = q.type || (q.choices ? 'choice' : q.bins ? 'sort' : q.accept ? 'text' : 'number');
+    var box = el('<div class="q ' + type + '"><div class="qn"><span>' + (opts.label || 'Question') + ' ' + (i + 1) + ' of ' + total + '</span>' + (q.tag ? '<span class="tag">' + esc(q.tag) + '</span>' : '') + '</div>' +
+      '<div class="qt">' + q.q + '</div>' + figHTML(q.fig) + '<div class="area"></div><div class="fb" aria-live="polite"></div></div>');
+    var area = $('.area', box), fb = $('.fb', box), api = { el: box, type: type, q: q };
+    if (type === 'choice' || type === 'multi') {
+      var order = q.keepOrder ? q.choices.map(function (_, k) { return k; }) : shuffle(q.choices.map(function (_, k) { return k; }));
+      area.innerHTML = '<div class="opts" role="' + (type === 'multi' ? 'group' : 'radiogroup') + '">' + order.map(function (k) {
+        return '<button type="button" class="opt" data-k="' + k + '" role="' + (type === 'multi' ? 'checkbox' : 'radio') + '" aria-checked="false"><span class="mk"></span><span>' + q.choices[k] + '</span></button>';
+      }).join('') + '</div>';
+      $$('.opt', area).forEach(function (b) {
+        b.onclick = function () {
+          if (box.classList.contains('locked')) return;
+          if (type === 'choice') $$('.opt', area).forEach(function (x) { x.classList.remove('sel'); x.setAttribute('aria-checked', 'false'); });
+          b.classList.toggle('sel'); b.setAttribute('aria-checked', b.classList.contains('sel'));
+          if (opts.onChange) opts.onChange();
+        };
+      });
+      api.answered = function () { return $$('.opt.sel', area).length > 0; };
+      api.isRight = function () {
+        var sel = $$('.opt.sel', area).map(function (b) { return +b.dataset.k; }).sort();
+        var ans = (type === 'multi' ? q.answer.slice() : [q.answer]).sort();
+        return sel.length === ans.length && sel.every(function (v, j) { return v === ans[j]; });
+      };
+      api.mark = function () {
+        var ans = type === 'multi' ? q.answer : [q.answer];
+        $$('.opt', area).forEach(function (b) { var k = +b.dataset.k; if (ans.indexOf(k) >= 0) b.classList.add('right'); else if (b.classList.contains('sel')) b.classList.add('wrong'); });
+      };
+      api.answerText = function () { return (type === 'multi' ? q.answer : [q.answer]).map(function (k) { return q.choices[k]; }).join(' and '); };
+      api.reset = function () { $$('.opt', area).forEach(function (b) { b.className = 'opt'; b.setAttribute('aria-checked', 'false'); }); };
+      api.clearWrong = function () { $$('.opt.sel', area).forEach(function (b) { b.classList.remove('sel'); }); };
+    } else if (type === 'number' || type === 'text') {
+      area.innerHTML = '<div class="numrow"><input class="num" type="text" ' + (type === 'number' ? 'inputmode="decimal"' : '') + ' autocomplete="off" spellcheck="false" aria-label="Your answer" placeholder="' + (q.ph || (type === 'number' ? 'answer' : 'type a word')) + '"' + (type === 'text' ? ' style="font-family:Inter,sans-serif;width:14em"' : '') + '>' + (q.unit ? '<span class="unit">' + q.unit + '</span>' : '') + '</div>';
+      var inp = $('input', area);
+      inp.oninput = function () { if (opts.onChange) opts.onChange(); };
+      if (opts.onEnter) inp.onkeydown = function (e) { if (e.key === 'Enter') opts.onEnter(); };
+      api.answered = function () { return inp.value.trim() !== ''; };
+      api.isRight = function () {
+        if (type === 'text') { var v = norm(inp.value); return q.accept.some(function (a) { return norm(a) === v; }); }
+        var got = parseNum(inp.value); if (!got) return false;
+        var list = Array.isArray(q.answer) && Array.isArray(q.answer[0]) ? q.answer : [q.answer];
+        return list.some(function (a) { return feq(got, toFr(a)); });
+      };
+      api.badFormat = function () { return type === 'number' && inp.value.trim() !== '' && !parseNum(inp.value); };
+      api.mark = function () { inp.style.borderColor = api.isRight() ? '#15803D' : '#B42318'; };
+      api.answerText = function () { return type === 'text' ? q.accept[0] : showNum(toFr(Array.isArray(q.answer) && Array.isArray(q.answer[0]) ? q.answer[0] : q.answer)) + (q.unit ? ' ' + q.unit.replace(/<[^>]+>/g, '') : ''); };
+      api.reset = function () { inp.value = ''; inp.style.borderColor = ''; inp.disabled = false; };
+      api.clearWrong = function () { inp.select(); };
+      api.lock = function () { inp.disabled = true; };
+    } else if (type === 'sort') {
+      sortWidget(area, q, api, opts);
+    }
+    api.feedback = function (kind, head, body) {
+      fb.className = 'fb show ' + kind;
+      fb.innerHTML = '<b class="h">' + head + '</b>' + (body || '');
+    };
+    api.hideFeedback = function () { fb.className = 'fb'; fb.innerHTML = ''; };
+    return api;
+  }
+
+  // Sort: tap a card, then tap a group.  q.bins: [names], q.items: [[text, binIndex], …]
+  function sortWidget(area, q, api, opts) {
+    var picked = null, place = {};
+    area.innerHTML = '<div class="sort"><p class="hint">Tap a card. Then tap the group where it belongs.</p><div class="pool"></div><div class="bins">' +
+      q.bins.map(function (b, k) { return '<div class="bin" data-b="' + k + '" role="button" tabindex="0" aria-label="Group: ' + esc(b.replace(/<[^>]+>/g, '')) + '"><div class="bh">' + b + '</div></div>'; }).join('') + '</div></div>';
+    var pool = $('.pool', area);
+    shuffle(q.items.map(function (_, k) { return k; })).forEach(function (k) {
+      var c = el('<button type="button" class="card" data-k="' + k + '">' + q.items[k][0] + '</button>');
+      c.onclick = function (e) {
+        e.stopPropagation(); if (api.el.classList.contains('locked')) return;
+        if (picked === c) { c.classList.remove('pick'); picked = null; return; }
+        // A card is already picked and you tapped a card sitting in a group: drop into that group.
+        if (picked && c.parentNode.classList.contains('bin')) { drop(c.parentNode); return; }
+        if (picked) picked.classList.remove('pick');
+        picked = c; c.classList.add('pick');
+      };
+      pool.appendChild(c);
+    });
+    function drop(bin) {
+      if (!picked || api.el.classList.contains('locked')) return;
+      bin.appendChild(picked); place[picked.dataset.k] = +bin.dataset.b; picked.classList.remove('pick', 'wrong'); picked = null;
+      if (opts.onChange) opts.onChange();
+    }
+    $$('.bin', area).forEach(function (b) { b.onclick = function () { drop(b); }; b.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); drop(b); } }; });
+    pool.onclick = function () { if (picked) { pool.appendChild(picked); delete place[picked.dataset.k]; picked.classList.remove('pick'); picked = null; } };
+    api.answered = function () { return Object.keys(place).length === q.items.length; };
+    api.isRight = function () { return q.items.every(function (it, k) { return place[k] === it[1]; }); };
+    api.wrongCount = function () { return q.items.filter(function (it, k) { return place[k] !== it[1]; }).length; };
+    api.mark = function () { $$('.card', area).forEach(function (c) { var k = c.dataset.k; c.classList.remove('right', 'wrong'); if (place[k] != null) c.classList.add(place[k] === q.items[k][1] ? 'right' : 'wrong'); }); };
+    api.answerText = function () { return q.bins.map(function (b, k) { return '<b>' + b + ':</b> ' + q.items.filter(function (it) { return it[1] === k; }).map(function (it) { return it[0]; }).join(', '); }).join('<br>'); };
+    api.clearWrong = function () { $$('.card.wrong', area).forEach(function (c) { pool.appendChild(c); delete place[c.dataset.k]; c.classList.remove('wrong'); }); };
+    api.reset = function () { $$('.card', area).forEach(function (c) { c.className = 'card'; pool.appendChild(c); }); place = {}; };
+  }
+
+  /* Practice: check one question at a time. First miss → hint. Second miss → show answer. */
+  function practiceSet(host, qs, key, onDone) {
+    var first = {}, done = {};
+    var scoreBox = el('<div class="score" aria-live="polite"></div>');
+    var items = qs.map(function (q, i) {
+      var api = makeQ(q, i, qs.length, { label: 'Problem', onEnter: function () { check(); } });
+      var tries = 0;
+      var row = el('<div class="btnrow"><button class="btn small" type="button">Check</button></div>');
+      api.el.appendChild(row);
+      var btn = $('button', row);
+      function check() {
+        if (done[i]) return;
+        if (!api.answered()) { api.feedback('hint', 'Answer first.', api.type === 'sort' ? 'Put every card in a group.' : ''); return; }
+        if (api.badFormat && api.badFormat()) { api.feedback('hint', 'Type a number.', 'Use digits like 24, a fraction like 3/4, or a mixed number like 2 1/3.'); return; }
+        tries++;
+        if (api.isRight()) {
+          if (tries === 1) first[i] = true;
+          done[i] = true; api.mark(); api.el.classList.add('locked'); if (api.lock) api.lock(); btn.disabled = true;
+          api.feedback('ok', okWord(), q.why ? '<div>' + q.why + '</div>' : '');
+          progress();
+        } else if (tries === 1) {
+          if (api.type === 'sort') { api.mark(); }
+          api.feedback('hint', 'Not yet. Try again.', '<div>' + (q.hint || 'Read the question again and check your work.') + (api.type === 'sort' ? ' Red cards are in the wrong group. Tap one and move it.' : '') + '</div>');
+          if (api.type !== 'sort') api.clearWrong();
+        } else {
+          done[i] = true; api.mark(); api.el.classList.add('locked'); if (api.lock) api.lock(); btn.disabled = true;
+          api.feedback('no', 'Here is the answer.', '<div>The answer is <b>' + api.answerText() + '</b>.</div>' + (q.why ? '<div style="margin-top:4px">' + q.why + '</div>' : ''));
+          progress();
+        }
+      }
+      btn.onclick = check;
+      host.appendChild(api.el);
+      return api;
+    });
+    host.appendChild(scoreBox);
+    var again = el('<div class="btnrow"><button class="btn ghost" type="button">Start practice over</button></div>');
+    $('button', again).onclick = function () { host.innerHTML = ''; practiceSet(host, qs, key, onDone); };
+    host.appendChild(again);
+    function progress() {
+      var n = Object.keys(done).length;
+      if (n < qs.length) return;
+      var f = Object.keys(first).length;
+      showScore(scoreBox, f, qs.length, 'right on the first try');
+      var best = store.get(key, null); if (!best || f > best.right) store.set(key, { right: f, of: qs.length });
+      if (onDone) onDone();
+    }
+  }
+
+  function showScore(box, right, total, words) {
+    var pct = Math.round(100 * right / total);
+    var msg = pct === 100 ? 'Perfect! You know this.' : pct >= 80 ? 'Great work. Look back at any you missed.' : pct >= 60 ? 'Good start. Read the feedback, then try again.' : 'Keep going. Go back to the notes, then try again.';
+    box.innerHTML = '<div class="big">' + right + ' / ' + total + '</div><div class="msg">You got <b>' + right + ' of ' + total + '</b> ' + words + '. ' + msg + '</div><div class="bar"><i style="width:' + pct + '%"></i></div>';
+    box.classList.add('show');
+  }
+
+  /* Exit ticket: answer everything, then check once. Score shows at the end. */
+  function exitTicket(host, qs, key, onDone) {
+    host.innerHTML = '';
+    var apis = qs.map(function (q, i) { var a = makeQ(q, i, qs.length, { label: 'Question' }); host.appendChild(a.el); return a; });
+    var scoreBox = el('<div class="score" aria-live="polite"></div>');
+    var row = el('<div class="btnrow"><button class="btn gold" type="button">Check my answers</button><span class="msg" style="color:var(--muted);font-size:14.5px"></span></div>');
+    host.appendChild(row); host.appendChild(scoreBox);
+    var btn = $('button', row), msg = $('.msg', row);
+    btn.onclick = function () {
+      if (btn.dataset.state === 'done') { exitTicket(host, qs, key, onDone); host.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      var missing = apis.filter(function (a) { return !a.answered(); }).length;
+      if (missing) { msg.textContent = 'Answer every question first (' + missing + ' left).'; return; }
+      msg.textContent = '';
+      var right = 0;
+      apis.forEach(function (a) {
+        var ok = a.isRight(); if (ok) right++;
+        a.mark(); a.el.classList.add('locked'); if (a.lock) a.lock();
+        if (ok) a.feedback('ok', okWord(), a.q.why ? '<div>' + a.q.why + '</div>' : '');
+        else a.feedback('no', 'Not quite.', '<div>The answer is <b>' + a.answerText() + '</b>.</div>' + (a.q.why ? '<div style="margin-top:4px">' + a.q.why + '</div>' : ''));
+      });
+      showScore(scoreBox, right, qs.length, 'correct on the exit ticket');
+      store.set(key, { right: right, of: qs.length, when: Date.now() });
+      btn.textContent = 'Try a fresh exit ticket'; btn.className = 'btn ghost'; btn.dataset.state = 'done';
+      scoreBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (onDone) onDone();
+    };
+  }
+
+  /* ======================================================================
+     NOTES BLOCKS
+     p | tip | key | vocab | fill | example | reveal | write | fig | try
+     ====================================================================== */
+  function notesBlock(b, key, idx) {
+    var t = b.t;
+    if (t === 'p') return el('<div class="nb">' + b.html + '</div>');
+    if (t === 'h') return el('<h3>' + b.html + '</h3>');
+    if (t === 'tip') return el('<div class="nb nb-tip">' + b.html + '</div>');
+    if (t === 'key') return el('<div class="nb nb-key"><span class="lbl">' + (b.label || 'Remember') + '</span>' + b.html + '</div>');
+    if (t === 'fig') return el('<div class="nb">' + figHTML(b) + '</div>');
+    if (t === 'vocab') {
+      var v = el('<div class="nb"><p style="font-size:14px;color:var(--muted);margin-bottom:8px">Tap a card to flip it.</p><div class="vcards"></div></div>');
+      b.words.forEach(function (w) {
+        var c = el('<button type="button" class="vcard" aria-label="' + esc(w[0]) + ': tap to see the meaning"><div class="in"><div class="f"><b>' + w[0] + '</b><span>Tap to flip</span></div><div class="b"><div>' + w[1] + (w[2] ? '<i>Example: ' + w[2] + '</i>' : '') + '</div></div></div></button>');
+        c.onclick = function () { c.classList.toggle('flip'); };
+        $('.vcards', v).appendChild(c);
+      });
+      return v;
+    }
+    if (t === 'fill') {
+      // text with blanks written as [[answer|other ok answer]]
+      var answers = [];
+      var html = b.html.replace(/\[\[(.+?)\]\]/g, function (_, a) { answers.push(a.split('|')); return '<input type="text" aria-label="blank ' + answers.length + '" autocomplete="off" spellcheck="false" data-a="' + (answers.length - 1) + '">'; });
+      var f = el('<div class="nb fill-wrap"><div class="fill">' + html + '</div><div class="btnrow"><button class="btn small" type="button">Check my notes</button><button class="btn small ghost" type="button">Show answers</button><span class="m" style="font-size:14.5px"></span></div></div>');
+      var saved = store.get(key + ':fill' + idx, {});
+      $$('input', f).forEach(function (inp) {
+        var a = answers[+inp.dataset.a]; inp.style.width = Math.max(5, Math.min(14, a[0].length + 2)) + 'em';
+        if (saved[inp.dataset.a]) inp.value = saved[inp.dataset.a];
+        inp.oninput = function () { inp.className = ''; saved[inp.dataset.a] = inp.value; store.set(key + ':fill' + idx, saved); };
+      });
+      var bt = $$('button', f), m = $('.m', f);
+      bt[0].onclick = function () {
+        var right = 0, ins = $$('input', f);
+        ins.forEach(function (inp) { var a = answers[+inp.dataset.a]; var ok = a.some(function (x) { return norm(x) === norm(inp.value); }); inp.className = ok ? 'ok' : 'no'; if (ok) right++; });
+        m.innerHTML = right === ins.length ? '<b style="color:var(--ok)">All ' + right + ' blanks are right!</b>' : right + ' of ' + ins.length + ' right. Fix the red blanks.';
+      };
+      bt[1].onclick = function () { $$('input', f).forEach(function (inp) { var a = answers[+inp.dataset.a]; if (!a.some(function (x) { return norm(x) === norm(inp.value); })) { inp.value = a[0]; inp.className = 'ok'; saved[inp.dataset.a] = a[0]; } }); store.set(key + ':fill' + idx, saved); m.textContent = 'Read the notes again with the answers filled in.'; };
+      return f;
+    }
+    if (t === 'example') {
+      var e = el('<div class="nb ex"><div class="exh">' + (b.title || 'Worked example') + '</div>' + (b.q ? '<div style="padding:12px 14px 0">' + b.q + '</div>' : '') + figHTML(b.fig).replace('<figure class="fig"', '<figure class="fig" style="padding:0 14px"') +
+        '<ol>' + b.steps.map(function (s, k) { return '<li' + (k ? ' hidden' : '') + '>' + s + '</li>'; }).join('') + '</ol><div class="exb"><button class="btn small ghost" type="button">Next step</button></div></div>');
+      var nx = $('.exb button', e);
+      if (b.steps.length < 2) nx.remove();
+      else nx.onclick = function () { var h = $('li[hidden]', e); if (h) h.hidden = false; if (!$('li[hidden]', e)) nx.remove(); };
+      return e;
+    }
+    if (t === 'reveal') {
+      var r = el('<div class="nb reveal"><div>' + b.q + '</div><div class="btnrow"><button class="btn small ghost" type="button">' + (b.btn || 'Show me') + '</button></div><div class="ans" hidden>' + b.a + '</div></div>');
+      $('button', r).onclick = function () { $('.ans', r).hidden = false; $('button', r).remove(); };
+      return r;
+    }
+    if (t === 'write') {
+      var w = el('<div class="nb write"><label>' + b.q + '</label><textarea rows="' + (b.rows || 3) + '" placeholder="' + esc(b.ph || 'Write your thinking here…') + '"></textarea><div class="saved"></div></div>');
+      var ta = $('textarea', w), sv = $('.saved', w), id = $('label', w);
+      var fid = 'w' + Math.random().toString(36).slice(2); ta.id = fid; id.setAttribute('for', fid);
+      ta.value = store.get(key + ':w' + idx, '');
+      var tm; ta.oninput = function () { clearTimeout(tm); tm = setTimeout(function () { store.set(key + ':w' + idx, ta.value); sv.textContent = 'Saved on this device.'; }, 400); };
+      return w;
+    }
+    if (t === 'try') {
+      var host = el('<div class="nb"></div>');
+      practiceSet(host, [b.q], key + ':try' + idx);
+      $$('.btnrow:last-child', host).forEach(function (x) { if (/over/.test(x.textContent)) x.remove(); });
+      $('.qn span', host).textContent = 'Try it';
+      return host;
+    }
+    return el('<div class="nb">' + (b.html || '') + '</div>');
+  }
+
+  /* ======================================================================
+     LABS
+     ====================================================================== */
+  var LABS = {};
+
+  /* Graph lab — student builds a bar graph, line plot or line graph from data.
+     cfg: {mode:'bar'|'lineplot'|'linegraph', title, data: {cats|xs|min,max}, vals (correct), step, max, yLabel, xLabel, intro, table, after:[questions]} */
+  LABS.graph = function (host, cfg, done) {
+    var mode = cfg.mode, n = mode === 'lineplot' ? cfg.max - cfg.min + 1 : (cfg.cats || cfg.xs).length;
+    var cur = []; for (var i = 0; i < n; i++) cur.push(mode === 'linegraph' ? null : 0);
+    var step = cfg.step || 1;
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="row"><div class="col" style="flex:0 1 300px">' + (cfg.table ? tableHTML(cfg.table) : '') + '</div>' +
+      '<div class="col" style="flex:1 1 380px"><div class="g fig"></div><div class="ctl pad"></div></div></div>' +
+      '<div class="btnrow"><button class="btn" type="button" data-a="check">Check my graph</button><button class="btn ghost" type="button" data-a="clear">Clear</button></div><div class="status" aria-live="polite"></div><div class="after"></div></div>';
+    var g = $('.g', host), status = $('.status', host), pad = $('.ctl', host);
+    var labels = mode === 'lineplot' ? (function () { var a = []; for (var k = cfg.min; k <= cfg.max; k++) a.push(String(k)); return a; })() : (cfg.cats || cfg.xs);
+    pad.innerHTML = '<span style="font-size:13.5px;color:var(--muted);width:100%">' + (mode === 'lineplot' ? 'Tap above a number to add an ×. Or use the buttons.' : mode === 'bar' ? 'Tap in a column to set the bar height. Or use the buttons.' : 'Tap in a column to place the point. Or use the buttons.') + '</span>' +
+      '<label style="font-size:14px">Column <select class="pick" style="font:15px var(--sans);padding:6px;border-radius:6px">' + labels.map(function (l, k) { return '<option value="' + k + '">' + esc(l) + '</option>'; }).join('') + '</select></label>' +
+      '<button class="btn small ghost" type="button" data-d="-1" aria-label="down">' + M + '</button><button class="btn small ghost" type="button" data-d="1" aria-label="up">+</button>';
+    function draw() {
+      var f = mode === 'bar' ? FIG.bar({ title: cfg.title, cats: cfg.cats, vals: cur, step: step, max: cfg.yMax, yLabel: cfg.yLabel, xLabel: cfg.xLabel }, true)
+        : mode === 'lineplot' ? FIG.lineplot({ title: cfg.title, min: cfg.min, max: cfg.max, vals: cur.concat([]), xLabel: cfg.xLabel }, true)
+          : FIG.linegraph({ title: cfg.title, xs: cfg.xs, vals: cur, step: step, max: cfg.yMax, yLabel: cfg.yLabel, xLabel: cfg.xLabel }, true);
+      g.innerHTML = f.svg;
+      var svg = $('svg', g);
+      $$('.hit', svg).forEach(function (r) {
+        r.addEventListener('click', function (ev) {
+          var k = +r.dataset.i; $('.pick', pad).value = k;
+          if (mode === 'lineplot') { cur[k] = (cur[k] || 0) + 1; draw(); return; }
+          var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+          var p = pt.matrixTransform(svg.getScreenCTM().inverse());
+          var geo = f.geo, v = Math.round((geo.T + geo.ph - p.y) / geo.ph * geo.max / step) * step;
+          cur[k] = Math.max(0, Math.min(geo.max, v)); draw();
+        });
+      });
+    }
+    $$('[data-d]', pad).forEach(function (b) {
+      b.onclick = function () {
+        var k = +$('.pick', pad).value, d = +b.dataset.d;
+        var top = cfg.yMax || 99;
+        if (cur[k] == null) cur[k] = 0; else cur[k] = Math.max(0, Math.min(top, cur[k] + d * (mode === 'lineplot' ? 1 : step)));
+        draw(); status.textContent = labels[k] + ': ' + cur[k];
+      };
+    });
+    $('[data-a=clear]', host).onclick = function () { for (var k = 0; k < n; k++) cur[k] = mode === 'linegraph' ? null : 0; status.textContent = ''; draw(); };
+    $('[data-a=check]', host).onclick = function () {
+      var wrong = []; cfg.vals.forEach(function (v, k) { if (cur[k] !== v) wrong.push(labels[k]); });
+      if (!wrong.length) {
+        status.innerHTML = '<b style="color:var(--ok)">Your graph matches the data!</b> ' + (cfg.success || '');
+        var a = $('.after', host);
+        if (cfg.after && !a.childElementCount) { a.appendChild(el('<h3>Read your graph</h3>')); practiceSet(a, cfg.after, cfg.key + ':after'); }
+        if (done) done();
+      } else {
+        status.innerHTML = '<span style="color:#B42318"><b>Not yet.</b></span> Check ' + (wrong.length > 3 ? wrong.length + ' columns' : 'these: <b>' + wrong.map(esc).join(', ') + '</b>') + '. Count the data again.';
+      }
+    };
+    draw();
+  };
+
+  /* Sort lab — a bigger sort with a check button. cfg: {intro, bins, items, success} */
+  LABS.sort = function (host, cfg, done) {
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="sw"></div><div class="btnrow"><button class="btn" type="button">Check my sort</button><button class="btn ghost" type="button">Start over</button></div><div class="status" aria-live="polite"></div></div>';
+    var api = { el: host };
+    sortWidget($('.sw', host), { bins: cfg.bins, items: cfg.items }, api, {});
+    var st = $('.status', host), bs = $$('.btnrow button', host);
+    bs[0].onclick = function () {
+      if (!api.answered()) { st.textContent = 'Put every card in a group first.'; return; }
+      api.mark();
+      if (api.isRight()) { st.innerHTML = '<b style="color:var(--ok)">All sorted correctly!</b> ' + (cfg.success || ''); if (done) done(); }
+      else st.innerHTML = '<b style="color:#B42318">' + api.wrongCount() + ' card' + (api.wrongCount() > 1 ? 's are' : ' is') + ' in the wrong group.</b> Red cards need to move. Tap one, then tap a new group.';
+    };
+    bs[1].onclick = function () { api.reset(); st.textContent = ''; };
+  };
+
+  /* Sketch pad — draw, label, save on this device. cfg: {intro, specimen:'leaf'|null, checklist:[…], prompt} */
+  LABS.sketch = function (host, cfg, done, key) {
+    var colors = ['#1B2333', '#B42318', '#1D4ED8', '#15803D', '#A16207', '#7C3AED'];
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="row">' +
+      (cfg.specimen ? '<div class="col" style="flex:0 1 260px"><div class="spec" style="border:1px solid var(--line-2);border-radius:10px;background:#fff;padding:8px;text-align:center"></div><div class="btnrow" style="justify-content:center"><div class="seg" role="group" aria-label="Zoom"><button type="button" data-z="1" aria-pressed="true">Whole</button><button type="button" data-z="3" aria-pressed="false">Hand lens ×3</button></div></div></div>' : '') +
+      '<div class="col"><div class="pad" style="margin-bottom:8px">' + colors.map(function (c, k) { return '<button type="button" class="swatch" style="background:' + c + '" data-c="' + c + '" aria-label="color ' + (k + 1) + '" aria-pressed="' + (k === 0) + '"></button>'; }).join('') +
+      '<div class="seg" role="group" aria-label="Tool" style="margin-left:6px"><button type="button" data-t="pen" aria-pressed="true">Pen</button><button type="button" data-t="label" aria-pressed="false">Label</button><button type="button" data-t="erase" aria-pressed="false">Eraser</button></div></div>' +
+      '<div class="sk-wrap"><canvas width="900" height="620" aria-label="Sketch area"></canvas></div>' +
+      '<div class="btnrow"><button class="btn small ghost" type="button" data-a="undo">Undo</button><button class="btn small ghost" type="button" data-a="clear">Clear</button><button class="btn small" type="button" data-a="save">Save my sketch</button><span class="m" style="font-size:14px;color:var(--muted)"></span></div></div></div>' +
+      (cfg.checklist ? '<h3>Check your sketch</h3><ul class="check-list">' + cfg.checklist.map(function (c, k) { return '<li><label><input type="checkbox" data-k="' + k + '"> <span>' + c + '</span></label></li>'; }).join('') + '</ul>' : '') + '</div>';
+    if (cfg.specimen) {
+      var spec = $('.spec', host);
+      var leaf = SPECIMENS[cfg.specimen] || '';
+      var setZ = function (z) {
+        spec.innerHTML = '<div style="overflow:hidden;width:100%;aspect-ratio:1/1.15;position:relative"><div style="transform:scale(' + z + ');transform-origin:' + (z > 1 ? '62% 38%' : 'center') + ';transition:transform .3s">' + leaf + '</div></div><div style="font-size:12.5px;color:var(--muted)">' + (z > 1 ? 'Up close: look at the veins and the edge.' : 'A real leaf is about 8 cm long.') + '</div>';
+        $$('[data-z]', host).forEach(function (b) { b.setAttribute('aria-pressed', +b.dataset.z === z); });
+      };
+      $$('[data-z]', host).forEach(function (b) { b.onclick = function () { setZ(+b.dataset.z); }; });
+      setZ(1);
+    }
+    var cv = $('canvas', host), ctx = cv.getContext('2d'), color = colors[0], tool = 'pen', strokes = store.get(key + ':sketch', []), cur = null;
+    function redraw() {
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
+      ctx.strokeStyle = '#EEF0F4'; ctx.lineWidth = 1;
+      for (var x = 30; x < cv.width; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cv.height); ctx.stroke(); }
+      for (var y = 30; y < cv.height; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cv.width, y); ctx.stroke(); }
+      strokes.forEach(function (s) {
+        if (s.text) { ctx.fillStyle = s.c; ctx.font = '600 26px Inter, sans-serif'; ctx.fillText(s.text, s.x, s.y); return; }
+        ctx.strokeStyle = s.erase ? '#fff' : s.c; ctx.lineWidth = s.erase ? 28 : 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.beginPath(); s.p.forEach(function (p, k) { if (k) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); }); if (s.p.length === 1) ctx.lineTo(s.p[0][0] + .1, s.p[0][1]); ctx.stroke();
+      });
+    }
+    function pos(e) { var r = cv.getBoundingClientRect(); return [Math.round((e.clientX - r.left) * cv.width / r.width), Math.round((e.clientY - r.top) * cv.height / r.height)]; }
+    cv.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      if (tool === 'label') {
+        var t = window.prompt('Type your label:'); if (t) { var p = pos(e); strokes.push({ text: t.slice(0, 40), x: p[0], y: p[1], c: color }); redraw(); }
+        return;
+      }
+      cv.setPointerCapture(e.pointerId); cur = { c: color, erase: tool === 'erase', p: [pos(e)] }; strokes.push(cur); redraw();
+    });
+    cv.addEventListener('pointermove', function (e) { if (!cur) return; cur.p.push(pos(e)); redraw(); });
+    var end = function () { cur = null; };
+    cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+    $$('.swatch', host).forEach(function (b) { b.onclick = function () { color = b.dataset.c; $$('.swatch', host).forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); if (tool === 'erase') setTool('pen'); }; });
+    function setTool(t) { tool = t; $$('[data-t]', host).forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.t === t); }); }
+    $$('[data-t]', host).forEach(function (b) { b.onclick = function () { setTool(b.dataset.t); }; });
+    var m = $('.m', host);
+    $('[data-a=undo]', host).onclick = function () { strokes.pop(); redraw(); };
+    $('[data-a=clear]', host).onclick = function () { if (!strokes.length || window.confirm('Erase your whole sketch?')) { strokes = []; redraw(); } };
+    $('[data-a=save]', host).onclick = function () { store.set(key + ':sketch', strokes); m.textContent = 'Saved on this device.'; if (done) done(); };
+    var ck = store.get(key + ':check', {});
+    $$('.check-list input', host).forEach(function (c) { c.checked = !!ck[c.dataset.k]; c.onchange = function () { ck[c.dataset.k] = c.checked; store.set(key + ':check', ck); }; });
+    redraw();
+  };
+  var SPECIMENS = {
+    leaf: '<svg viewBox="0 0 200 230" width="100%" role="img" aria-label="A green maple-like leaf with a stem, a main vein and smaller veins, and a jagged edge"><g stroke="#2F5D2A" stroke-linejoin="round">' +
+      '<path d="M100 20 C120 40 150 40 170 55 C160 75 175 95 185 110 C160 115 150 130 150 150 C130 145 115 160 104 180 L100 186 L96 180 C85 160 70 145 50 150 C50 130 40 115 15 110 C25 95 40 75 30 55 C50 40 80 40 100 20 Z" fill="#6BA34A" stroke-width="2.5"/>' +
+      '<path d="M100 186 L100 225" stroke-width="4" fill="none"/>' +
+      '<path d="M100 186 L100 30 M100 120 L160 70 M100 120 L40 70 M100 150 L150 130 M100 150 L50 130 M130 95 L150 60 M70 95 L50 60 M130 95 L170 100 M70 95 L30 100" stroke="#D9E9C8" stroke-width="2" fill="none"/>' +
+      '<path d="M170 55 l6 -4 M185 110 l7 1 M15 110 l-7 1 M30 55 l-6 -4 M150 150 l5 5 M50 150 l-5 5" stroke-width="2"/></g>' +
+      '<circle cx="128" cy="78" r="5" fill="#A16207" opacity=".7"/></svg>'
+  };
+
+  /* Penny lab — drops of water on a penny (fair test: plain vs soapy). */
+  LABS.penny = function (host, cfg, done, key) {
+    var RANGE = { plain: [30, 44], soapy: [13, 21] };
+    var data = store.get(key + ':penny', { plain: [], soapy: [] });
+    var liquid = 'plain', drops = 0, cap = 0, spilled = false;
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p>' +
+      '<div class="row"><div class="col" style="flex:0 1 320px">' +
+      '<div class="seg" role="group" aria-label="Type of water"><button type="button" data-l="plain" aria-pressed="true">Plain water</button><button type="button" data-l="soapy" aria-pressed="false">Soapy water</button></div>' +
+      '<div class="pv" style="margin-top:10px;border:1px solid var(--line-2);border-radius:10px;background:#fff"></div>' +
+      '<div class="btnrow"><button class="btn gold" type="button" data-a="drop">Add a drop</button><button class="btn ghost" type="button" data-a="new">Dry the penny</button></div>' +
+      '<div class="status" aria-live="polite"></div></div>' +
+      '<div class="col"><h3 style="margin-top:0">Data table</h3><div class="tbl"></div>' +
+      '<div class="nb nb-tip" style="font-size:14.5px"><b>Fair test.</b> We only change <b>the type of water</b>. We keep the same penny, the same dropper and the same height (3 cm).</div>' +
+      '<div class="avg"></div></div></div></div>';
+    var pv = $('.pv', host), st = $('.status', host);
+    function newTrial() { drops = 0; spilled = false; var r = RANGE[liquid]; cap = r[0] + Math.floor(Math.random() * (r[1] - r[0] + 1)); drawPenny(); st.textContent = data[liquid].length >= 5 ? 'You finished 5 trials of ' + liquid + ' water.' : 'Trial ' + (data[liquid].length + 1) + ' of 5 with ' + liquid + ' water. Count every drop.'; }
+    function drawPenny() {
+      var h = spilled ? 0 : Math.min(1, drops / (RANGE.plain[1])) * (liquid === 'plain' ? 46 : 30);
+      var spread = spilled ? '' : '<ellipse cx="150" cy="' + (128 - h / 2) + '" rx="' + (80 + Math.min(drops, 8) * 1.5) + '" ry="' + Math.max(2, h / 2 + 2) + '" fill="#8EC5F0" opacity=".75" stroke="#3B82C4" stroke-width="1.5"/>';
+      var puddle = spilled ? '<ellipse cx="150" cy="168" rx="125" ry="14" fill="#8EC5F0" opacity=".6"/><text x="150" y="40" text-anchor="middle" font-size="18" font-weight="700" fill="#B42318" font-family="Inter,sans-serif">Spill! It overflowed.</text>' : '';
+      pv.innerHTML = '<svg viewBox="0 0 300 190" width="100%" role="img" aria-label="Penny with ' + drops + ' drops of water' + (spilled ? ', spilled' : '') + '">' +
+        '<rect x="0" y="150" width="300" height="40" fill="#F2F3F6"/>' + puddle +
+        '<ellipse cx="150" cy="140" rx="84" ry="16" fill="#9A5B2B"/><rect x="66" y="128" width="168" height="12" fill="#B87333"/><ellipse cx="150" cy="128" rx="84" ry="16" fill="#C98B4E" stroke="#8A4F22" stroke-width="2"/>' + spread +
+        '<rect x="143" y="2" width="14" height="34" rx="3" fill="#E3E5EA" stroke="#5B6475"/><path d="M146 36 L150 46 L154 36 Z" fill="#5B6475"/>' +
+        '<text x="290" y="24" text-anchor="end" font-size="15" font-family="JetBrains Mono,monospace" fill="#1E2D4F">drops: ' + drops + '</text></svg>';
+    }
+    function table() {
+      var avg = function (a) { if (a.length < 5) return '—'; var s = a.reduce(function (x, y) { return x + y; }, 0); return '≈ ' + Math.round(s / 5); };
+      $('.tbl', host).innerHTML = tableHTML({ caption: 'Drops before it spilled, trials 1–5', head: ['Water', '1', '2', '3', '4', '5', 'Avg.'], leftCol: true, rows: ['plain', 'soapy'].map(function (l) { var r = [l === 'plain' ? 'Plain' : 'Soapy']; for (var k = 0; k < 5; k++) r.push(data[l][k] != null ? data[l][k] : ''); r.push(avg(data[l])); return r; }) });
+      var a = $('.avg', host);
+      if (data.plain.length === 5 && data.soapy.length === 5 && !a.dataset.on) {
+        a.dataset.on = 1;
+        var sumP = data.plain.reduce(function (x, y) { return x + y; }, 0), sumS = data.soapy.reduce(function (x, y) { return x + y; }, 0);
+        a.appendChild(el('<h3>Find the averages</h3>'));
+        a.appendChild(el('<p style="font-size:15px">An average is a “fair share.” Add all 5 trials. Then divide the total by 5.</p>'));
+        practiceSet(a, [
+          { q: 'Add your 5 <b>plain water</b> trials. What is the total?', answer: sumP, hint: 'Add the numbers in the Plain row: ' + data.plain.join(' + ') + '.', why: data.plain.join(' + ') + ' = ' + sumP + '.' },
+          { q: 'Add your 5 <b>soapy water</b> trials. What is the total?', answer: sumS, hint: 'Add the numbers in the Soapy row: ' + data.soapy.join(' + ') + '.', why: data.soapy.join(' + ') + ' = ' + sumS + '.' },
+          { q: 'Which kind of water held <b>more</b> drops on the penny?', choices: ['Plain water', 'Soapy water', 'They held the same'], answer: sumP > sumS ? 0 : sumP < sumS ? 1 : 2, why: 'Plain water held more. Water is “sticky”: it pulls on itself and makes a dome. Soap weakens that pull, so the dome breaks sooner.' }
+        ], key + ':pennyavg');
+        a.appendChild(el('<div>' + figHTML({ bar: { title: 'Average drops on a penny', cats: ['Plain', 'Soapy'], vals: [Math.round(sumP / 5), Math.round(sumS / 5)], step: 5, yLabel: 'Drops' } }) + '</div>'));
+        if (done) done();
+      }
+    }
+    $$('[data-l]', host).forEach(function (b) { b.onclick = function () { liquid = b.dataset.l; $$('[data-l]', host).forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); newTrial(); }; });
+    $('[data-a=drop]', host).onclick = function () {
+      if (data[liquid].length >= 5) { st.textContent = 'You already have 5 trials of ' + liquid + ' water. ' + (liquid === 'plain' && data.soapy.length < 5 ? 'Switch to soapy water.' : ''); return; }
+      if (spilled) { st.textContent = 'Dry the penny to start the next trial.'; return; }
+      drops++;
+      if (drops > cap) {
+        spilled = true; data[liquid].push(cap); store.set(key + ':penny', data);
+        st.innerHTML = '<b>Spill!</b> The penny held <b>' + cap + '</b> drops before it overflowed. We record ' + cap + '. Tap “Dry the penny” for the next trial.';
+        table();
+      } else st.textContent = drops + ' drop' + (drops > 1 ? 's' : '') + ' so far. Watch the dome of water grow.';
+      drawPenny();
+    };
+    $('[data-a=new]', host).onclick = newTrial;
+    var reset = el('<button class="btn small ghost" type="button" style="margin-top:12px">Erase my data and start over</button>');
+    reset.onclick = function () { if (window.confirm('Erase all your penny data?')) { data = { plain: [], soapy: [] }; store.set(key + ':penny', data); $('.avg', host).innerHTML = ''; delete $('.avg', host).dataset.on; table(); newTrial(); } };
+    $('.lab', host).appendChild(reset);
+    table(); newTrial();
+  };
+
+  /* Embed lab — links to a bigger lab page on this site. cfg: {href, title, text} */
+  LABS.link = function (host, cfg) {
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><a class="btn gold" style="display:inline-block;text-decoration:none" href="' + cfg.href + '">' + (cfg.btn || 'Open the lab') + ' →</a></div>';
+  };
+
+  /* ======================================================================
+     PAGE
+     ====================================================================== */
+  function render(root, U, L) {
+    var key = U.id + '-' + L.n;
+    var idx = U.lessons.indexOf(L), prev = U.lessons[idx - 1], next = U.lessons[idx + 1];
+    var subj = U.subject === 'math' ? 'Math' : 'Science';
+    document.title = L.title + ' — ' + subj + ' ' + U.short + ' — Mrs. Tesnar\'s 5th Grade';
+    var secs = [['goals', 'Goals'], ['outline', 'Outline']];
+    if (L.notes) secs.push(['notes', 'Notes']);
+    if (L.practice) secs.push(['practice', 'Practice']);
+    if (L.lab) secs.push(['lab', 'Lab']);
+    if (L.exit) secs.push(['exit', 'Exit ticket']);
+    var doneMap = store.get(key + ':done', {});
+    root.innerHTML = '<div class="ls">' +
+      '<nav class="ls-crumb" aria-label="Breadcrumb"><a href="' + U.home + '">← ' + subj + ' units</a><a href="' + U.unitHref + '">' + esc(U.short) + ': ' + esc(U.title) + '</a></nav>' +
+      '<header class="ls-hdr"><span class="ls-eyebrow">' + subj + ' · ' + esc(U.short) + ' · ' + (U.word || 'Lesson') + ' ' + L.n + ' of ' + U.lessons.length + '</span><h1>' + L.title + '</h1><p class="ls-goal">' + (L.goal || '') + '</p>' +
+      '<div class="ls-meta">' + (L.stds || []).map(function (s) { return s[0]; }).join(' · ') + (L.when ? ' &nbsp;|&nbsp; ' + L.when : '') + '</div></header>' +
+      '<nav class="ls-jump" aria-label="Lesson sections">' + secs.map(function (s, k) { return '<a href="#' + s[0] + '" data-s="' + s[0] + '" class="' + (doneMap[s[0]] ? 'done' : '') + '"><span class="dot"></span>' + (k + 1) + '. ' + s[1] + '</a>'; }).join('') + '</nav><div class="body"></div>' +
+      '<nav class="ls-pager" aria-label="Other lessons">' + (prev ? '<a href="' + pageHref(U, prev) + '"><small>← Previous</small><b>' + prev.title + '</b></a>' : '<span></span>') + (next ? '<a class="nx" href="' + pageHref(U, next) + '"><small>Next →</small><b>' + next.title + '</b></a>' : '<a class="nx" href="' + U.unitHref + '"><small>Done →</small><b>Back to the unit</b></a>') + '</nav></div>';
+    var body = $('.body', root);
+    function mark(s) { doneMap[s] = 1; store.set(key + ':done', doneMap); var a = $('.ls-jump a[data-s="' + s + '"]', root); if (a) a.classList.add('done'); }
+    function sec(id, n, title, lead) { var s = el('<section class="ls-sec" id="' + id + '"><h2><span class="num">' + n + '</span>' + title + '</h2>' + (lead ? '<p class="ls-lead">' + lead + '</p>' : '') + '</section>'); body.appendChild(s); return s; }
+    var n = 0;
+    // 1 Goals
+    var g = sec('goals', ++n, 'Today’s Goals');
+    g.appendChild(el('<div class="ls-goals"><div class="ls-box"><h3>I can…</h3><ul class="ls-ican">' + (L.targets || []).map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>' +
+      '<div class="ls-box"><h3>NC Standards</h3>' + (L.stds || []).map(function (s) { return '<div class="ls-std"><b>' + s[0] + '</b>' + s[1] + '</div>'; }).join('') + '</div></div>'));
+    if (L.vocab && L.vocab.length) g.appendChild(el('<div><h3>Words to know</h3><div class="ls-chips">' + L.vocab.map(function (v) { return '<span class="ls-chip" title="' + esc(v[1]) + '">' + v[0] + '</span>'; }).join('') + '</div></div>'));
+    if (L.phenom) g.appendChild(el('<div class="nb nb-tip" style="margin-top:16px"><b>Our puzzle:</b> ' + L.phenom + '</div>'));
+    // 2 Outline + materials
+    var o = sec('outline', ++n, 'Lesson Outline', 'Here is our plan for today.');
+    o.appendChild(el('<ol class="ls-outline">' + (L.outline || []).map(function (p) { return '<li><div class="part">' + p[0] + (p[1] ? '<span class="min">' + p[1] + ' min</span>' : '') + '</div><div class="what">' + p[2] + '</div></li>'; }).join('') + '</ol>'));
+    if (L.materials && L.materials.length) o.appendChild(el('<div><h3>Materials</h3><ul class="ls-mat">' + L.materials.map(function (m) { var t = typeof m === 'string' ? { t: m } : m; return '<li>' + (t.href ? '<a href="' + t.href + '" target="_blank" rel="noopener">' + t.t + '</a>' : t.t) + (t.note ? '<span class="note">' + t.note + '</span>' : '') + '</li>'; }).join('') + '</ul></div>'));
+    // 3 Notes
+    if (L.notes) {
+      var nt = sec('notes', ++n, 'Interactive Notes', 'Read, tap, and fill in. Your notes save on this device.');
+      L.notes.forEach(function (b, k) { nt.appendChild(notesBlock(b, key, k)); });
+      nt.appendChild(el('<div class="btnrow"></div>')).appendChild(el('<button class="btn small ghost" type="button">I finished my notes ✓</button>')).onclick = function (e) { mark('notes'); e.target.textContent = 'Notes done ✓'; e.target.disabled = true; };
+    }
+    // 4 Practice
+    if (L.practice) { var pr = sec('practice', ++n, 'Practice', 'Check each problem. If you miss one, you get a hint and another try.'); var ph = el('<div></div>'); pr.appendChild(ph); practiceSet(ph, L.practice, key + ':practice', function () { mark('practice'); }); }
+    // 5 Lab
+    if (L.lab) { var lb = sec('lab', ++n, L.lab.title || 'Lab', L.lab.lead || ''); var lh = el('<div></div>'); lb.appendChild(lh); L.lab.key = key + ':lab'; LABS[L.lab.type](lh, L.lab, function () { mark('lab'); }, key + ':lab'); }
+    // 6 Exit ticket
+    if (L.exit) { var ex = sec('exit', ++n, 'Exit Ticket', 'Show what you learned today. Answer every question, then check. Your score shows at the end.'); var eh = el('<div></div>'); ex.appendChild(eh); exitTicket(eh, L.exit, key + ':exit', function () { mark('exit'); }); var last = store.get(key + ':exit', null); if (last) ex.insertBefore(el('<p class="ls-lead" style="margin-top:-8px">Last time on this device: <b>' + last.right + ' of ' + last.of + '</b>.</p>'), eh); }
+    if (location.hash) { var t = document.getElementById(location.hash.slice(1)); if (t) setTimeout(function () { t.scrollIntoView(); }, 0); }
+  }
+  function pageHref(U, L) { return 'lesson-' + L.n + '.html'; }
+
+  /* Self-test: every question must have a valid answer. Problems show in the console. */
+  function selfTest(U) {
+    var bad = [];
+    U.lessons.forEach(function (L) {
+      ['practice', 'exit'].forEach(function (part) {
+        (L[part] || []).forEach(function (q, i) {
+          var where = U.id + ' lesson ' + L.n + ' ' + part + ' #' + (i + 1);
+          if (q.choices) { var a = q.type === 'multi' ? q.answer : [q.answer]; if (!a.every(function (k) { return k >= 0 && k < q.choices.length; })) bad.push(where + ': answer index'); }
+          else if (q.bins) { if (!q.items.every(function (it) { return it[1] >= 0 && it[1] < q.bins.length; })) bad.push(where + ': sort bin'); }
+          else if (q.accept) { if (!q.accept.length) bad.push(where + ': no accepted words'); }
+          else { var list = Array.isArray(q.answer) && Array.isArray(q.answer[0]) ? q.answer : [q.answer]; if (!list.every(function (x) { return toFr(x); })) bad.push(where + ': number answer'); }
+        });
+      });
+      if (L.lab && L.lab.type === 'graph') { var c = L.lab, n = c.mode === 'lineplot' ? c.max - c.min + 1 : (c.cats || c.xs).length; if (c.vals.length !== n) bad.push(U.id + ' lesson ' + L.n + ' lab: vals length'); }
+      if (L.lab && !LABS[L.lab.type]) bad.push(U.id + ' lesson ' + L.n + ' lab type ' + L.lab.type);
+    });
+    if (bad.length) console.warn('Lesson self-test found problems:\n' + bad.join('\n'));
+    return bad;
+  }
+
+  /* Lesson list for a unit page: <div data-lesson-list="math-u0" data-base="unit0/"></div> */
+  function lessonList(host) {
+    var U = UNITS[host.dataset.lessonList]; if (!U) return;
+    var base = host.dataset.base || '';
+    var groups = {}; var order = [];
+    U.lessons.forEach(function (L) { var gname = L.section || ''; if (!groups[gname]) { groups[gname] = []; order.push(gname); } groups[gname].push(L); });
+    host.innerHTML = order.map(function (gname) {
+      return (gname ? '<div class="ll-sub">' + gname + '</div>' : '') + '<div class="ll-list">' + groups[gname].map(function (L) {
+        var ex = store.get(U.id + '-' + L.n + ':exit:exit', null) || store.get(U.id + '-' + L.n + ':exit', null);
+        return '<a class="ll-item" href="' + base + 'lesson-' + L.n + '.html"><span class="n">' + L.n + '</span><span><span class="t">' + L.title + '</span><span class="g" style="display:block">' + (L.goal || '') + '</span></span><span class="s' + (ex ? ' done' : '') + '">' + (ex ? 'Exit ticket ' + ex.right + '/' + ex.of : (L.when || '')) + '</span></a>';
+      }).join('') + '</div>';
+    }).join('');
+  }
+
+  window.LessonKit = {
+    unit: function (U) { UNITS[U.id] = U; selfTest(U); },
+    boot: function () {
+      var root = document.getElementById('lesson');
+      if (root) {
+        var U = UNITS[root.dataset.unit], nn = +root.dataset.n;
+        var L = U && U.lessons.filter(function (x) { return x.n === nn; })[0];
+        if (!L) { root.innerHTML = '<div class="ls"><p>This lesson is not ready yet.</p></div>'; return; }
+        render(root, U, L);
+      }
+      $$('[data-lesson-list]').forEach(lessonList);
+    },
+    selfTest: function () { var all = []; Object.keys(UNITS).forEach(function (k) { all = all.concat(selfTest(UNITS[k])); }); return all; },
+    _parse: parseNum, _fig: FIG
+  };
+})();
