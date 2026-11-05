@@ -713,6 +713,72 @@
     show(); readout();
   };
 
+  /* Pulse lab — count beats (or breaths) for 15 seconds, × 4 = per minute. Resting vs. after exercise.
+     cfg: {what:'heartbeats'|'breaths', intro} */
+  LABS.pulse = function (host, cfg, done, key) {
+    var what = cfg.what || 'heartbeats', data = store.get(key + ':pulse', { rest: null, active: null });
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p>' +
+      '<div class="seg" role="group" aria-label="When"><button type="button" data-w="rest" aria-pressed="true">Resting</button><button type="button" data-w="active" aria-pressed="false">After 1 minute of jumping jacks</button></div>' +
+      '<div class="row" style="margin-top:12px"><div class="col" style="flex:0 1 260px"><div class="clock" style="font:700 56px var(--mono);color:var(--navy);text-align:center;border:2px solid var(--line-2);border-radius:12px;background:#fff;padding:10px">0:15</div>' +
+      '<div class="btnrow" style="justify-content:center"><button class="btn gold" type="button" data-a="go">Start 15 seconds</button></div></div>' +
+      '<div class="col"><label style="font-weight:600;color:var(--navy)">How many ' + what + ' did you count in 15 seconds?</label><div class="numrow" style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap"><input class="num" inputmode="numeric" style="font:600 22px var(--mono);width:6em;padding:8px 10px;border:2px solid var(--line-2);border-radius:10px" aria-label="count in 15 seconds"><button class="btn" type="button" data-a="save">Record</button></div>' +
+      '<div class="status" aria-live="polite"></div></div></div><div class="res"></div></div>';
+    var when = 'rest', clock = $('.clock', host), st = $('.status', host), tm = null;
+    $$('[data-w]', host).forEach(function (b) { b.onclick = function () { when = b.dataset.w; $$('[data-w]', host).forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); st.textContent = ''; }; });
+    $('[data-a=go]', host).onclick = function () {
+      clearInterval(tm); var left = 15; clock.textContent = '0:15'; st.textContent = 'Count! ' + (what === 'heartbeats' ? 'Two fingers on your wrist or neck.' : 'Count each time you breathe in.');
+      tm = setInterval(function () { left--; clock.textContent = '0:' + String(left).padStart(2, '0'); if (left <= 0) { clearInterval(tm); clock.textContent = 'Stop!'; st.textContent = 'Type how many you counted.'; } }, 1000);
+    };
+    function results() {
+      var r = $('.res', host), rows = [['Resting', data.rest], ['After exercise', data.active]];
+      r.innerHTML = tableHTML({ head: ['When', 'In 15 seconds', 'Per minute (× 4)'], leftCol: true, rows: rows.map(function (x) { return [x[0], x[1] == null ? '' : x[1], x[1] == null ? '' : '<b>' + x[1] * 4 + '</b>']; }) });
+      if (data.rest != null && data.active != null) {
+        r.innerHTML += figHTML({ bar: { title: (what === 'heartbeats' ? 'Heart rate' : 'Breathing rate') + ' (per minute)', cats: ['Resting', 'After exercise'], vals: [data.rest * 4, data.active * 4], step: 20, yLabel: what === 'heartbeats' ? 'Beats per minute' : 'Breaths per minute' } });
+        var up = data.active > data.rest;
+        r.innerHTML += '<div class="nb nb-tip">' + (up ? 'Your ' + (what === 'heartbeats' ? 'heart rate' : 'breathing rate') + ' went <b>up</b> by ' + ((data.active - data.rest) * 4) + ' per minute. Working muscles need more oxygen, so the heart and lungs speed up.' : 'Try the exercise again for a full minute, then count right away.') + '</div>';
+        if (done) done();
+      }
+    }
+    $('[data-a=save]', host).onclick = function () {
+      var v = parseInt($('input', host).value, 10);
+      if (!(v > 0 && v < 100)) { st.textContent = 'Type the number you counted in 15 seconds (like 22).'; return; }
+      data[when] = v; store.set(key + ':pulse', data); st.innerHTML = v + ' in 15 seconds → ' + v + ' × 4 = <b>' + v * 4 + ' per minute</b>.'; $('input', host).value = ''; results();
+    };
+    results();
+  };
+
+  /* Reaction lab — how fast does a message travel from your eyes to your brain to your hand? */
+  LABS.reaction = function (host, cfg, done, key) {
+    var times = store.get(key + ':react', []), state = 'idle', t0 = 0, timer = null;
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p>' +
+      '<button type="button" class="pad-r" style="width:100%;min-height:170px;border-radius:14px;border:0;font:700 24px var(--sans);color:#fff;background:#1E2D4F;cursor:pointer">Tap here to start</button>' +
+      '<div class="status" aria-live="polite"></div><div class="res"></div><div class="btnrow"><button class="btn small ghost" type="button" data-a="clear">Clear my trials</button></div></div>';
+    var pad = $('.pad-r', host), st = $('.status', host);
+    function show() {
+      var r = $('.res', host);
+      if (!times.length) { r.innerHTML = ''; return; }
+      var avg = Math.round(times.reduce(function (a, b) { return a + b; }, 0) / times.length);
+      r.innerHTML = tableHTML({ head: ['Trial'].concat(times.map(function (_, i) { return i + 1; })).concat(['Average']), rows: [['Time (ms)'].concat(times).concat(['<b>' + avg + '</b>'])] }) +
+        '<p style="font-size:14.5px;color:var(--muted)">1,000 milliseconds (ms) = 1 second. Your message traveled: <b>eyes → nerves → brain → spinal cord → nerves → hand muscles</b> in about ' + avg + ' ms!</p>';
+      if (times.length >= 5 && done) done();
+    }
+    pad.onclick = function () {
+      if (state === 'idle' || state === 'done') {
+        if (times.length >= 5) { st.textContent = 'You finished 5 trials. Clear to try again.'; return; }
+        state = 'wait'; pad.style.background = '#B42318'; pad.textContent = 'Wait for GREEN…';
+        timer = setTimeout(function () { state = 'go'; pad.style.background = '#15803D'; pad.textContent = 'TAP!'; t0 = performance.now(); }, 1200 + Math.random() * 2500);
+      } else if (state === 'wait') {
+        clearTimeout(timer); state = 'idle'; pad.style.background = '#1E2D4F'; pad.textContent = 'Too soon! Tap to try again.';
+      } else if (state === 'go') {
+        var ms = Math.round(performance.now() - t0); times.push(ms); store.set(key + ':react', times);
+        state = 'done'; pad.style.background = '#1E2D4F'; pad.textContent = ms + ' ms — tap for the next trial';
+        st.textContent = 'Trial ' + times.length + ' of 5.'; show();
+      }
+    };
+    $('[data-a=clear]', host).onclick = function () { times = []; store.set(key + ':react', times); state = 'idle'; pad.textContent = 'Tap here to start'; st.textContent = ''; show(); };
+    show();
+  };
+
   /* Embed lab — links to a bigger lab page on this site. cfg: {href, title, text} */
   LABS.link = function (host, cfg) {
     host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><a class="btn gold" style="display:inline-block;text-decoration:none" href="' + cfg.href + '">' + (cfg.btn || 'Open the lab') + ' →</a></div>';
