@@ -197,6 +197,21 @@
     s += '<text x="16" y="' + (6 + S / 2) + '" text-anchor="middle" font-size="14" font-family="Inter,sans-serif" fill="#1B2333">' + esc(o.hLabel || '1') + '</text>';
     return { svg: '<svg viewBox="0 0 ' + (S + 40) + ' ' + (S + 34) + '" width="' + (S + 40) + '" role="img" aria-label="' + esc(o.label || 'Area model') + '">' + s + '</svg>' };
   };
+  /* Coordinate plane (first quadrant). o: {max, points:[[x,y,label]], connect:true, line:true} */
+  FIG.coord = function (o, live) {
+    var N = o.max || 10, S = 26, L = 30, T = 10, W = L + N * S + 16, H = T + N * S + 34, s = '';
+    for (var i = 0; i <= N; i++) {
+      s += '<line x1="' + (L + i * S) + '" y1="' + T + '" x2="' + (L + i * S) + '" y2="' + (T + N * S) + '" stroke="' + (i ? '#E3E5EA' : '#1B2333') + '" stroke-width="' + (i ? 1 : 2) + '"/>';
+      s += '<line x1="' + L + '" y1="' + (T + (N - i) * S) + '" x2="' + (L + N * S) + '" y2="' + (T + (N - i) * S) + '" stroke="' + (i ? '#E3E5EA' : '#1B2333') + '" stroke-width="' + (i ? 1 : 2) + '"/>';
+      s += axisText(L + i * S, T + N * S + 18, String(i), 'middle', 11) + (i ? axisText(L - 8, T + (N - i) * S + 4, String(i), 'end', 11) : '');
+    }
+    var P = function (p) { return [L + p[0] * S, T + (N - p[1]) * S]; };
+    var pts = (o.points || []);
+    if ((o.connect || o.line) && pts.length > 1) s += '<polyline points="' + pts.concat(o.connect ? [pts[0]] : []).map(function (p) { return P(p).join(','); }).join(' ') + '" fill="' + (o.connect ? 'rgba(255,193,7,.25)' : 'none') + '" stroke="#1E2D4F" stroke-width="2.5"/>';
+    pts.forEach(function (p) { var q = P(p); s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="6" fill="#FFC107" stroke="#1E2D4F" stroke-width="2"/>' + (p[2] ? '<text x="' + (q[0] + 8) + '" y="' + (q[1] - 8) + '" font-size="13" font-weight="700" font-family="Inter,sans-serif" fill="#1E2D4F">' + esc(p[2]) + '</text>' : ''); });
+    if (live) s += '<rect class="hit" x="' + (L - S / 2) + '" y="' + (T - S / 2) + '" width="' + ((N + 1) * S) + '" height="' + ((N + 1) * S) + '" fill="transparent" style="cursor:crosshair"/>';
+    return { svg: '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" role="img" aria-label="' + esc(o.label || 'Coordinate grid with points ' + pts.map(function (p) { return '(' + p[0] + ', ' + p[1] + ')'; }).join(' ')) + '">' + s + '</svg>', geo: { L: L, T: T, S: S, N: N } };
+  };
   function tableHTML(t) {
     return '<div class="tw"><table class="dt">' + (t.caption ? '<caption style="caption-side:top;text-align:left;font-weight:600;color:#1E2D4F;padding:4px 0">' + t.caption + '</caption>' : '') +
       '<tr>' + t.head.map(function (h, i) { return '<th' + (i === 0 && t.leftCol ? ' class="l"' : '') + '>' + h + '</th>'; }).join('') + '</tr>' +
@@ -205,7 +220,7 @@
   // fig spec: {bar:{…}} | {lineplot:{…}} | {linegraph:{…}} | {table:{…}} | {svg:"…"}  (+ caption)
   function figHTML(f) {
     if (!f) return '';
-    var inner = f.bar ? FIG.bar(f.bar).svg : f.lineplot ? FIG.lineplot(f.lineplot).svg : f.linegraph ? FIG.linegraph(f.linegraph).svg : f.iso ? FIG.iso(f.iso).svg : f.strip ? FIG.strip(f.strip).svg : f.area ? FIG.area(f.area).svg : f.table ? tableHTML(f.table) : (f.svg || f.html || '');
+    var inner = f.bar ? FIG.bar(f.bar).svg : f.lineplot ? FIG.lineplot(f.lineplot).svg : f.linegraph ? FIG.linegraph(f.linegraph).svg : f.iso ? FIG.iso(f.iso).svg : f.strip ? FIG.strip(f.strip).svg : f.area ? FIG.area(f.area).svg : f.coord ? FIG.coord(f.coord).svg : f.table ? tableHTML(f.table) : (f.svg || f.html || '');
     return '<figure class="fig" style="margin:10px 0">' + inner + (f.caption ? '<figcaption>' + f.caption + '</figcaption>' : '') + '</figure>';
   }
 
@@ -1012,6 +1027,33 @@
     $('[data-a=clear]', host).onclick = function () { on = {}; draw(); };
     $('[data-a=next]', host).onclick = function () { pi = (pi + 1) % cfg.problems.length; load(); };
     load();
+  };
+
+  /* Coordinate lab — plot points in order (NC.5.G.1, NC.5.OA.3). cfg: {targets:[[x,y,label]], connect, line, max, after:[questions]} */
+  LABS.coord = function (host, cfg, done, key) {
+    var plotted = [];
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="tgt" style="font-weight:600;color:var(--navy)"></div><div class="fig pic"></div><div class="status" aria-live="polite"></div><div class="btnrow"><button class="btn small ghost" type="button" data-a="undo">Undo</button><button class="btn small ghost" type="button" data-a="clear">Start over</button></div><div class="after"></div></div>';
+    var pic = $('.pic', host), st = $('.status', host);
+    function draw() {
+      var all = cfg.targets.length === plotted.length;
+      var f = FIG.coord({ max: cfg.max, points: plotted, connect: all && cfg.connect, line: all && cfg.line }, !all);
+      pic.innerHTML = f.svg;
+      var t = cfg.targets[plotted.length];
+      $('.tgt', host).innerHTML = t ? 'Plot point ' + (t[2] ? '<b>' + esc(t[2]) + '</b> ' : '') + 'at <b style="font-family:var(--mono)">(' + t[0] + ', ' + t[1] + ')</b>. Tap where it goes.' : 'All points plotted!';
+      var hit = $('.hit', pic);
+      if (hit) hit.addEventListener('click', function (ev) {
+        var svg = $('svg', pic), pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+        var p = pt.matrixTransform(svg.getScreenCTM().inverse()), g = f.geo;
+        var x = Math.round((p.x - g.L) / g.S), y = Math.round(g.N - (p.y - g.T) / g.S);
+        var want = cfg.targets[plotted.length];
+        if (x === want[0] && y === want[1]) { plotted.push(want); st.innerHTML = '<span style="color:var(--ok)">Yes! (' + x + ', ' + y + ').</span>'; draw(); if (plotted.length === cfg.targets.length) finish(); }
+        else st.innerHTML = 'You tapped <b>(' + x + ', ' + y + ')</b>. ' + (x !== want[0] ? 'Go <b>across</b> to ' + want[0] + ' first (x). ' : '') + (y !== want[1] ? 'Then go <b>up</b> to ' + want[1] + ' (y).' : '');
+      });
+    }
+    function finish() { st.innerHTML = '<b style="color:var(--ok)">All points plotted!</b> ' + (cfg.success || ''); var a = $('.after', host); if (cfg.after && !a.childElementCount) practiceSet(a, cfg.after, key + ':coord', done); else if (done) done(); }
+    $('[data-a=undo]', host).onclick = function () { plotted.pop(); st.textContent = ''; draw(); };
+    $('[data-a=clear]', host).onclick = function () { plotted = []; st.textContent = ''; $('.after', host).innerHTML = ''; draw(); };
+    draw();
   };
 
   /* Embed lab — links to a bigger lab page on this site. cfg: {href, title, text} */
