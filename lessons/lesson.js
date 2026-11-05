@@ -905,6 +905,46 @@
     load();
   };
 
+  /* Recipe for Traits — flip a coin for each parent's gene; build a puppy (LS.5.3.2).
+     Each parent has one "show" gene (capital) and one "hidden" gene for every trait. */
+  LABS.recipe = function (host, cfg, done, key) {
+    var TRAITS = [
+      { name: 'Fur color', A: 'brown', a: 'cream' }, { name: 'Ears', A: 'floppy', a: 'pointy' },
+      { name: 'Tail', A: 'long', a: 'short' }, { name: 'Spots', A: 'spots', a: 'no spots' }, { name: 'Nose', A: 'black', a: 'pink' }
+    ];
+    var pups = store.get(key + ':pups', []);
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="row"><div class="col"><div class="tw tbl"></div><div class="btnrow"><button class="btn gold" type="button" data-a="flip">Flip the coins</button><button class="btn small ghost" type="button" data-a="clear">Start over</button></div></div><div class="col" style="flex:0 1 260px"><div class="pup fig"></div></div></div><h3>Our litter (<span class="n">0</span> puppies)</h3><div class="litter" style="display:flex;flex-wrap:wrap;gap:8px"></div><div class="status" aria-live="polite"></div></div>';
+    function pupSVG(t, size) {
+      var fur = t[0] === 'brown' ? '#9A6233' : '#EBD9B4', dark = '#3B2A1E';
+      var ears = t[1] === 'floppy' ? '<ellipse cx="62" cy="58" rx="12" ry="24" fill="' + dark + '" opacity=".75" transform="rotate(20 62 58)"/><ellipse cx="118" cy="58" rx="12" ry="24" fill="' + dark + '" opacity=".75" transform="rotate(-20 118 58)"/>' : '<path d="M58 50 L66 18 L80 44 Z M122 50 L114 18 L100 44 Z" fill="' + fur + '" stroke="' + dark + '" stroke-width="2"/>';
+      var tail = t[2] === 'long' ? '<path d="M150 120 Q185 95 178 70" stroke="' + fur + '" stroke-width="10" fill="none" stroke-linecap="round"/>' : '<path d="M150 120 Q160 112 162 104" stroke="' + fur + '" stroke-width="10" fill="none" stroke-linecap="round"/>';
+      var spots = t[3] === 'spots' ? '<circle cx="120" cy="125" r="9" fill="' + dark + '" opacity=".6"/><circle cx="95" cy="140" r="7" fill="' + dark + '" opacity=".6"/><circle cx="76" cy="62" r="6" fill="' + dark + '" opacity=".6"/>' : '';
+      var nose = t[4] === 'black' ? '#1B1B1B' : '#E89AA6';
+      return '<svg viewBox="0 0 200 175" width="' + size + '" role="img" aria-label="Puppy with ' + t.join(', ') + '">' + tail +
+        '<ellipse cx="110" cy="128" rx="48" ry="30" fill="' + fur + '" stroke="' + dark + '" stroke-width="2"/><rect x="74" y="140" width="12" height="28" rx="5" fill="' + fur + '" stroke="' + dark + '" stroke-width="2"/><rect x="128" y="140" width="12" height="28" rx="5" fill="' + fur + '" stroke="' + dark + '" stroke-width="2"/>' +
+        '<circle cx="90" cy="70" r="34" fill="' + fur + '" stroke="' + dark + '" stroke-width="2"/>' + ears + spots + '<circle cx="78" cy="64" r="4" fill="' + dark + '"/><circle cx="102" cy="64" r="4" fill="' + dark + '"/><ellipse cx="90" cy="82" rx="7" ry="5" fill="' + nose + '"/></svg>';
+    }
+    function flip() { return Math.random() < 0.5; }
+    function render(last) {
+      var tb = $('.tbl', host);
+      tb.innerHTML = '<table class="dt"><tr><th class="l">Trait</th><th>Mom’s gene</th><th>Dad’s gene</th><th class="l">Puppy shows</th></tr>' + TRAITS.map(function (tr, i) {
+        var g = last ? last.g[i] : null;
+        return '<tr><td class="l">' + tr.name + '</td><td>' + (g ? (g[0] ? 'A (' + tr.A + ')' : 'a (' + tr.a + ')') : '?') + '</td><td>' + (g ? (g[1] ? 'A (' + tr.A + ')' : 'a (' + tr.a + ')') : '?') + '</td><td class="l"><b>' + (last ? last.t[i] : '') + '</b></td></tr>';
+      }).join('') + '</table><p style="font-size:13.5px;color:var(--muted)">Both parents are <b>Aa</b> for every trait: they show the capital-A trait but carry a hidden “a”. A puppy shows the “a” trait only if it gets <b>a from both</b> parents.</p>';
+      $('.pup', host).innerHTML = last ? pupSVG(last.t, 240) : '';
+      $('.litter', host).innerHTML = pups.map(function (p, i) { return '<div style="text-align:center;font-size:12px">' + pupSVG(p.t, 90) + '<br>Puppy ' + (i + 1) + '</div>'; }).join('');
+      $('.n', host).textContent = pups.length;
+      if (pups.length >= 4) { $('.status', host).innerHTML = '<b>Look at your litter.</b> Same parents, but the puppies look different! Each puppy gets a different mix of genes from mom and dad. That is called <b>variation</b>.'; if (done) done(); }
+    }
+    $('[data-a=flip]', host).onclick = function () {
+      var g = TRAITS.map(function () { return [flip(), flip()]; });
+      var t = TRAITS.map(function (tr, i) { return g[i][0] || g[i][1] ? tr.A : tr.a; });
+      var p = { g: g, t: t }; pups.push(p); if (pups.length > 8) pups.shift(); store.set(key + ':pups', pups); render(p);
+    };
+    $('[data-a=clear]', host).onclick = function () { pups = []; store.set(key + ':pups', pups); $('.status', host).textContent = ''; render(null); };
+    render(pups[pups.length - 1] || null);
+  };
+
   /* Embed lab — links to a bigger lab page on this site. cfg: {href, title, text} */
   LABS.link = function (host, cfg) {
     host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><a class="btn gold" style="display:inline-block;text-decoration:none" href="' + cfg.href + '">' + (cfg.btn || 'Open the lab') + ' →</a></div>';
