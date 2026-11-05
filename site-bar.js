@@ -12,6 +12,7 @@
   var LINKS = [
     { label: "Math",          href: "math/index.html",    section: "math/" },
     { label: "Science",       href: "science/index.html", section: "science/" },
+    { label: "Fluency Lab",   href: "fluency-lab/index.html", section: "fluency-lab/" },
     { label: "Learning Lab",  href: "learning-lab/index.html", section: "learning-lab/" },
     { label: "Arcade",        href: "arcade/index.html",  section: "arcade/" },
     { label: "Science Lab",   href: "lab/index.html",     section: "lab/" },

@@ -22,6 +22,7 @@ Built from the look of Mr. Allen's 8th grade site. Pushing to `main` publishes i
 |---|---|
 | `index.html` | Home |
 | `math/`, `science/` | Year at a glance + one page per unit (standards, targets, vocabulary, links) |
+| `fluency-lab/` | Fluency Lab: 10 modules, leveled Practice + Skill Check (`fl.js` holds every generator, self-tests on load) |
 | `learning-lab/` | Fluency practice (`ll.js` holds every skill generator) |
 | `arcade/` | Math games (`arcade.js` shared helper; answer peek only with `?test=1`) |
 | `lab/` | Virtual science lab activities (`lab.js`, `lab.css`) |

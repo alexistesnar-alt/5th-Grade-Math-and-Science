@@ -18,6 +18,7 @@ PAGES
   math/unit1.html …        One page per math unit: targets, standards, vocabulary, notes/homework links, practice
   science/index.html       Science year at a glance (units, pacing, NC science standards)
   science/unit1.html …     One page per science unit: phenomenon, standards, words to know, notebook, labs
+  fluency-lab/             Fluency Lab: 10 modules, each with leveled Practice and a Skill Check
   learning-lab/            Fluency practice (facts, multi-digit, decimals, fractions, order of operations, volume)
   arcade/                  Math games
   lab/                     Virtual science lab activities
