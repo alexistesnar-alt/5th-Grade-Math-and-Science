@@ -127,6 +127,50 @@
     s += '</svg>';
     return { svg: s, geo: { L: L, T: T, ph: ph, pw: pw, cw: cw, max: max, step: step } };
   };
+  /* 3D prisms (isometric). spec: {boxes:[{l,w,h,x,y,z,color,labels:[l,w,h]}], cubes:true|false, layers:n (show only n layers), size}
+     cubes:true draws every unit cube (for counting); false draws solid boxes with edge labels. */
+  var COS = Math.cos(Math.PI / 6), SIN = 0.5;
+  function shade(hex, f) {
+    var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    var m = function (v) { return Math.max(0, Math.min(255, Math.round(f > 1 ? v + (255 - v) * (f - 1) : v * f))); };
+    return '#' + [m(r), m(g), m(b)].map(function (v) { return v.toString(16).padStart(2, '0'); }).join('');
+  }
+  FIG.iso = function (o) {
+    var S = o.size || 26, pts = [], parts = [];
+    var P = function (x, y, z) { return [(x - y) * COS * S, (x + y) * SIN * S - z * S]; };
+    var poly = function (arr, fill) { return '<polygon points="' + arr.map(function (p) { var q = P(p[0], p[1], p[2]); pts.push(q); return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ') + '" fill="' + fill + '" stroke="#1E2D4F" stroke-width="1.3" stroke-linejoin="round"/>'; };
+    var faces = function (x, y, z, l, w, h, c) {
+      return poly([[x, y, z + h], [x + l, y, z + h], [x + l, y + w, z + h], [x, y + w, z + h]], shade(c, 1.25)) +
+        poly([[x + l, y, z], [x + l, y + w, z], [x + l, y + w, z + h], [x + l, y, z + h]], shade(c, 0.8)) +
+        poly([[x, y + w, z], [x + l, y + w, z], [x + l, y + w, z + h], [x, y + w, z + h]], c);
+    };
+    var cubes = [];
+    o.boxes.forEach(function (b, bi) {
+      var bx = b.x || 0, by = b.y || 0, bz = b.z || 0, c = b.color || '#F2A93B', hh = o.layers != null ? Math.min(o.layers, b.h) : b.h;
+      if (o.cubes) { for (var z = 0; z < hh; z++) for (var y = 0; y < b.w; y++) for (var x = 0; x < b.l; x++) cubes.push([bx + x, by + y, bz + z, c]); }
+      else parts.push({ k: bx + by + bz, s: faces(bx, by, bz, b.l, b.w, b.h, c), b: b, bx: bx, by: by, bz: bz });
+      // ghost outline of the full box when building layer by layer
+      if (o.cubes && o.layers != null && o.layers < b.h) parts.push({ k: 1e9, s: '<g fill="none" stroke="#9AA3B5" stroke-dasharray="4 4">' + [[[bx, by + b.w, bz + b.h], [bx + b.l, by + b.w, bz + b.h], [bx + b.l, by, bz + b.h]], [[bx + b.l, by + b.w, bz], [bx + b.l, by + b.w, bz + b.h]], [[bx, by + b.w, bz], [bx, by + b.w, bz + b.h]], [[bx + b.l, by, bz], [bx + b.l, by, bz + b.h]]].map(function (line) { return '<polyline points="' + line.map(function (p) { var q = P(p[0], p[1], p[2]); pts.push(q); return q.join(','); }).join(' ') + '"/>'; }).join('') + '</g>' });
+    });
+    cubes.sort(function (a, b) { return (a[0] + a[1] + a[2]) - (b[0] + b[1] + b[2]) || a[2] - b[2]; });
+    var body = cubes.map(function (q) { return faces(q[0], q[1], q[2], 1, 1, 1, q[3]); }).join('');
+    parts.sort(function (a, b) { return a.k - b.k; });
+    body += parts.map(function (p) { return p.s; }).join('');
+    // edge labels for solid boxes
+    var lab = '';
+    o.boxes.forEach(function (b) {
+      if (!b.labels) return;
+      var bx = b.x || 0, by = b.y || 0, bz = b.z || 0, L = b.labels;
+      var t = function (p, txt, dx, dy) { var q = P(p[0], p[1], p[2]); q = [q[0] + dx, q[1] + dy]; pts.push([q[0] - 30, q[1] - 12], [q[0] + 30, q[1] + 8]); return '<text x="' + q[0].toFixed(1) + '" y="' + q[1].toFixed(1) + '" font-size="14" font-weight="700" fill="#1E2D4F" text-anchor="middle" font-family="Inter,sans-serif" paint-order="stroke" stroke="#fff" stroke-width="4">' + txt + '</text>'; };
+      if (L[0]) lab += t([bx + b.l / 2, by + b.w, bz], L[0], -8, 20);
+      if (L[1]) lab += t([bx + b.l, by + b.w / 2, bz], L[1], 22, 16);
+      if (L[2]) lab += t([bx, by + b.w, bz + b.h / 2], L[2], -26, 4);
+    });
+    var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
+    var minx = Math.min.apply(null, xs) - 8, maxx = Math.max.apply(null, xs) + 8, miny = Math.min.apply(null, ys) - 8, maxy = Math.max.apply(null, ys) + 8;
+    var W = maxx - minx, H = maxy - miny;
+    return { svg: '<svg viewBox="' + minx.toFixed(1) + ' ' + miny.toFixed(1) + ' ' + W.toFixed(1) + ' ' + H.toFixed(1) + '" width="' + Math.round(W) + '" role="img" aria-label="' + esc(o.label || 'A prism made of cubes') + '">' + body + lab + '</svg>' };
+  };
   function tableHTML(t) {
     return '<div class="tw"><table class="dt">' + (t.caption ? '<caption style="caption-side:top;text-align:left;font-weight:600;color:#1E2D4F;padding:4px 0">' + t.caption + '</caption>' : '') +
       '<tr>' + t.head.map(function (h, i) { return '<th' + (i === 0 && t.leftCol ? ' class="l"' : '') + '>' + h + '</th>'; }).join('') + '</tr>' +
@@ -135,7 +179,7 @@
   // fig spec: {bar:{…}} | {lineplot:{…}} | {linegraph:{…}} | {table:{…}} | {svg:"…"}  (+ caption)
   function figHTML(f) {
     if (!f) return '';
-    var inner = f.bar ? FIG.bar(f.bar).svg : f.lineplot ? FIG.lineplot(f.lineplot).svg : f.linegraph ? FIG.linegraph(f.linegraph).svg : f.table ? tableHTML(f.table) : (f.svg || f.html || '');
+    var inner = f.bar ? FIG.bar(f.bar).svg : f.lineplot ? FIG.lineplot(f.lineplot).svg : f.linegraph ? FIG.linegraph(f.linegraph).svg : f.iso ? FIG.iso(f.iso).svg : f.table ? tableHTML(f.table) : (f.svg || f.html || '');
     return '<figure class="fig" style="margin:10px 0">' + inner + (f.caption ? '<figcaption>' + f.caption + '</figcaption>' : '') + '</figure>';
   }
 
@@ -595,6 +639,78 @@
     reset.onclick = function () { if (window.confirm('Erase all your penny data?')) { data = { plain: [], soapy: [] }; store.set(key + ':penny', data); $('.avg', host).innerHTML = ''; delete $('.avg', host).dataset.on; table(); newTrial(); } };
     $('.lab', host).appendChild(reset);
     table(); newTrial();
+  };
+
+  /* Prism lab — volume with unit cubes.
+     mode 'explore': change length, width, height; build it layer by layer.
+     mode 'hunt':    find every rectangular prism made of exactly cfg.V cubes.
+     mode 'composite': a figure made of two prisms; show the two parts. cfg.parts:[{l,w,h,x,y,z}] */
+  LABS.prism = function (host, cfg, done, key) {
+    var max = cfg.max || 6, l = cfg.l || 4, w = cfg.w || 3, h = cfg.h || 2;
+    function stepper(name, val, set) {
+      var e = el('<div class="pad" style="margin:4px 0"><span style="width:76px;font-weight:600">' + name + '</span><button class="btn small ghost" type="button" aria-label="less ' + name + '">' + M + '</button><b class="v" style="font:700 24px var(--mono);min-width:36px;text-align:center;color:var(--navy)">' + val + '</b><button class="btn small ghost" type="button" aria-label="more ' + name + '">+</button></div>');
+      var bs = $$('button', e), v = $('.v', e);
+      bs[0].onclick = function () { if (val > 1) { val--; v.textContent = val; set(val); } };
+      bs[1].onclick = function () { if (val < max) { val++; v.textContent = val; set(val); } };
+      return e;
+    }
+    if (cfg.mode === 'composite') {
+      var parts = cfg.parts, split = false;
+      host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="fig pic"></div><div class="btnrow"><button class="btn gold" type="button">Show the two prisms</button></div><div class="status" aria-live="polite"></div><div class="after"></div></div>';
+      var pic = $('.pic', host), st = $('.status', host), bt = $('.btn', host);
+      var draw = function () {
+        pic.innerHTML = FIG.iso({ boxes: parts.map(function (p, i) { return { l: p.l, w: p.w, h: p.h, x: p.x, y: p.y, z: p.z, color: split ? (i ? '#7BA7E0' : '#F2A93B') : '#F2A93B', labels: split && !cfg.cubes ? [p.l, p.w, p.h] : null }; }), cubes: !!cfg.cubes, size: cfg.size || 30, label: 'A figure made of two rectangular prisms' }).svg;
+      };
+      bt.onclick = function () {
+        split = !split; draw(); bt.textContent = split ? 'Put them back together' : 'Show the two prisms';
+        if (split) {
+          var v = parts.map(function (p) { return p.l * p.w * p.h; });
+          st.innerHTML = 'Orange prism: ' + parts[0].l + ' × ' + parts[0].w + ' × ' + parts[0].h + '. Blue prism: ' + parts[1].l + ' × ' + parts[1].w + ' × ' + parts[1].h + '.';
+          var a = $('.after', host);
+          if (!a.childElementCount) {
+            practiceSet(a, [
+              { q: 'What is the volume of the <b>orange</b> prism?', answer: v[0], unit: 'cubic units', hint: 'Multiply its length × width × height.', why: parts[0].l + ' × ' + parts[0].w + ' × ' + parts[0].h + ' = ' + v[0] + '.' },
+              { q: 'What is the volume of the <b>blue</b> prism?', answer: v[1], unit: 'cubic units', why: parts[1].l + ' × ' + parts[1].w + ' × ' + parts[1].h + ' = ' + v[1] + '.' },
+              { q: 'What is the volume of the whole figure?', answer: v[0] + v[1], unit: 'cubic units', hint: 'Add the two volumes.', why: v[0] + ' + ' + v[1] + ' = ' + (v[0] + v[1]) + ' cubic units.' }
+            ], key + ':comp', done);
+          }
+        } else st.textContent = '';
+      };
+      draw(); return;
+    }
+    if (cfg.mode === 'hunt') {
+      var V = cfg.V, all = [];
+      for (var a = 1; a <= V; a++) for (var b = a; b <= V; b++) if (V % (a * b) === 0 && V / (a * b) >= b) all.push([a, b, V / (a * b)].join('×'));
+      var found = store.get(key + ':hunt' + V, []); max = Math.max(max, V);
+      host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + ' There are <b>' + all.length + '</b> different prisms. (Turning a prism on its side does not make a new one.)</p>' +
+        '<div class="row"><div class="col" style="flex:0 1 280px"><div class="ctl0"></div><div class="read" style="margin:8px 0;font:600 18px var(--mono);color:var(--navy)"></div><button class="btn gold" type="button">Save this prism</button></div><div class="col"><div class="fig pic"></div></div></div>' +
+        '<h3>Prisms you found (<span class="nf">0</span> of ' + all.length + ')</h3><div class="ls-chips found"></div><div class="status" aria-live="polite"></div></div>';
+      var pic2 = $('.pic', host), read = $('.read', host), st2 = $('.status', host), c0 = $('.ctl0', host);
+      l = 1; w = 1; h = 1;
+      var upd = function () { var v = l * w * h; read.innerHTML = l + ' × ' + w + ' × ' + h + ' = ' + v + (v === V ? ' ✓' : ''); pic2.innerHTML = FIG.iso({ boxes: [{ l: l, w: w, h: h }], cubes: true, size: Math.max(12, 30 - Math.max(l, w, h)) }).svg; };
+      var list = function () { $('.found', host).innerHTML = found.map(function (f) { return '<span class="ls-chip">' + f.replace(/×/g, ' × ') + '</span>'; }).join(''); $('.nf', host).textContent = found.length; };
+      c0.append(stepper('Length', 1, function (v) { l = v; upd(); }), stepper('Width', 1, function (v) { w = v; upd(); }), stepper('Height', 1, function (v) { h = v; upd(); }));
+      $('.btn.gold', host).onclick = function () {
+        var v = l * w * h; if (v !== V) { st2.innerHTML = 'That prism has <b>' + v + '</b> cubes. You need exactly <b>' + V + '</b>.'; return; }
+        var k = [l, w, h].sort(function (x, y) { return x - y; }).join('×');
+        if (found.indexOf(k) >= 0) { st2.textContent = 'You already found that one (maybe turned a different way).'; return; }
+        found.push(k); store.set(key + ':hunt' + V, found); list();
+        st2.innerHTML = found.length === all.length ? '<b style="color:var(--ok)">You found all ' + all.length + ' prisms!</b> They all have the same volume: ' + V + ' cubic units.' : 'Nice! ' + (all.length - found.length) + ' to go.';
+        if (found.length === all.length && done) done();
+      };
+      upd(); list(); return;
+    }
+    // explore
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="row"><div class="col" style="flex:0 1 280px"><div class="ctl0"></div><div class="btnrow"><button class="btn gold" type="button">Build it layer by layer</button></div></div><div class="col"><div class="fig pic" style="min-height:200px"></div></div></div><div class="status" aria-live="polite" style="font-size:17px"></div><div class="after"></div></div>';
+    var pic3 = $('.pic', host), st3 = $('.status', host), busy = false;
+    var show = function (layers) { pic3.innerHTML = FIG.iso({ boxes: [{ l: l, w: w, h: h }], cubes: true, layers: layers, size: 26 }).svg; };
+    var readout = function () { st3.innerHTML = 'Base layer: ' + l + ' × ' + w + ' = <b>' + (l * w) + '</b> cubes. Layers: <b>' + h + '</b>. Volume = ' + (l * w) + ' × ' + h + ' = <b>' + (l * w * h) + ' cubic units</b>.'; };
+    $('.ctl0', host).append(stepper('Length', l, function (v) { l = v; show(); readout(); }), stepper('Width', w, function (v) { w = v; show(); readout(); }), stepper('Height', h, function (v) { h = v; show(); readout(); }));
+    $('.btn.gold', host).onclick = function () {
+      if (busy) return; busy = true; var k = 0;
+      (function step() { k++; show(k); st3.innerHTML = 'Layer ' + k + ': ' + (l * w) + ' cubes. Total so far: <b>' + (l * w * k) + '</b>.'; if (k < h) setTimeout(step, 700); else { setTimeout(function () { readout(); busy = false; var a = $('.after', host); if (cfg.after && !a.childElementCount) { a.appendChild(el('<h3>Try these</h3>')); practiceSet(a, cfg.after, key + ':after', done); } }, 700); } })();
+    };
+    show(); readout();
   };
 
   /* Embed lab — links to a bigger lab page on this site. cfg: {href, title, text} */
