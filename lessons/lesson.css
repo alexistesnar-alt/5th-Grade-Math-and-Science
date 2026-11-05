@@ -205,3 +205,7 @@ table.dt td.l,table.dt th.l{text-align:left}
   .ll-item .s{grid-column:2;text-align:left}
 }
 @media print{.ls-jump,.ls-pager,.btnrow,.lab{display:none}.ls-sec{break-inside:avoid}}
+/* stacked fractions inside lesson text: <span class="fx"><span>3</span><span>4</span></span> */
+.fx{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-size:.86em;font-family:var(--mono);font-weight:600}
+.fx>span:first-child{border-bottom:2px solid currentColor;padding:0 .15em .05em}
+.fx>span:last-child{padding:.05em .15em 0}

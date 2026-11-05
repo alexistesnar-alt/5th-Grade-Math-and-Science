@@ -11,13 +11,12 @@ import os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # (folder for the pages, data id = file name in lessons/data)
-UNITS = [
-    ("math/unit0", "math-u0"),
-    ("math/unit1", "math-u1"),
-    ("science/unit0", "sci-u0"),
-    ("science/unit1", "sci-u1"),
-]
-DATA_FILE = {"math-u0": "math-u0.js", "math-u1": "math-u1.js", "sci-u0": "science-u0.js", "sci-u1": "science-u1.js"}
+# Math units: folder math/unitX uses lessons/data/math-uX.js (id "math-uX").
+# Science units: folder science/unitX uses lessons/data/science-uX.js (id "sci-uX").
+MATH = ["0", "1", "1a", "2", "3", "4", "5", "6", "7", "7a", "8"]
+SCI = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
+UNITS = [(f"math/unit{u}", f"math-u{u}") for u in MATH] + [(f"science/unit{u}", f"sci-u{u}") for u in SCI]
+DATA_FILE = {**{f"math-u{u}": f"math-u{u}.js" for u in MATH}, **{f"sci-u{u}": f"science-u{u}.js" for u in SCI}}
 
 PAGE = """<!DOCTYPE html>
 <html lang="en">

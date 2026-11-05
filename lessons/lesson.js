@@ -171,6 +171,32 @@
     var W = maxx - minx, H = maxy - miny;
     return { svg: '<svg viewBox="' + minx.toFixed(1) + ' ' + miny.toFixed(1) + ' ' + W.toFixed(1) + ' ' + H.toFixed(1) + '" width="' + Math.round(W) + '" role="img" aria-label="' + esc(o.label || 'A prism made of cubes') + '">' + body + lab + '</svg>' };
   };
+  /* Fraction strip: {parts, shaded, wholes (number of strips), label, color} */
+  FIG.strip = function (o) {
+    var W = 320, H = 34, gap = 10, n = o.wholes || 1, shaded = o.shaded, s = '';
+    for (var k = 0; k < n; k++) {
+      var y = k * (H + gap);
+      for (var i = 0; i < o.parts; i++) {
+        var on = shaded > k * o.parts + i;
+        s += '<rect x="' + (2 + i * W / o.parts) + '" y="' + (y + 2) + '" width="' + (W / o.parts) + '" height="' + H + '" fill="' + (on ? (o.color || '#FFC107') : '#fff') + '" stroke="#1E2D4F" stroke-width="2"/>';
+      }
+    }
+    var TH = n * (H + gap);
+    return { svg: '<svg viewBox="0 0 ' + (W + 4) + ' ' + TH + '" width="' + (W + 4) + '" role="img" aria-label="' + esc(o.label || (shaded + ' of ' + o.parts + ' equal parts shaded')) + '">' + s + '</svg>' };
+  };
+  /* Area model for fraction × fraction: {a,b,c,d} → a/b of the width (yellow) and c/d of the height (blue); overlap green. {w,h} optional whole size */
+  FIG.area = function (o) {
+    var S = 240, cols = o.b, rows = o.d, s = '', cw = S / cols, rh = S / rows;
+    for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) {
+      var inA = c < (o.a || 0), inB = r >= rows - (o.c || 0);
+      var fill = inA && inB ? '#5BB381' : inA ? '#FFE08A' : inB ? '#A9C8F0' : '#fff';
+      s += '<rect x="' + (30 + c * cw) + '" y="' + (6 + r * rh) + '" width="' + cw + '" height="' + rh + '" fill="' + fill + '" stroke="#9AA3B5" stroke-width="1"/>';
+    }
+    s += '<rect x="30" y="6" width="' + S + '" height="' + S + '" fill="none" stroke="#1E2D4F" stroke-width="3"/>';
+    s += '<text x="' + (30 + S / 2) + '" y="' + (S + 26) + '" text-anchor="middle" font-size="14" font-family="Inter,sans-serif" fill="#1B2333">' + esc(o.wLabel || '1') + '</text>';
+    s += '<text x="16" y="' + (6 + S / 2) + '" text-anchor="middle" font-size="14" font-family="Inter,sans-serif" fill="#1B2333">' + esc(o.hLabel || '1') + '</text>';
+    return { svg: '<svg viewBox="0 0 ' + (S + 40) + ' ' + (S + 34) + '" width="' + (S + 40) + '" role="img" aria-label="' + esc(o.label || 'Area model') + '">' + s + '</svg>' };
+  };
   function tableHTML(t) {
     return '<div class="tw"><table class="dt">' + (t.caption ? '<caption style="caption-side:top;text-align:left;font-weight:600;color:#1E2D4F;padding:4px 0">' + t.caption + '</caption>' : '') +
       '<tr>' + t.head.map(function (h, i) { return '<th' + (i === 0 && t.leftCol ? ' class="l"' : '') + '>' + h + '</th>'; }).join('') + '</tr>' +
@@ -179,7 +205,7 @@
   // fig spec: {bar:{…}} | {lineplot:{…}} | {linegraph:{…}} | {table:{…}} | {svg:"…"}  (+ caption)
   function figHTML(f) {
     if (!f) return '';
-    var inner = f.bar ? FIG.bar(f.bar).svg : f.lineplot ? FIG.lineplot(f.lineplot).svg : f.linegraph ? FIG.linegraph(f.linegraph).svg : f.iso ? FIG.iso(f.iso).svg : f.table ? tableHTML(f.table) : (f.svg || f.html || '');
+    var inner = f.bar ? FIG.bar(f.bar).svg : f.lineplot ? FIG.lineplot(f.lineplot).svg : f.linegraph ? FIG.linegraph(f.linegraph).svg : f.iso ? FIG.iso(f.iso).svg : f.strip ? FIG.strip(f.strip).svg : f.area ? FIG.area(f.area).svg : f.table ? tableHTML(f.table) : (f.svg || f.html || '');
     return '<figure class="fig" style="margin:10px 0">' + inner + (f.caption ? '<figcaption>' + f.caption + '</figcaption>' : '') + '</figure>';
   }
 
@@ -777,6 +803,106 @@
     };
     $('[data-a=clear]', host).onclick = function () { times = []; store.set(key + ':react', times); state = 'idle'; pad.textContent = 'Tap here to start'; st.textContent = ''; show(); };
     show();
+  };
+
+  /* Sharing lab — share items equally among people (fractions as division, NC.5.NF.3).
+     cfg.problems: [[items, people, 'thing'], …] */
+  LABS.share = function (host, cfg, done, key) {
+    var pi = 0, cut = 1;
+    var COLORS = ['#F2A93B', '#7BA7E0', '#5BB381', '#E07B7B', '#B08BE0', '#E0C25B', '#5BC7C7', '#C78B5B'];
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="prob" style="font-weight:600;font-size:18px;color:var(--navy)"></div><div class="fig pic"></div>' +
+      '<div class="pad" style="margin-top:6px"><span style="font-weight:600">Cut each one into</span><button class="btn small ghost" type="button" data-d="-1" aria-label="fewer pieces">' + M + '</button><b class="cv" style="font:700 22px var(--mono);min-width:30px;text-align:center">1</b><button class="btn small ghost" type="button" data-d="1" aria-label="more pieces">+</button><span>pieces</span><button class="btn small gold" type="button" data-a="deal">Deal the pieces</button></div>' +
+      '<div class="status" aria-live="polite"></div><div class="after"></div><div class="btnrow"><button class="btn small ghost" type="button" data-a="next">Next problem →</button></div></div>';
+    var pic = $('.pic', host), st = $('.status', host);
+    function draw(dealt) {
+      var p = cfg.problems[pi], n = p[0], people = p[1], W = 300, H = 40, s = '';
+      for (var k = 0; k < n; k++) for (var i = 0; i < cut; i++) {
+        var idx = k * cut + i, who = idx % people;
+        s += '<rect x="' + (2 + i * W / cut) + '" y="' + (2 + k * (H + 8)) + '" width="' + (W / cut) + '" height="' + H + '" fill="' + (dealt ? COLORS[who % COLORS.length] : '#FFF3C4') + '" stroke="#1E2D4F" stroke-width="2"/>';
+        if (dealt && W / cut > 22) s += '<text x="' + (2 + (i + .5) * W / cut) + '" y="' + (2 + k * (H + 8) + 26) + '" text-anchor="middle" font-size="13" font-weight="700" font-family="Inter,sans-serif" fill="#1B2333">' + (who + 1) + '</text>';
+      }
+      pic.innerHTML = '<svg viewBox="0 0 304 ' + (n * (H + 8)) + '" width="304" role="img" aria-label="' + n + ' ' + p[2] + ' cut into ' + cut + ' pieces each">' + s + '</svg>';
+    }
+    function load() {
+      var p = cfg.problems[pi]; cut = 1; $('.cv', host).textContent = 1;
+      $('.prob', host).innerHTML = 'Problem ' + (pi + 1) + ' of ' + cfg.problems.length + ': Share <b>' + p[0] + ' ' + p[2] + '</b> equally among <b>' + p[1] + ' people</b>.';
+      st.textContent = 'Each bar is one whole. Choose how many pieces to cut each one into.'; $('.after', host).innerHTML = ''; draw(false);
+    }
+    $$('[data-d]', host).forEach(function (b) { b.onclick = function () { cut = Math.max(1, Math.min(12, cut + +b.dataset.d)); $('.cv', host).textContent = cut; draw(false); st.textContent = ''; }; });
+    $('[data-a=deal]', host).onclick = function () {
+      var p = cfg.problems[pi], total = p[0] * cut;
+      if (total % p[1]) { draw(false); st.innerHTML = 'There are ' + total + ' pieces. ' + total + ' pieces can’t be shared equally among ' + p[1] + ' people. Try a different number of pieces. <i>Hint: try cutting each into ' + p[1] + '.</i>'; return; }
+      draw(true);
+      var each = total / p[1];
+      st.innerHTML = 'Each person gets <b>' + each + ' pieces</b>, and each piece is <b>1/' + cut + '</b> of one whole.';
+      var a = $('.after', host);
+      if (!a.childElementCount) practiceSet(a, [{ q: 'How much does each person get? Write it as a fraction or mixed number.', answer: [p[0], p[1]].join('/'), hint: 'Each person gets ' + each + ' pieces of size 1/' + cut + '.', why: p[0] + ' ÷ ' + p[1] + ' = ' + p[0] + '/' + p[1] + '. Sharing ' + p[0] + ' among ' + p[1] + ' gives each person ' + p[0] + '/' + p[1] + '.' }], key + ':share' + pi, pi === cfg.problems.length - 1 ? done : null);
+    };
+    $('[data-a=next]', host).onclick = function () { pi = (pi + 1) % cfg.problems.length; load(); };
+    load();
+  };
+
+  /* Area lab — fraction × fraction with an area model (NC.5.NF.4). cfg.problems: [[a,b,c,d], …] */
+  LABS.area = function (host, cfg, done, key) {
+    var pi = 0, step = 0;
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="prob" style="font:600 22px var(--mono);color:var(--navy)"></div>' +
+      '<div class="row"><div class="col" style="flex:0 1 300px"><div class="fig pic"></div></div><div class="col"><div class="status" aria-live="polite" style="font-size:16px"></div><div class="btnrow"><button class="btn gold" type="button" data-a="step">Shade the first fraction</button><button class="btn small ghost" type="button" data-a="next">Next problem →</button></div><div class="after"></div></div></div></div>';
+    var pic = $('.pic', host), st = $('.status', host), bt = $('[data-a=step]', host);
+    function load() {
+      var p = cfg.problems[pi]; step = 0; bt.textContent = 'Shade ' + p[0] + '/' + p[1] + ' of the width'; bt.disabled = false;
+      $('.prob', host).innerHTML = p[0] + '/' + p[1] + ' × ' + p[2] + '/' + p[3] + ' = ?';
+      pic.innerHTML = FIG.area({ a: 0, b: p[1], c: 0, d: p[3] }).svg; st.innerHTML = 'The square is 1 whole. It is split into ' + p[1] + ' columns and ' + p[3] + ' rows.'; $('.after', host).innerHTML = '';
+    }
+    bt.onclick = function () {
+      var p = cfg.problems[pi]; step++;
+      if (step === 1) { pic.innerHTML = FIG.area({ a: p[0], b: p[1], c: 0, d: p[3] }).svg; st.innerHTML = 'Yellow shows <b>' + p[0] + '/' + p[1] + '</b> of the whole.'; bt.textContent = 'Now shade ' + p[2] + '/' + p[3] + ' of that'; }
+      else {
+        pic.innerHTML = FIG.area({ a: p[0], b: p[1], c: p[2], d: p[3] }).svg; bt.disabled = true;
+        st.innerHTML = 'Green is <b>' + p[2] + '/' + p[3] + ' of ' + p[0] + '/' + p[1] + '</b>. There are ' + (p[0] * p[2]) + ' green parts out of ' + (p[1] * p[3]) + ' parts in the whole.';
+        practiceSet($('.after', host), [{ q: 'What is ' + p[0] + '/' + p[1] + ' × ' + p[2] + '/' + p[3] + '?', answer: (p[0] * p[2]) + '/' + (p[1] * p[3]), hint: 'Count the green parts. Count all the parts in the whole square.', why: (p[0] * p[2]) + ' green parts out of ' + (p[1] * p[3]) + ': ' + p[0] + '/' + p[1] + ' × ' + p[2] + '/' + p[3] + ' = ' + (p[0] * p[2]) + '/' + (p[1] * p[3]) + '. Multiply the tops; multiply the bottoms.' }], key + ':area' + pi, pi === cfg.problems.length - 1 ? done : null);
+      }
+    };
+    $('[data-a=next]', host).onclick = function () { pi = (pi + 1) % cfg.problems.length; load(); };
+    load();
+  };
+
+  /* Parentheses puzzle — place one pair of parentheses to hit the target (NC.5.OA.2).
+     cfg.puzzles: [['3 + 4 × 5 − 2', target], …]  numbers and + − × ÷ separated by spaces */
+  LABS.parens = function (host, cfg, done, key) {
+    var pi = 0, sel = [];
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="tg" style="font-weight:600;margin-bottom:6px"></div><div class="ex" style="display:flex;flex-wrap:wrap;gap:6px;font:700 28px var(--mono);color:var(--navy)"></div>' +
+      '<div class="status" aria-live="polite"></div><div class="btnrow"><button class="btn small ghost" type="button" data-a="clear">Remove parentheses</button><button class="btn small ghost" type="button" data-a="next">Next puzzle →</button></div></div>';
+    var exEl = $('.ex', host), st = $('.status', host), solved = store.get(key + ':parens', {});
+    function ops(t) { return t === '×' || t === '÷' || t === '+' || t === M; }
+    function calc(list) { // list of numbers/ops with optional parens, order of operations
+      var a = list.slice(), i;
+      var lp = a.indexOf('('); if (lp >= 0) { var rp = a.indexOf(')'); a.splice(lp, rp - lp + 1, calc(a.slice(lp + 1, rp))); }
+      for (i = 1; i < a.length; i += 2) if (a[i] === '×' || a[i] === '÷') { a.splice(i - 1, 3, a[i] === '×' ? a[i - 1] * a[i + 1] : a[i - 1] / a[i + 1]); i -= 2; }
+      var v = a[0]; for (i = 1; i < a.length; i += 2) v = a[i] === '+' ? v + a[i + 1] : v - a[i + 1]; return v;
+    }
+    function toks() { return cfg.puzzles[pi][0].split(' ').map(function (t) { return ops(t) ? t : +t; }); }
+    function draw() {
+      var tk = toks(), out = [];
+      tk.forEach(function (t, i) {
+        if (sel.length === 2 && i === sel[0]) out.push('<span style="color:var(--gold-line)">(</span>');
+        out.push(typeof t === 'number' ? '<button type="button" class="nb-n" data-i="' + i + '" style="font:inherit;color:inherit;border:2px solid ' + (sel.indexOf(i) >= 0 ? 'var(--gold-line)' : 'var(--line-2)') + ';background:#fff;border-radius:8px;padding:2px 8px;cursor:pointer">' + t + '</button>' : '<span>' + t + '</span>');
+        if (sel.length === 2 && i === sel[1]) out.push('<span style="color:var(--gold-line)">)</span>');
+      });
+      exEl.innerHTML = out.join('');
+      $$('.nb-n', exEl).forEach(function (b) { b.onclick = function () { var i = +b.dataset.i; if (sel.length >= 2) sel = []; sel.push(i); sel.sort(function (x, y) { return x - y; }); if (sel.length === 2 && sel[0] === sel[1]) sel = [i]; draw(); check(); }; });
+    }
+    function check() {
+      var tk = toks(), target = cfg.puzzles[pi][1];
+      if (sel.length < 2) { st.textContent = sel.length ? 'Now tap the number where the parentheses end.' : ''; return; }
+      var list = tk.slice(); list.splice(sel[1] + 1, 0, ')'); list.splice(sel[0], 0, '(');
+      var v = calc(list);
+      if (v === target) { st.innerHTML = '<b style="color:var(--ok)">Yes! It equals ' + target + '.</b>'; solved[pi] = 1; store.set(key + ':parens', solved); if (Object.keys(solved).length === cfg.puzzles.length && done) done(); }
+      else st.innerHTML = 'With those parentheses it equals <b>' + (v % 1 ? v.toFixed(2) : v) + '</b>, not ' + target + '. Try another spot.';
+    }
+    function load() { sel = []; $('.tg', host).innerHTML = 'Puzzle ' + (pi + 1) + ' of ' + cfg.puzzles.length + ': Tap the first and last number to put parentheses around. Make it equal <b style="font:700 20px var(--mono)">' + cfg.puzzles[pi][1] + '</b>. Without parentheses it equals ' + calc(toks()) + '.'; st.textContent = ''; draw(); }
+    $('[data-a=clear]', host).onclick = function () { sel = []; draw(); st.textContent = ''; };
+    $('[data-a=next]', host).onclick = function () { pi = (pi + 1) % cfg.puzzles.length; load(); };
+    load();
   };
 
   /* Embed lab — links to a bigger lab page on this site. cfg: {href, title, text} */
