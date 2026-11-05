@@ -945,6 +945,26 @@
     render(pups[pups.length - 1] || null);
   };
 
+  /* Fraction division lab (NC.5.NF.7). cfg.problems: [['w', a, b] = a ÷ 1/b, ['u', b, n] = 1/b ÷ n] */
+  LABS.fdiv = function (host, cfg, done, key) {
+    var pi = 0;
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="prob" style="font:600 24px var(--mono);color:var(--navy)"></div><div class="fig pic"></div><div class="status" aria-live="polite"></div><div class="btnrow"><button class="btn gold" type="button" data-a="show">Show me</button><button class="btn small ghost" type="button" data-a="next">Next problem →</button></div><div class="after"></div></div>';
+    var pic = $('.pic', host), st = $('.status', host);
+    function load() {
+      var p = cfg.problems[pi]; $('.after', host).innerHTML = '';
+      if (p[0] === 'w') { $('.prob', host).innerHTML = p[1] + ' ÷ 1/' + p[2] + ' = ?'; st.innerHTML = 'How many <b>1/' + p[2] + 's</b> fit in ' + p[1] + ' whole' + (p[1] > 1 ? 's' : '') + '?'; pic.innerHTML = FIG.strip({ parts: 1, shaded: 0, wholes: p[1] }).svg; }
+      else { $('.prob', host).innerHTML = '1/' + p[1] + ' ÷ ' + p[2] + ' = ?'; st.innerHTML = 'Share <b>1/' + p[1] + '</b> of the whole equally into <b>' + p[2] + '</b> parts. How big is each part?'; pic.innerHTML = FIG.area({ a: 1, b: p[1], c: 0, d: 1, label: '1/' + p[1] + ' of a square shaded' }).svg; }
+    }
+    $('[data-a=show]', host).onclick = function () {
+      var p = cfg.problems[pi], q;
+      if (p[0] === 'w') { pic.innerHTML = FIG.strip({ parts: p[2], shaded: p[1] * p[2], wholes: p[1] }).svg; st.innerHTML = 'Each whole has <b>' + p[2] + '</b> pieces of size 1/' + p[2] + '. ' + p[1] + ' wholes have ' + p[1] + ' × ' + p[2] + ' pieces.'; q = { q: p[1] + ' ÷ 1/' + p[2] + ' = ?', answer: p[1] * p[2], why: p[1] + ' × ' + p[2] + ' = ' + (p[1] * p[2]) + '. There are ' + (p[1] * p[2]) + ' pieces of 1/' + p[2] + ' in ' + p[1] + '.' }; }
+      else { pic.innerHTML = FIG.area({ a: 1, b: p[1], c: 1, d: p[2], label: '1/' + p[1] + ' split into ' + p[2] + ' parts' }).svg; st.innerHTML = 'The 1/' + p[1] + ' column is split into ' + p[2] + ' parts. One part (green) is 1 of ' + (p[1] * p[2]) + ' equal parts in the whole.'; q = { q: '1/' + p[1] + ' ÷ ' + p[2] + ' = ?', answer: '1/' + (p[1] * p[2]), why: '1/' + p[1] + ' ÷ ' + p[2] + ' = 1/' + (p[1] * p[2]) + '. Each part is smaller than 1/' + p[1] + '.' }; }
+      var a = $('.after', host); if (!a.childElementCount) practiceSet(a, [q], key + ':fdiv' + pi, pi === cfg.problems.length - 1 ? done : null);
+    };
+    $('[data-a=next]', host).onclick = function () { pi = (pi + 1) % cfg.problems.length; load(); };
+    load();
+  };
+
   /* Embed lab — links to a bigger lab page on this site. cfg: {href, title, text} */
   LABS.link = function (host, cfg) {
     host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><a class="btn gold" style="display:inline-block;text-decoration:none" href="' + cfg.href + '">' + (cfg.btn || 'Open the lab') + ' →</a></div>';
