@@ -845,21 +845,22 @@
   /* Area lab — fraction × fraction with an area model (NC.5.NF.4). cfg.problems: [[a,b,c,d], …] */
   LABS.area = function (host, cfg, done, key) {
     var pi = 0, step = 0;
+    function lbl(n, d) { return cfg.decimal ? String(n / d) : n + '/' + d; }
     host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="prob" style="font:600 22px var(--mono);color:var(--navy)"></div>' +
       '<div class="row"><div class="col" style="flex:0 1 300px"><div class="fig pic"></div></div><div class="col"><div class="status" aria-live="polite" style="font-size:16px"></div><div class="btnrow"><button class="btn gold" type="button" data-a="step">Shade the first fraction</button><button class="btn small ghost" type="button" data-a="next">Next problem →</button></div><div class="after"></div></div></div></div>';
     var pic = $('.pic', host), st = $('.status', host), bt = $('[data-a=step]', host);
     function load() {
-      var p = cfg.problems[pi]; step = 0; bt.textContent = 'Shade ' + p[0] + '/' + p[1] + ' of the width'; bt.disabled = false;
-      $('.prob', host).innerHTML = p[0] + '/' + p[1] + ' × ' + p[2] + '/' + p[3] + ' = ?';
+      var p = cfg.problems[pi]; step = 0; bt.textContent = 'Shade ' + lbl(p[0], p[1]) + ' of the width'; bt.disabled = false;
+      $('.prob', host).innerHTML = lbl(p[0], p[1]) + ' × ' + lbl(p[2], p[3]) + ' = ?';
       pic.innerHTML = FIG.area({ a: 0, b: p[1], c: 0, d: p[3] }).svg; st.innerHTML = 'The square is 1 whole. It is split into ' + p[1] + ' columns and ' + p[3] + ' rows.'; $('.after', host).innerHTML = '';
     }
     bt.onclick = function () {
       var p = cfg.problems[pi]; step++;
-      if (step === 1) { pic.innerHTML = FIG.area({ a: p[0], b: p[1], c: 0, d: p[3] }).svg; st.innerHTML = 'Yellow shows <b>' + p[0] + '/' + p[1] + '</b> of the whole.'; bt.textContent = 'Now shade ' + p[2] + '/' + p[3] + ' of that'; }
+      if (step === 1) { pic.innerHTML = FIG.area({ a: p[0], b: p[1], c: 0, d: p[3] }).svg; st.innerHTML = 'Yellow shows <b>' + lbl(p[0], p[1]) + '</b> of the whole.'; bt.textContent = 'Now shade ' + lbl(p[2], p[3]) + ' of that'; }
       else {
         pic.innerHTML = FIG.area({ a: p[0], b: p[1], c: p[2], d: p[3] }).svg; bt.disabled = true;
-        st.innerHTML = 'Green is <b>' + p[2] + '/' + p[3] + ' of ' + p[0] + '/' + p[1] + '</b>. There are ' + (p[0] * p[2]) + ' green parts out of ' + (p[1] * p[3]) + ' parts in the whole.';
-        practiceSet($('.after', host), [{ q: 'What is ' + p[0] + '/' + p[1] + ' × ' + p[2] + '/' + p[3] + '?', answer: (p[0] * p[2]) + '/' + (p[1] * p[3]), hint: 'Count the green parts. Count all the parts in the whole square.', why: (p[0] * p[2]) + ' green parts out of ' + (p[1] * p[3]) + ': ' + p[0] + '/' + p[1] + ' × ' + p[2] + '/' + p[3] + ' = ' + (p[0] * p[2]) + '/' + (p[1] * p[3]) + '. Multiply the tops; multiply the bottoms.' }], key + ':area' + pi, pi === cfg.problems.length - 1 ? done : null);
+        st.innerHTML = 'Green is <b>' + lbl(p[2], p[3]) + ' of ' + lbl(p[0], p[1]) + '</b>. There are ' + (p[0] * p[2]) + ' green parts out of ' + (p[1] * p[3]) + ' parts in the whole.';
+        practiceSet($('.after', host), [{ q: 'What is ' + lbl(p[0], p[1]) + ' × ' + lbl(p[2], p[3]) + '?', answer: (p[0] * p[2]) + '/' + (p[1] * p[3]), hint: 'Count the green parts. Count all the parts in the whole square.', why: (p[0] * p[2]) + ' green parts out of ' + (p[1] * p[3]) + ': ' + lbl(p[0], p[1]) + ' × ' + lbl(p[2], p[3]) + ' = ' + (p[0] * p[2]) + '/' + (p[1] * p[3]) + '. Multiply the tops; multiply the bottoms.' }], key + ':area' + pi, pi === cfg.problems.length - 1 ? done : null);
       }
     };
     $('[data-a=next]', host).onclick = function () { pi = (pi + 1) % cfg.problems.length; load(); };
@@ -985,6 +986,30 @@
       if (!wrong) { st.innerHTML = '<b style="color:var(--ok)">All correct!</b> ' + cfg.problems[pi][0].toLocaleString('en-US') + ' × ' + cfg.problems[pi][1] + ' = ' + (cfg.problems[pi][0] * cfg.problems[pi][1]).toLocaleString('en-US') + '.'; if (pi === cfg.problems.length - 1 && done) done(); }
       else st.innerHTML = '<b style="color:#B42318">' + wrong + ' box' + (wrong > 1 ? 'es need' : ' needs') + ' fixing.</b> Tip: 30 × 20 = 3 × 2 with two zeros = 600.';
     };
+    $('[data-a=next]', host).onclick = function () { pi = (pi + 1) % cfg.problems.length; load(); };
+    load();
+  };
+
+  /* Hundredths grid — shade a decimal (NC.5.NBT.3). cfg.problems: ['0.37', '0.6', …] (tenths or hundredths) */
+  LABS.dgrid = function (host, cfg, done, key) {
+    var pi = 0, on = {};
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="prob" style="font:600 22px var(--mono);color:var(--navy)"></div><div class="fig pic" style="touch-action:manipulation"></div><div class="status" aria-live="polite"></div><div class="btnrow"><button class="btn gold" type="button" data-a="check">Check</button><button class="btn small ghost" type="button" data-a="clear">Clear</button><button class="btn small ghost" type="button" data-a="next">Next →</button></div></div>';
+    var pic = $('.pic', host), st = $('.status', host);
+    function count() { return Object.keys(on).filter(function (k) { return on[k]; }).length; }
+    function draw() {
+      var S = 26, h = '';
+      for (var r = 0; r < 10; r++) for (var c = 0; c < 10; c++) { var k = r * 10 + c; h += '<rect data-k="' + k + '" x="' + (2 + c * S) + '" y="' + (2 + r * S) + '" width="' + S + '" height="' + S + '" fill="' + (on[k] ? '#FFC107' : '#fff') + '" stroke="#9AA3B5" style="cursor:pointer"/>'; }
+      for (c = 0; c <= 10; c++) h += '<line x1="' + (2 + c * S) + '" y1="2" x2="' + (2 + c * S) + '" y2="' + (2 + 10 * S) + '" stroke="#1E2D4F" stroke-width="' + (c % 10 ? 1.4 : 3) + '"/>';
+      pic.innerHTML = '<svg viewBox="0 0 266 266" width="266" role="img" aria-label="Hundredths grid with ' + count() + ' squares shaded">' + h + '</svg>';
+      $$('rect', pic).forEach(function (r) { r.addEventListener('click', function () { var k = +r.dataset.k; on[k] = !on[k]; draw(); st.textContent = count() + ' hundredths shaded = ' + (count() / 100).toFixed(2); }); });
+    }
+    function load() { on = {}; $('.prob', host).innerHTML = 'Shade <b>' + cfg.problems[pi] + '</b> of the whole square.'; st.textContent = 'Tap squares to shade them. Each column is one tenth.'; draw(); }
+    $('[data-a=check]', host).onclick = function () {
+      var want = Math.round(parseFloat(cfg.problems[pi]) * 100), n = count();
+      if (n === want) { st.innerHTML = '<b style="color:var(--ok)">Yes!</b> ' + cfg.problems[pi] + ' = ' + want + ' hundredths' + (want % 10 === 0 ? ' = ' + (want / 10) + ' tenths' : ' = ' + Math.floor(want / 10) + ' tenths and ' + (want % 10) + ' hundredths') + '.'; if (pi === cfg.problems.length - 1 && done) done(); }
+      else st.innerHTML = 'You shaded <b>' + n + '</b> hundredths. ' + cfg.problems[pi] + ' is <b>' + want + '</b> hundredths. ' + (n > want ? 'Take some away.' : 'Shade more.');
+    };
+    $('[data-a=clear]', host).onclick = function () { on = {}; draw(); };
     $('[data-a=next]', host).onclick = function () { pi = (pi + 1) % cfg.problems.length; load(); };
     load();
   };
