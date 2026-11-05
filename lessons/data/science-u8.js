@@ -1,0 +1,66 @@
+/* Science · Unit 8: End-of-Year Review — Can Humans Survive on Planet Zorion? — 9 days. All 5th grade science standards.
+   Students are the Earth-Zorion Research Alliance. Zorion is a made-up planet for review. */
+(function () {
+  var PHEN = 'You are part of the <b>Earth-Zorion Research Alliance</b>. Your mission: test the weather, life, materials and forces on the planet Zorion. <b>Is Zorion a safe and sustainable place for humans?</b>';
+  var S = function (c, t) { return [c, t]; };
+  var ex = function (t, m) { return [t, 0, m]; };
+  LessonKit.unit({
+    id: 'sci-u8', subject: 'science', short: 'Unit 8', title: 'End-of-Year Review: Planet Zorion', home: '../index.html', unitHref: '../unit8.html', word: 'Day',
+    lessons: [
+      { n: 1, title: 'How Does the Human Body Work on Zorion?', phenom: PHEN, goal: 'Let’s review body systems.', stds: [S('LS.5.1.1', 'Levels of organization.'), S('LS.5.1.2', 'Body systems.')],
+        targets: ['I can explain how body systems work together.'], vocab: [['organ system', 'Organs working together.']],
+        outline: [ex('Mission', 'Zorion’s air has less oxygen. Which systems are affected?'), ex('Review', 'Body systems stations.')], materials: ['Unit 10 Zorion slides and handout'],
+        notes: [{ t: 'key', label: 'Remember', html: '<p style="margin:0">cell → tissue → organ → organ system → organism. Respiratory + circulatory deliver oxygen.</p>' }],
+        practice: [{ q: 'Less oxygen on Zorion. Which two systems work harder?', choices: ['Respiratory and circulatory', 'Skeletal and digestive'], answer: 0, why: 'They bring and deliver oxygen.' }, { type: 'sort', q: 'Match.', bins: ['Skeletal', 'Muscular', 'Nervous', 'Digestive'], items: [['bones', 0], ['biceps', 1], ['brain', 2], ['stomach', 3]], why: 'Structures and systems.' }],
+        exit: [{ q: 'Which is largest?', choices: ['organ system', 'tissue', 'cell'], answer: 0, why: 'Systems are made of organs.' }] },
+      { n: 2, title: 'Do Zorion Creatures Learn or Are They Born with It?', phenom: PHEN, goal: 'Let’s review traits and behaviors.', stds: [S('LS.5.3.1', 'Instincts vs. learned behaviors.'), S('LS.5.3.2', 'Inherited vs. acquired traits.')],
+        targets: ['I can classify traits and behaviors.'], vocab: [['instinct', 'Born knowing.']],
+        outline: [ex('Mission', 'Observe Zorion creatures.'), ex('Review', 'Sort traits and behaviors.')], materials: ['Zorion creature cards'],
+        notes: [{ t: 'key', label: 'Remember', html: '<p style="margin:0">Inherited traits come from parents. Acquired traits come from life. Instincts are inborn; learned behaviors are taught.</p>' }],
+        practice: [{ type: 'sort', q: 'Sort the Zorion creature facts.', bins: ['Inherited trait', 'Acquired trait', 'Instinct', 'Learned behavior'], items: [['purple scales like its parents', 0], ['a scar from a fall', 1], ['babies swim right after hatching', 2], ['it learned to open a supply box', 3]], why: 'Traits vs. behaviors.' }],
+        exit: [{ q: 'Can a scar be passed to offspring?', choices: ['No', 'Yes'], answer: 0, why: 'It is acquired.' }] },
+      { n: 3, title: 'Life on Zorion', phenom: PHEN, goal: 'Let’s review ecosystems and food webs.', stds: [S('LS.5.2.1', 'Ecosystems.'), S('LS.5.2.2', 'Producers, consumers, decomposers.'), S('LS.5.2.3', 'Changes in ecosystems.')],
+        targets: ['I can classify organisms and predict effects of changes.'], vocab: [['food web', 'Connected food chains.']],
+        outline: [ex('Mission', 'Build a Zorion food web.'), ex('Review', 'What if one population disappears?')], materials: ['Zorion food web cards'],
+        notes: [{ t: 'key', label: 'Remember', html: '<p style="margin:0">Energy flows sun → producer → consumers. Decomposers recycle nutrients.</p>' }],
+        practice: [{ type: 'sort', q: 'Classify the Zorion organisms.', bins: ['Producer', 'Consumer', 'Decomposer'], items: [['glowing moss that uses starlight', 0], ['a six-legged grazer', 1], ['fungus on fallen logs', 2]], why: 'Roles.' }, { q: 'If the glowing moss dies off, what happens to the grazers?', choices: ['They decrease.', 'They increase.'], answer: 0, why: 'They lose food.' }],
+        exit: [{ q: 'Arrows in a food web show…', choices: ['energy flow', 'size'], answer: 0, why: 'Energy moves to the eater.' }] },
+      { n: 4, title: 'Weather on Zorion', phenom: PHEN, goal: 'Let’s review the water cycle and weather tools.', stds: [S('ESS.5.1.1', 'Weather data.'), S('ESS.5.1.4', 'Water cycle.')],
+        targets: ['I can explain the water cycle and read weather data.'], vocab: [['condensation', 'Vapor → drops.']],
+        outline: [ex('Mission', 'Read Zorion weather station data.'), ex('Review', 'Water cycle model.')], materials: ['Zorion weather data'],
+        notes: [{ t: 'key', label: 'Remember', html: '<p style="margin:0">Evaporation, transpiration, condensation, precipitation — powered by the sun (or Zorion’s star!).</p>' }],
+        practice: [{ type: 'sort', q: 'Match each process.', bins: ['Evaporation', 'Condensation', 'Precipitation'], items: [['puddles dry up', 0], ['fog forms at night', 1], ['rain falls', 2]], why: 'Water cycle.' }, { q: 'Which tool measures wind speed?', choices: ['Anemometer', 'Barometer'], answer: 0, why: 'Wind speed.' }],
+        exit: [{ q: 'What powers the water cycle?', choices: ['Energy from a star (the sun)', 'Gravity only'], answer: 0, why: 'Star energy causes evaporation.' }] },
+      { n: 5, title: 'Predicting Weather on Zorion', phenom: PHEN, goal: 'Let’s use air pressure and fronts to forecast.', stds: [S('ESS.5.1.2', 'Forecasting and severe weather.'), S('ESS.5.1.3', 'Ocean influences.')],
+        targets: ['I can forecast weather from fronts and pressure.'], vocab: [['front', 'Where air masses meet.']],
+        outline: [ex('Mission', 'Forecast for a Zorion landing site.'), ex('Review', 'Fronts, pressure, ocean effects.')], materials: ['Zorion weather map'],
+        notes: [{ t: 'key', label: 'Remember', html: '<p style="margin:0">Low pressure → clouds and storms. Cold front → storms then cooler. Warm oceans keep coasts mild and fuel hurricanes.</p>' }],
+        practice: [{ q: 'A low-pressure system is coming. Forecast?', choices: ['Clouds and rain', 'Clear skies'], answer: 0, why: 'Low pressure.' }, { q: 'Which storm forms over warm oceans?', choices: ['Hurricane', 'Tornado'], answer: 0, why: 'Warm water fuels hurricanes.' }],
+        exit: [{ q: 'A cold front usually brings…', choices: ['storms, then cooler air', 'steady warm weather'], answer: 0, why: 'Cold fronts.' }] },
+      { n: 6, title: 'Testing the Properties of Zorion Materials', phenom: PHEN, goal: 'Let’s review matter, changes and heating/cooling.', stds: [S('PS.5.1.1', 'Weight before and after.'), S('PS.5.1.2', 'New substances.'), S('PS.5.1.3', 'Heating and cooling materials.')],
+        targets: ['I can classify changes and choose materials for building.'], vocab: [['insulator', 'Slows heat.']],
+        outline: [ex('Mission', 'Mystery bag investigation; test materials for a Zorion shelter.'), ex('Review', 'Mass before and after changes.')], materials: ['Mystery bag materials', 'Scale'],
+        notes: [{ t: 'key', label: 'Remember', html: '<p style="margin:0">Chemical change = new substance. In a closed system, weight stays the same. Insulators slow heat; conductors move heat.</p>' }],
+        practice: [{ q: 'Two Zorion powders fizz when mixed. Chemical or physical?', choices: ['Chemical', 'Physical'], answer: 0, why: 'Gas = new substance.' }, { q: 'Sealed bag: 200 g before mixing. After?', answer: 200, unit: 'g', why: 'Closed system.' }, { q: 'Zorion nights are freezing. Which shelter wall is best?', choices: ['Foam (insulator)', 'Thin metal (conductor)'], answer: 0, why: 'Keeps heat in.' }],
+        exit: [{ q: 'Heating most materials makes them…', choices: ['expand', 'contract'], answer: 0, why: 'Particles spread.' }] },
+      { n: 7, title: 'Can We Move on Zorion?', phenom: PHEN, goal: 'Let’s review gravity, friction, mass and speed.', stds: [S('PS.5.2.1', 'Gravity, friction, mass.'), S('PS.5.2.2', 'Position, direction, speed.')],
+        targets: ['I can predict motion on Zorion.'], vocab: [['speed', 'distance ÷ time']],
+        outline: [ex('Stations', 'Gravity and force (ramp + drop test: Earth time × 1.15 for Zorion); mass; friction on felt, sandpaper and foil.'), ex('Review', 'Speed calculations.')], materials: ['Ramps, toy cars, stopwatches', 'Washers or marbles', 'Rice or sand bags', 'Felt, sandpaper, foil'],
+        notes: [{ t: 'example', title: 'Drop on Zorion', steps: ['An object falls 1 m in 0.45 s on Earth.', 'Zorion fall time ≈ Earth time × 1.15.', '0.45 × 1.15 ≈ 0.52 s. It falls a little slower — Zorion’s gravity is weaker.'] }],
+        practice: [{ q: 'A rover goes 36 m in 9 s. Speed?', answer: 4, unit: 'm per second', why: '36 ÷ 9.' }, { q: 'Zorion ground is rough gravel. Compared to smooth ground, a rover rolls…', choices: ['a shorter distance', 'farther'], answer: 0, why: 'More friction.' }, { q: 'Loaded rover (more mass), same push. It goes…', choices: ['less far', 'farther'], answer: 0, why: 'More mass.' }],
+        exit: [{ q: 'Fall time on Earth: 2 s. Zorion fall time (× 1.15)?', answer: 2.3, unit: 's', why: '2 × 1.15.' }] },
+      { n: 8, title: 'Final Report: Can We Live on Zorion?', phenom: PHEN, goal: 'Let’s write a CER recommendation for mission command.', stds: [S('SEP', 'Engaging in argument from evidence')],
+        targets: ['I can write a claim with evidence and reasoning from all our tests.'], vocab: [['recommendation', 'Advice based on evidence.']],
+        outline: [ex('CER', 'Groups complete the CER on the student handout.'), ex('Present', 'Optional: 1-page report, poster/brochure, or short slide deck.')], materials: ['Zorion student handout', 'Slideshow'],
+        notes: [{ t: 'key', label: 'CER', html: '<p style="margin:0"><b>Claim</b>: Is Zorion safe and sustainable? <b>Evidence</b>: data from weather, life, materials, forces. <b>Reasoning</b>: the science ideas that connect them.</p>' }, { t: 'write', q: 'Write your recommendation.', rows: 7, ph: 'Claim: …\nEvidence: …\nReasoning: …\nRecommendation: …' }],
+        practice: [{ q: 'Which is evidence?', choices: ['Our foam shelter kept the temperature 10° warmer at night.', 'Zorion seems cool.'], answer: 0, why: 'Data from a test.' }],
+        exit: [{ q: 'Reasoning in a CER is…', choices: ['the science idea connecting evidence to the claim', 'a guess'], answer: 0, why: 'Science explains why.' }] },
+      { n: 9, title: 'Grudgeball Review', phenom: PHEN, goal: 'Let’s review the whole year with a team game.', stds: [S('All', 'All 5th grade science standards.')],
+        targets: ['I can answer review questions from every unit.'], vocab: [['review', 'Look back.']],
+        outline: [ex('Game', 'Grudgeball: teams answer every question; correct answers earn points; take a shot for a bonus. Teams start with 4 points.')], materials: ['Grudgeball Science EOG Review slides', '5th Grade Science Released EOG'],
+        notes: [{ t: 'tip', html: 'Play fair and kind. Every team answers every question!' }],
+        practice: [{ q: 'Which system breaks food into nutrients?', choices: ['Digestive', 'Nervous'], answer: 0, why: 'Digestion.' }, { q: 'Decomposers…', choices: ['break down dead things', 'make food from sunlight'], answer: 0, why: 'Recyclers.' }, { q: 'Fog forms by…', choices: ['condensation', 'evaporation'], answer: 0, why: 'Cooling vapor.' }, { q: 'A copper statue turning green is a…', choices: ['chemical change', 'physical change'], answer: 0, why: 'New substance.' }, { q: 'Friction is a ___ force.', choices: ['contact', 'non-contact'], answer: 0, why: 'Surfaces touch.' }, { q: 'Inherited traits come from…', choices: ['parents', 'the environment'], answer: 0, why: 'Genes.' }],
+        exit: [{ q: 'Speed of 50 m in 10 s?', answer: 5, unit: 'm per second', why: '50 ÷ 10.' }, { q: 'An estuary is where…', choices: ['a river meets the ocean', 'two mountains meet'], answer: 0, why: 'Fresh + salt water.' }] }
+    ]
+  });
+})();
