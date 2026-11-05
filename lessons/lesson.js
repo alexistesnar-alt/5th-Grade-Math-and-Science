@@ -965,6 +965,30 @@
     load();
   };
 
+  /* Partial products lab — area model for multi-digit multiplication (NC.5.NBT.5). cfg.problems: [[a, b], …] */
+  LABS.partial = function (host, cfg, done, key) {
+    var pi = 0;
+    function parts(n) { var s = String(n), out = []; for (var i = 0; i < s.length; i++) if (+s[i]) out.push(+s[i] * Math.pow(10, s.length - 1 - i)); return out; }
+    host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><div class="prob" style="font:600 24px var(--mono);color:var(--navy)"></div><div class="grid0" style="overflow-x:auto"></div><div class="btnrow"><button class="btn gold" type="button" data-a="check">Check</button><button class="btn small ghost" type="button" data-a="next">Next problem →</button></div><div class="status" aria-live="polite"></div></div>';
+    var st = $('.status', host);
+    function load() {
+      var p = cfg.problems[pi], A = parts(p[0]), B = parts(p[1]);
+      $('.prob', host).textContent = p[0].toLocaleString('en-US') + ' × ' + p[1];
+      var h = '<table class="dt" style="margin:8px 0"><tr><th>×</th>' + A.map(function (a) { return '<th style="background:#FFF3C4">' + a.toLocaleString('en-US') + '</th>'; }).join('') + '</tr>' +
+        B.map(function (b, r) { return '<tr><th style="background:#E3EEFB">' + b + '</th>' + A.map(function (a, c) { return '<td><input class="num pp" data-v="' + (a * b) + '" inputmode="numeric" aria-label="' + a + ' times ' + b + '" style="font:600 17px var(--mono);width:6.5em;padding:6px;border:2px solid var(--line-2);border-radius:8px"></td>'; }).join('') + '</tr>'; }).join('') + '</table>' +
+        '<label style="font-weight:600">Add the partial products: <input class="num tot" data-v="' + (p[0] * p[1]) + '" inputmode="numeric" aria-label="total" style="font:700 20px var(--mono);width:8em;padding:6px 8px;border:2px solid var(--line-2);border-radius:8px"></label>';
+      $('.grid0', host).innerHTML = h; st.textContent = 'Multiply each yellow number by each blue number. Then add.';
+    }
+    $('[data-a=check]', host).onclick = function () {
+      var ins = $$('.grid0 input', host), wrong = 0;
+      ins.forEach(function (i) { var ok = +i.value.replace(/,/g, '') === +i.dataset.v; i.style.borderColor = ok ? '#15803D' : '#B42318'; i.style.background = ok ? '#E9F6EE' : '#FDECEA'; if (!ok) wrong++; });
+      if (!wrong) { st.innerHTML = '<b style="color:var(--ok)">All correct!</b> ' + cfg.problems[pi][0].toLocaleString('en-US') + ' × ' + cfg.problems[pi][1] + ' = ' + (cfg.problems[pi][0] * cfg.problems[pi][1]).toLocaleString('en-US') + '.'; if (pi === cfg.problems.length - 1 && done) done(); }
+      else st.innerHTML = '<b style="color:#B42318">' + wrong + ' box' + (wrong > 1 ? 'es need' : ' needs') + ' fixing.</b> Tip: 30 × 20 = 3 × 2 with two zeros = 600.';
+    };
+    $('[data-a=next]', host).onclick = function () { pi = (pi + 1) % cfg.problems.length; load(); };
+    load();
+  };
+
   /* Embed lab — links to a bigger lab page on this site. cfg: {href, title, text} */
   LABS.link = function (host, cfg) {
     host.innerHTML = '<div class="lab"><p class="steps">' + (cfg.intro || '') + '</p><a class="btn gold" style="display:inline-block;text-decoration:none" href="' + cfg.href + '">' + (cfg.btn || 'Open the lab') + ' →</a></div>';

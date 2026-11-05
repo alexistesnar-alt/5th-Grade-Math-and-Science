@@ -45,7 +45,7 @@ PAGE = """<!DOCTYPE html>
 def lesson_numbers(path):
     """Lesson numbers in a data file: lines that start a lesson with `n: <number>,`."""
     src = open(path, encoding="utf-8").read()
-    return sorted({int(m) for m in re.findall(r"^\s*n:\s*(\d+),", src, re.M)})
+    return sorted({int(m) for m in re.findall(r"(?:^|\{)\s*n:\s*(\d+),", src, re.M)})
 
 
 for folder, uid in UNITS:
