@@ -34,12 +34,10 @@ LESSON PAGES (one page per lesson)
   Each page has: Goals (I can + NC standards), Outline + Materials, Interactive Notes,
   Practice, a Lab, and an Exit Ticket (students see their score at the end).
 
-  The WORDS for every lesson in a unit live in ONE file:
-    lessons/data/math-u0.js       Math: Launching the Year
-    lessons/data/science-u0.js    Science: Unit 0
-    lessons/data/math-u1.js       Math: Unit 1 Finding Volume
-    lessons/data/science-u1.js    Science: Unit 1 Fueling Athletes
-  New unit? Add its data file, add it to the list in _tools/make_lesson_pages.py, and run that script.
+  The WORDS for every lesson in a unit live in ONE file in lessons/data/:
+    Math:     math-u0.js (Launch), math-u1.js, math-u1a.js (Order of Operations mini-unit), math-u2.js …
+              math-u7.js, math-u7a.js (Measurement mini-unit), math-u8.js
+    Science:  science-u0.js … science-u8.js
   Open the file, find the lesson ("n: 2," is Lesson 2), and change the words inside the quotes.
   Keep the quotes, commas and brackets.
 
