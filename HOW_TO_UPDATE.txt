@@ -63,6 +63,10 @@ ADD A LINK TO A PDF OR GOOGLE DOC
     <a href="#" class="feature-card"> … </a>
   Replace # with the link (for a Google Doc: Share → "Anyone with the link" → Copy link).
   To post a PDF: Add file → Upload files, then link to it, e.g. href="files/lesson1.pdf".
+  Activities you made (slides, escape rooms) go in math/activities/. Example: the Halloween
+  Fractions Escape Room is math/activities/Fractions_Escape_Room_Halloween.pptx, linked from
+  the Practice and Play list on math/unit3.html as href="activities/Fractions_Escape_Room_Halloween.pptx".
+  Keep answer keys off the site.
 
 LOOK
   site.css   colors and layout     brand.js / brand.css   fonts (Source Serif 4, Inter)
