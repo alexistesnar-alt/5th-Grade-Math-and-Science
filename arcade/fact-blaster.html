@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fact Blaster — Math Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<script src="../brand.js"></script>
+<style>
+  .fb-sky{position:relative;height:340px;border-radius:14px;overflow:hidden;margin:0 0 12px;
+    background:radial-gradient(circle at 20% 15%,rgba(255,255,255,.12) 0 1px,transparent 2px) 0 0/38px 41px,
+               radial-gradient(circle at 70% 60%,rgba(255,255,255,.1) 0 1px,transparent 2px) 0 0/53px 47px,
+               linear-gradient(#0B1430,#1E2D4F);border:1px solid rgba(255,255,255,.12)}
+  .fb-ground{position:absolute;left:0;right:0;bottom:0;height:22px;background:linear-gradient(#3B4A6B,#2A3755);border-top:2px solid #FFC107}
+  .fb-rock{position:absolute;top:0;min-width:96px;padding:10px 12px;border-radius:44% 56% 50% 50%/55% 45% 55% 45%;text-align:center;
+    background:radial-gradient(circle at 35% 30%,#A8A29E,#57534E 70%);border:2px solid #292524;color:#fff;
+    font:700 clamp(18px,4.6vw,24px)/1.1 var(--mono);text-shadow:0 2px 0 rgba(0,0,0,.45);transform:translateX(-50%);white-space:nowrap}
+  .fb-rock.low{box-shadow:0 0 0 3px #F97316}
+  .fb-boom{position:absolute;transform:translate(-50%,-50%);font:800 22px/1 var(--sans);color:#FFC107;pointer-events:none;animation:fbBoom .6s ease-out forwards}
+  @keyframes fbBoom{from{opacity:1;transform:translate(-50%,-50%) scale(.6)}to{opacity:0;transform:translate(-50%,-90%) scale(1.5)}}
+  .fb-ship{position:absolute;left:50%;bottom:22px;width:46px;height:34px;transform:translateX(-50%)}
+  .fb-form{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px}
+  .fb-form input{width:170px;min-height:56px;border-radius:12px;border:2px solid rgba(255,255,255,.3);background:#fff;color:#16213B;font:700 26px/1 var(--mono);text-align:center;padding:0 10px}
+  .fb-form input:focus{outline:3px solid #FFC107;outline-offset:2px;border-color:#FFC107}
+  .fb-form input.miss{animation:fbShake .35s}
+  @keyframes fbShake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .fb-hint{text-align:center;color:#AEB7C8;font-size:14.5px;margin:8px 0 0;min-height:1.3em}
+  @media (prefers-reduced-motion:reduce){.fb-boom{animation:none;opacity:0}.fb-form input.miss{animation:none}}
+  @media (max-width:480px){.fb-sky{height:300px}}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="a-wrap">
+  <a class="a-back" href="index.html">&larr; Arcade</a>
+  <div class="a-card" id="game">
+    <div id="play">
+      <div class="fb-sky" id="sky" aria-label="Falling math facts">
+        <svg class="fb-ship" viewBox="0 0 46 34" aria-hidden="true"><path d="M23 2 L33 22 L44 30 L2 30 L13 22 Z" fill="#FFC107" stroke="#16213B" stroke-width="2"/><circle cx="23" cy="17" r="4" fill="#60A5FA"/></svg>
+        <div class="fb-ground"></div>
+      </div>
+      <form class="fb-form" id="form" autocomplete="off">
+        <label for="ans" style="color:#D9DEE8;font-weight:600">Answer</label>
+        <input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" enterkeyhint="go" aria-describedby="hint">
+        <button class="a-btn" type="submit">Blast</button>
+      </form>
+      <p class="fb-hint" id="hint">Type the answer to any falling fact and press Enter.</p>
+    </div>
+  </div>
+  <p class="a-stds">Standards: NC.5.NBT.5 · NC.5.NBT.6 (fact fluency) · NC.5.NBT.1</p>
+</main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="arcade.js"></script>
+<script>
+(function () {
+  "use strict";
+  var R = Arcade.rand, P = Arcade.pick;
+  var sky = document.getElementById("sky"), input = document.getElementById("ans"), form = document.getElementById("form"), hint = document.getElementById("hint");
+  var rocks = [], raf = 0, last = 0, spawnIn = 0, running = false, lastKey = "";
+  var REDUCED = false; try { REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { }
+
+  /* problems — every answer is a whole number */
+  function fact(level) {
+    for (var k = 0; k < 50; k++) {
+      var a, b, op, ans, t;
+      if (level === 1) { a = R(2, 12); b = R(2, 12); op = "×"; ans = a * b; }
+      else if (level === 2) { b = R(2, 12); ans = R(2, 12); a = b * ans; op = "÷"; }
+      else {
+        t = R(1, 4);
+        if (t === 1) { a = R(2, 9) * P([10, 100]); b = R(2, 9); op = "×"; ans = a * b; }          // 40 × 6, 300 × 7
+        else if (t === 2) { b = R(2, 9); ans = R(2, 9) * 10; a = b * ans; op = "÷"; }            // 560 ÷ 8
+        else if (t === 3) { a = R(2, 12); b = R(2, 12); op = "×"; ans = a * b; }
+        else { b = R(2, 12); ans = R(2, 12); a = b * ans; op = "÷"; }
+      }
+      var key = a + op + b;
+      if (key === lastKey || rocks.some(function (r) { return r.ans === ans; })) continue;   // answers on screen are all different
+      lastKey = key;
+      return { text: a.toLocaleString("en-US") + " " + op + " " + b.toLocaleString("en-US"), ans: ans, a: a, b: b, op: op };
+    }
+    return null;
+  }
+  function hintFor(f) {
+    if (f.op === "÷") return "Think: " + f.b + " × ? = " + f.a.toLocaleString("en-US") + ".";
+    var x = Math.min(f.a, f.b), y = Math.max(f.a, f.b);
+    if (y >= 10 && y % 10 === 0) return "Use the basic fact " + x + " × " + (y / (y % 100 === 0 ? 100 : 10)) + ", then put the zeros back.";
+    if (x === 9 || y === 9) { var o = x === 9 ? y : x; return "Nines: 10 × " + o + " = " + 10 * o + ", minus one " + o + "."; }
+    if (x === 6 || y === 6) { o = x === 6 ? y : x; return "Sixes: 5 × " + o + " = " + 5 * o + ", plus one more " + o + "."; }
+    if (x === 8 || y === 8) { o = x === 8 ? y : x; return "Eights: double, double, double " + o + "."; }
+    if (x === 7 || y === 7) { o = x === 7 ? y : x; return "Sevens: 5 × " + o + " + 2 × " + o + "."; }
+    return "Think of " + x + " groups of " + y + ".";
+  }
+
+  function speed() { return (REDUCED ? 22 : 30) + Math.min(40, Math.floor(stScore / 50) * 4); }   // pixels per second
+  var stScore = 0;
+  function spawn() {
+    var f = fact(game.level); if (!f) return;
+    var el = document.createElement("div");
+    el.className = "fb-rock"; el.textContent = f.text;
+    var x = R(16, 84);
+    if (rocks.length && Math.abs(rocks[rocks.length - 1].x - x) < 22) x = x < 50 ? x + 30 : x - 30;
+    el.style.left = x + "%"; sky.appendChild(el);
+    rocks.push({ el: el, y: -50, x: x, ans: f.ans, f: f });
+  }
+  function frame(t) {
+    if (!running) return;
+    var dt = Math.min(0.05, (t - last) / 1000 || 0); last = t;
+    if (!game.locked()) {
+      spawnIn -= dt;
+      if (spawnIn <= 0 && rocks.length < 4) { spawn(); spawnIn = Math.max(1.8, 3.6 - stScore / 400); }
+      var floor = sky.clientHeight - 22 - 40, lowest = null;
+      for (var i = 0; i < rocks.length; i++) {
+        var r = rocks[i]; r.y += speed() * dt; r.el.style.top = r.y + "px";
+        if (!lowest || r.y > lowest.y) lowest = r;
+        if (r.y >= floor) { crash(r); break; }
+      }
+      rocks.forEach(function (r) { r.el.classList.toggle("low", r === lowest && r.y > floor * 0.55); });
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  function remove(r) { var i = rocks.indexOf(r); if (i >= 0) rocks.splice(i, 1); if (r.el.parentNode) r.el.parentNode.removeChild(r.el); }
+  function boom(r, txt) {
+    var b = document.createElement("div"); b.className = "fb-boom"; b.textContent = txt;
+    b.style.left = r.x + "%"; b.style.top = (r.y + 20) + "px"; sky.appendChild(b);
+    setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 650);
+  }
+  function crash(r) {
+    remove(r);
+    game.wrong("<b>A rock landed!</b> " + r.f.text + " = " + r.ans.toLocaleString("en-US") + '.<span class="steps">' + hintFor(r.f) + "</span>", function () { input.focus(); });
+  }
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (game.locked()) return;
+    var v = parseInt(input.value.replace(/[,\s]/g, ""), 10);
+    if (isNaN(v)) { input.focus(); return; }
+    var hit = null;
+    rocks.forEach(function (r) { if (r.ans === v && (!hit || r.y > hit.y)) hit = r; });
+    input.value = "";
+    if (!hit) {
+      input.classList.remove("miss"); void input.offsetWidth; input.classList.add("miss");
+      hint.textContent = "No rock has the answer " + v.toLocaleString("en-US") + ". Check your facts!";
+      return;
+    }
+    boom(hit, "BOOM!"); remove(hit); stScore += 10;
+    hint.textContent = hit.f.text + " = " + v.toLocaleString("en-US");
+    game.right("<b>Blasted!</b> " + hit.f.text + " = " + v.toLocaleString("en-US") + ".", null, { lock: false, points: 10 });
+    input.focus();
+  });
+  function clearAll() { rocks.slice().forEach(remove); }
+
+  var game = Arcade.init({
+    id: "fact-blaster",
+    title: "Fact Blaster",
+    howTo: "Type the answer to a falling fact to blast it before it lands.",
+    mode: "lives", lives: 3,
+    levels: [
+      { name: "× facts", desc: "Multiplication facts to 12 × 12." },
+      { name: "÷ facts", desc: "Division facts to 144 ÷ 12." },
+      { name: "Mixed + tens", desc: "× and ÷ facts, plus 40 × 6 and 560 ÷ 8." }
+    ],
+    ends: { lives: "Three rocks landed!" },
+    onStart: function () {
+      clearAll(); stScore = 0; lastKey = ""; spawnIn = 0.3; running = true; last = performance.now();
+      hint.textContent = "Type the answer to any falling fact and press Enter.";
+      cancelAnimationFrame(raf); raf = requestAnimationFrame(frame); input.value = ""; input.focus();
+    },
+    onStop: function () { running = false; cancelAnimationFrame(raf); clearAll(); }
+  });
+  if (/[?&]test=1/.test(location.search)) window.__arcadePeek = function () { return rocks.map(function (r) { return r.ans; }); };
+  window.__arcadeTest = { fact: fact, hintFor: hintFor };
+})();
+</script>
+</body>
+</html>

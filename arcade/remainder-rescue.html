@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remainder Rescue — Math Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<script src="../brand.js"></script>
+<style>
+  .rr-story{text-align:center;font:600 18px/1.4 var(--sans);color:#D9DEE8;margin:0 0 8px}
+  .rr-ex{text-align:center;font:700 clamp(28px,8vw,46px)/1.2 var(--mono);color:#fff;margin:4px 0 10px}
+  .rr-pic{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 10px;min-height:20px}
+  .rr-boat{display:flex;flex-wrap:wrap;gap:3px;padding:6px 8px 8px;border-radius:6px 6px 18px 18px;background:#B45309;border:2px solid #FFC107;max-width:120px}
+  .rr-boat i,.rr-left i{width:12px;height:12px;border-radius:50%;background:#FDE68A;display:block}
+  .rr-left{display:flex;flex-wrap:wrap;gap:3px;padding:6px;border:2px dashed #F97316;border-radius:8px;align-items:center}
+  .rr-left span{color:#FDBA74;font:600 12px var(--sans);margin-right:4px}
+  .rr-form{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:12px}
+  .rr-form label{display:flex;flex-direction:column;gap:4px;color:#D9DEE8;font:600 13px var(--sans);text-align:center}
+  .rr-form input{width:120px;min-height:54px;border-radius:12px;border:2px solid rgba(255,255,255,.3);background:#fff;color:#16213B;font:700 24px/1 var(--mono);text-align:center}
+  .rr-form input.sm{width:84px}
+  .rr-form input:focus{outline:3px solid #FFC107;outline-offset:2px;border-color:#FFC107}
+  .rr-r{font:700 26px var(--mono);color:#FFC107;padding-bottom:12px}
+  .rr-hint{text-align:center;color:#FDBA74;font-size:15px;margin:8px 0 0;min-height:1.4em}
+</style>
+</head>
+<body>
+<script src="../site-bar.js"></script>
+<main class="a-wrap">
+  <a class="a-back" href="index.html">&larr; Arcade</a>
+  <div class="a-card" id="game">
+    <div id="play">
+      <p class="rr-story" id="story"></p>
+      <div class="rr-ex" id="ex"></div>
+      <div class="rr-pic" id="pic" aria-hidden="true"></div>
+      <form class="rr-form" id="form" autocomplete="off">
+        <label>Quotient<input id="q" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5"></label>
+        <span class="rr-r">R</span>
+        <label>Remainder<input id="r" class="sm" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3"></label>
+        <button class="a-btn" type="submit">Rescue!</button>
+      </form>
+      <p class="rr-hint" id="hint"></p>
+    </div>
+  </div>
+  <p class="a-stds">Standards: NC.5.NBT.6</p>
+</main>
+<div class="site-footer">© Mrs. Tesnar's 5th Grade</div>
+<script src="arcade.js"></script>
+<script>
+(function () {
+  "use strict";
+  var R = Arcade.rand, P = Arcade.pick;
+  var story = document.getElementById("story"), ex = document.getElementById("ex"), pic = document.getElementById("pic");
+  var qIn = document.getElementById("q"), rIn = document.getElementById("r"), hint = document.getElementById("hint"), form = document.getElementById("form");
+  var cur = null;
+  var N = function (n) { return n.toLocaleString("en-US"); };
+  var STORIES = [
+    ["campers", "rafts"], ["puppies", "rescue boats"], ["kittens", "carriers"], ["hikers", "rescue vans"], ["ducklings", "baskets"], ["penguins", "ice floats"]
+  ];
+
+  function make(level) {
+    var d, q, r, n;
+    for (var k = 0; k < 100; k++) {
+      if (level === 1) { d = R(3, 9); q = R(3, 11); }
+      else if (level === 2) { d = R(3, 9); q = R(25, 999); }
+      else { d = R(11, 49); q = R(12, Math.floor(9999 / d) - 1); }
+      r = R(1, d - 1); n = d * q + r;
+      if (n <= (level === 1 ? 99 : 9999)) break;
+    }
+    var s = P(STORIES);
+    return { n: n, d: d, q: q, r: r, who: s[0], ride: s[1] };
+  }
+  // partial quotients, so a miss shows the steps
+  function steps(n, d) {
+    var left = n, out = [], q = 0;
+    [1000, 100, 10, 1].forEach(function (p) {
+      var k = Math.floor(left / (d * p));
+      if (k > 0) { out.push(d + " × " + N(k * p) + " = " + N(d * k * p) + " → " + N(left) + " − " + N(d * k * p) + " = " + N(left - d * k * p)); left -= d * k * p; q += k * p; }
+    });
+    return out;
+  }
+  function show() {
+    cur = make(game.level);
+    story.innerHTML = "<b>" + N(cur.n) + " " + cur.who + "</b> need rescue. Each of the " + cur.ride + " holds <b>" + cur.d + "</b>. How many full " + cur.ride + "? How many " + cur.who + " are left?";
+    ex.textContent = N(cur.n) + " ÷ " + cur.d;
+    if (game.level === 1) {
+      var h = "";
+      for (var b = 0; b < cur.q; b++) { h += '<div class="rr-boat">'; for (var i = 0; i < cur.d; i++) h += "<i></i>"; h += "</div>"; }
+      h += '<div class="rr-left"><span>left</span>' + new Array(cur.r + 1).join("<i></i>") + "</div>";
+      pic.innerHTML = '<p style="width:100%;text-align:center;color:#AEB7C8;font-size:13px;margin:0">(Picture shows the answer. Count the boats and the ones left!)</p>' + h;
+      pic.hidden = false;
+    } else { pic.innerHTML = ""; pic.hidden = true; }
+    qIn.value = ""; rIn.value = ""; hint.textContent = ""; qIn.focus();
+  }
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (game.locked() || !cur) return;
+    var q = parseInt(qIn.value.replace(/,/g, ""), 10), r = parseInt(rIn.value.replace(/,/g, ""), 10);
+    if (isNaN(q)) { hint.textContent = "Type the quotient (full groups)."; qIn.focus(); return; }
+    if (isNaN(r)) { hint.textContent = "Type the remainder (left over). Type 0 if none are left."; rIn.focus(); return; }
+    if (q === cur.q && r === cur.r) {
+      game.right("<b>Rescued!</b> " + N(cur.n) + " ÷ " + cur.d + " = " + N(cur.q) + " R " + cur.r + ". " + N(cur.q) + " full " + cur.ride + ", " + cur.r + " " + cur.who + " left.", show, { delay: 1100 });
+      return;
+    }
+    var note;
+    if (r >= cur.d) note = "Your remainder (" + r + ") is " + (r === cur.d ? "the same as" : "bigger than") + " " + cur.d + ". That fills another " + cur.ride.replace(/s$/, "") + "!";
+    else if (q === cur.q) note = "The quotient is right. Check what is left: " + N(cur.n) + " − " + N(cur.d * cur.q) + " = " + cur.r + ".";
+    else note = "Check: " + cur.d + " × " + N(q) + " = " + N(cur.d * q) + (cur.d * q > cur.n ? ", which is more than " + N(cur.n) + "." : ".");
+    game.wrong("<b>" + N(cur.n) + " ÷ " + cur.d + " = " + N(cur.q) + " R " + cur.r + ".</b> " + note +
+      '<span class="steps">' + steps(cur.n, cur.d).join("<br>") + "<br>Check: " + cur.d + " × " + N(cur.q) + " + " + cur.r + " = " + N(cur.n) + " ✓</span>", show);
+  });
+  rIn.addEventListener("keydown", function (e) { if (e.key === "Backspace" && !rIn.value) qIn.focus(); });
+  qIn.addEventListener("keydown", function (e) { if (e.key === "Enter" && qIn.value && !rIn.value) { e.preventDefault(); rIn.focus(); } });
+
+  var game = Arcade.init({
+    id: "remainder-rescue",
+    title: "Remainder Rescue",
+    howTo: "Find the full groups (quotient) and how many are left (remainder).",
+    mode: "lives", lives: 3,
+    levels: [
+      { name: "Small groups", desc: "2-digit ÷ 1-digit, with pictures." },
+      { name: "Big crowds", desc: "Up to 4-digit ÷ 1-digit." },
+      { name: "Two-digit groups", desc: "Up to 4-digit ÷ 2-digit." }
+    ],
+    onStart: show,
+    onStop: function () { cur = null; }
+  });
+  if (/[?&]test=1/.test(location.search)) window.__arcadePeek = function () { return cur && [cur.q, cur.r]; };
+  window.__arcadeTest = { make: make, steps: steps };
+})();
+</script>
+</body>
+</html>
